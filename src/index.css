@@ -1,0 +1,3 @@
+body {
+  overflow-x: hidden; /* A workaround, see: https://material-ui-next.com/layout/grid/#negative-margin */
+}
