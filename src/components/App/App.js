@@ -1,7 +1,13 @@
 import React from 'react';
+import CssBaseline from 'material-ui/CssBaseline';
+
+import Header from '../Header/Header';
 
 const App = () => (
-  <div>App here!</div>
+  <div>
+    <CssBaseline />
+    <Header />
+  </div>
 );
 
 export default App;
