@@ -1,0 +1,11 @@
+.footer {
+  padding: 16px 24px;
+}
+
+.footer-icon {
+  vertical-align: middle;
+}
+
+.footer a {
+  font-weight: 500;
+}

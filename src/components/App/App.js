@@ -3,6 +3,7 @@ import { HashRouter as Router, Route } from 'react-router-dom';
 import CssBaseline from 'material-ui/CssBaseline';
 import Grid from 'material-ui/Grid';
 
+import Footer from '../Footer/Footer';
 import Header from '../Header/Header';
 import Home from '../Home/Home';
 
@@ -16,6 +17,7 @@ const App = () => (
           <Route exact path="/" component={Home}/>
         </Grid>
       </Grid>
+      <Footer />
     </div>
   </Router>
 );
