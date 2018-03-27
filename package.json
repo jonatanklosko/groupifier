@@ -1,0 +1,33 @@
+{
+  "name": "groupifier",
+  "version": "2.0.0",
+  "description": "A tool meant for WCA competition organizers helping to prepare competitor groups and generate scorecards.",
+  "keywords": [
+    "speedcubing",
+    "WCA",
+    "competition",
+    "scorecards"
+  ],
+  "author": "Jonatan Kłosko",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jonatanklosko/groupifier.git"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  },
+  "dependencies": {
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-scripts": "1.1.1"
+  },
+  "devDependencies": {
+    "gh-pages": "^1.1.0"
+  }
+}

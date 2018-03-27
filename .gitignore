@@ -1,0 +1,16 @@
+# NPM dependencies
+/node_modules
+
+# Testing
+/coverage
+
+# Production
+/build
+
+# Environment configuration
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
