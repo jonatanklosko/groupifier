@@ -20,7 +20,7 @@ const Home = () => (
       <Typography variant="display1">What is Groupifier?</Typography>
     </Grid>
     <Grid item>
-      <Typography>
+      <Typography variant="subheading">
         It is a tool meant for WCA competition organizers.
         Its main objective is to simplify the process of splitting competitors into groups
         and provide the best result with minimal configuration.
@@ -32,7 +32,7 @@ const Home = () => (
     <Grid item>
       <List>
         {features.map(feature =>
-          <ListItem>
+          <ListItem key={feature}>
             <ListItemIcon>
               <Icon>check</Icon>
             </ListItemIcon>
