@@ -6,7 +6,7 @@ import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
 import { Link } from 'react-router-dom';
 
-const Header = ({ isSignedIn }) => (
+const Header = ({ isSignedIn, onSignIn, onSignOut }) => (
   <AppBar position="static" color="primary">
     <Toolbar>
       <Typography variant="title" color="inherit" style={{ flexGrow: 1 }}>
@@ -16,8 +16,8 @@ const Header = ({ isSignedIn }) => (
         </Link>
       </Typography>
       {isSignedIn
-        ? <Button color="inherit">Sign out</Button>
-        : <Button color="inherit">Sign in</Button>}
+        ? <Button color="inherit" onClick={onSignOut}>Sign out</Button>
+        : <Button color="inherit" onClick={onSignIn}>Sign in</Button>}
     </Toolbar>
   </AppBar>
 );
