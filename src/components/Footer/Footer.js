@@ -20,7 +20,7 @@ const Footer = () => (
         </a>
       </Typography>
     </Grid>
-    <Grid item>
+    <Grid item style={{ marginLeft: 8 }}>
       <Typography>
         <a href="mailto:jonatanklosko@gmail.com" target="_blank" rel="noopener noreferrer">
           Contact
