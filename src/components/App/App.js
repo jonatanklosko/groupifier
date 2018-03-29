@@ -3,6 +3,7 @@ import { HashRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
 import CssBaseline from 'material-ui/CssBaseline';
 import Grid from 'material-ui/Grid';
 
+import Competition from '../Competition/Competition';
 import CompetitionList from '../CompetitionList/CompetitionList';
 import Footer from '../Footer/Footer';
 import Header from '../Header/Header';
@@ -41,6 +42,7 @@ export default class App extends Component {
             <Grid item xs={12} md={8} style={{ padding: 16 }}>
               {this.state.isSignedIn
                 ? <Switch>
+                    <Route path="/competitions/:competitionId" component={Competition} />
                     <Route path="/competitions" component={CompetitionList} />
                     <Redirect to="/competitions" />
                   </Switch>

@@ -10,6 +10,10 @@ const WcaApi = {
     return this.wcaApiFetch(`/competitions?${params}}`);
   },
 
+  getCompetitionWcif(competitionId) {
+    return this.wcaApiFetch(`/competitions/${competitionId}/wcif`);
+  },
+
   wcaApiFetch(path, fetchOptions = {}) {
     const baseApiUrl = `${process.env.REACT_APP_WCA_ORIGIN}/api/v0`;
 
