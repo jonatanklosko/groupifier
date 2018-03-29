@@ -10,7 +10,7 @@ const Header = ({ isSignedIn, onSignIn, onSignOut }) => (
   <AppBar position="static" color="primary">
     <Toolbar>
       <Typography variant="title" color="inherit" style={{ flexGrow: 1 }}>
-        <Link to="/">
+        <Link to={isSignedIn ? '/competitions' : '/'}>
           <Icon style={{ fontSize: '1.5em', verticalAlign: 'middle', marginRight: 10 }}>people</Icon>
           Groupifier
         </Link>

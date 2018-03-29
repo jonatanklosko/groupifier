@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { HashRouter as Router, Route } from 'react-router-dom';
+import { HashRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import CssBaseline from 'material-ui/CssBaseline';
 import Grid from 'material-ui/Grid';
 
@@ -39,11 +39,19 @@ export default class App extends Component {
           />
           <Grid container justify="center">
             <Grid item xs={12} md={8} style={{ padding: 16 }}>
-              <Route exact path="/" component={Home}/>
-              <Route path="/competitions" component={CompetitionList} />
+              {this.state.isSignedIn
+                ? <Switch>
+                    <Route path="/competitions" component={CompetitionList} />
+                    <Redirect to="/competitions" />
+                  </Switch>
+                : <Switch>
+                    <Route exact path="/" component={Home} />
+                    <Redirect to="/" />
+                  </Switch>
+              }
             </Grid>
           </Grid>
-          <Footer />
+          <Route exact path="/" component={Footer}/>
         </div>
       </Router>
     );
