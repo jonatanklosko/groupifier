@@ -3,6 +3,7 @@ import { HashRouter as Router, Route } from 'react-router-dom';
 import CssBaseline from 'material-ui/CssBaseline';
 import Grid from 'material-ui/Grid';
 
+import CompetitionList from '../CompetitionList/CompetitionList';
 import Footer from '../Footer/Footer';
 import Header from '../Header/Header';
 import Home from '../Home/Home';
@@ -39,6 +40,7 @@ export default class App extends Component {
           <Grid container justify="center">
             <Grid item xs={12} md={8} style={{ padding: 16 }}>
               <Route exact path="/" component={Home}/>
+              <Route path="/competitions" component={CompetitionList} />
             </Grid>
           </Grid>
           <Footer />
