@@ -3,6 +3,7 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import { LinearProgress } from 'material-ui/Progress';
 import Typography from 'material-ui/Typography';
 
+import CompetitionMenu from './CompetitionMenu/CompetitionMenu';
 import RolesManager from './RolesManager/RolesManager';
 
 import WcaApi from '../../logic/WcaApi';
@@ -27,18 +28,19 @@ export default class Competition extends Component {
 
   render() {
     const { wcif, loading } = this.state;
+    const { match } = this.props;
 
-    return (
+    return loading ? <LinearProgress /> : (
       <div>
-        {loading && <LinearProgress />}
-        <Typography variant="display1">
-          {wcif && wcif.name}
+        <Typography variant="display1" style={{ marginBottom: 16 }}>
+          {wcif.name}
         </Typography>
-        {wcif && <Switch>
-          <Route path="/competitions/:competitionId/roles" render={
+        <Switch>
+          <Route exact path={match.url} render={() => <CompetitionMenu baseUrl={match.url} />} />
+          <Route path={`${match.url}/roles`} render={
             () => <RolesManager wcif={wcif} onWcifUpdate={this.handleWcifUpdate.bind(this)} />
           } />
-        </Switch>}
+        </Switch>
       </div>
     );
   }
