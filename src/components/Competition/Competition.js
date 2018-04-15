@@ -4,6 +4,7 @@ import { LinearProgress } from 'material-ui/Progress';
 import Typography from 'material-ui/Typography';
 
 import CompetitionMenu from './CompetitionMenu/CompetitionMenu';
+import ConfigManager from './ConfigManager/ConfigManager';
 import RolesManager from './RolesManager/RolesManager';
 
 import WcaApi from '../../logic/WcaApi';
@@ -39,6 +40,9 @@ export default class Competition extends Component {
           <Route exact path={match.url} render={() => <CompetitionMenu baseUrl={match.url} />} />
           <Route path={`${match.url}/roles`} render={
             () => <RolesManager wcif={wcif} onWcifUpdate={this.handleWcifUpdate.bind(this)} />
+          } />
+          <Route path={`${match.url}/config`} render={
+            () => <ConfigManager wcif={wcif} onWcifUpdate={this.handleWcifUpdate.bind(this)} />
           } />
         </Switch>
       </div>

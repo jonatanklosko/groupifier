@@ -5,7 +5,8 @@ import List, { ListItem, ListItemText, ListItemIcon } from 'material-ui/List';
 import Paper from 'material-ui/Paper';
 
 const menuItems = [
-  { path: '/roles', text: "Edit roles", icon: 'perm_contact_calendar' }
+  { path: '/roles', text: "Edit roles", icon: 'perm_contact_calendar' },
+  { path: '/config', text: "Configure groups", icon: 'settings' }
 ];
 
 const CompetitionMenu = ({ baseUrl }) => (
