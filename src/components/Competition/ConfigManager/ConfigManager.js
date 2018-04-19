@@ -14,13 +14,12 @@ export default class ConfigManager extends Component {
     super(props);
     this.state = {
       localWcif: props.wcif,
-      tabValue: 0,
-      configByEvent: null
+      tabValue: 0
     }
   }
 
-  handleConfigByEventChange(configByEvent) {
-    this.setState({ configByEvent });
+  handleWcifChange(wcif) {
+    this.setState({ localWcif: wcif });
   }
 
   handleTabChange(event, value) {
@@ -41,18 +40,16 @@ export default class ConfigManager extends Component {
             </Tabs>
           </AppBar>
         </Grid>
-        {tabValue === 0 && (
-          <Grid item xs={12}>
-            <EventsConfig wcif={localWcif} configByEvent={configByEvent} onConfigByEventChange={this.handleConfigByEventChange.bind(this)} />
-          </Grid>
-        )}
-        {tabValue === 1 && (
-          <Grid item xs={12}>
+        <Grid item xs={12}>
+          {tabValue === 0 && (
+            <EventsConfig wcif={localWcif} onWcifChange={this.handleWcifChange.bind(this)} />
+          )}
+          {tabValue === 1 && (
             <Paper>
               <Typography>General settings</Typography>
             </Paper>
-          </Grid>
-        )}
+          )}
+        </Grid>
         <Grid item>
           <Button variant="raised" component={Link} to={`/competitions/${localWcif.id}`}>
             Cancel

@@ -27,36 +27,58 @@ export default class EventsConfig extends Component {
   }
 
   handleEventConfigChange(eventId, config) {
-    this.props.onConfigByEventChange({
-      ...this.props.configByEvent,
-      [eventId]: config
-    });
+    const { wcif } = this.props;
+    this.handleEventsConfigChange({ [eventId]: config })
   }
 
   handleDefaultEventConfigReady() {
     const { defaultEventConfig } = this.state;
     const { wcif } = this.props;
 
-    this.props.onConfigByEventChange(
+    this.handleEventsConfigChange(
       wcif.events.reduce((configByEvent, wcifEvent) => (
         Object.assign(configByEvent, { [wcifEvent.id]: Object.assign({}, defaultEventConfig) })
       ), {})
     );
   }
 
+  handleEventsConfigChange(eventsConfig) {
+    const { wcif } = this.props;
+    this.props.onWcifChange({
+      ...wcif,
+      extensions: {
+        ...wcif.extensions,
+        'Groupifier': {
+          ...wcif.extensions['Groupifier'],
+          configByEvent: {
+            ...wcif.extensions['Groupifier'].configByEvent,
+            ...eventsConfig
+          }
+        }
+      }
+    });
+  }
+
   render() {
-    const { onConfigByEventChange, configByEvent, wcif } = this.props;
+    const { wcif, onWcifChange } = this.props;
     const { defaultEventConfig } = this.state;
+
+    const configByEvent = wcif.extensions['Groupifier'].configByEvent;
 
     return configByEvent ? (
       <div>
         {wcif.events.map(wcifEvent =>
           <ExpansionPanel key={wcifEvent.id}>
             <ExpansionPanelSummary expandIcon={<Icon>expand_more</Icon>}>
-              <Typography variant="subheading">{Events.nameById(wcifEvent.id)}</Typography>
+              <Typography variant="subheading">
+                {Events.nameById(wcifEvent.id)}
+              </Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-              <EventConfig config={configByEvent[wcifEvent.id]} onChange={this.handleEventConfigChange.bind(this, wcifEvent.id)} />
+              <EventConfig
+                config={configByEvent[wcifEvent.id]}
+                onChange={this.handleEventConfigChange.bind(this, wcifEvent.id)}
+              />
             </ExpansionPanelDetails>
           </ExpansionPanel>
         )}
@@ -64,7 +86,10 @@ export default class EventsConfig extends Component {
     ) : (
       <Paper style={{ padding: 16 }}>
         <Typography variant="headline">Default configuration</Typography>
-        <EventConfig config={defaultEventConfig} onChange={this.handleDefaultEventConfigChange.bind(this)} />
+        <EventConfig
+          config={defaultEventConfig}
+          onChange={this.handleDefaultEventConfigChange.bind(this)}
+        />
         <Button
           onClick={this.handleDefaultEventConfigReady.bind(this)}
           disabled={Object.values(defaultEventConfig).some(value => value === null)}
