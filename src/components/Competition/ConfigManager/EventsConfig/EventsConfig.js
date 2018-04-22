@@ -37,7 +37,11 @@ export default class EventsConfig extends Component {
 
     this.handleEventsConfigChange(
       wcif.events.reduce((configByEvent, wcifEvent) => (
-        Object.assign(configByEvent, { [wcifEvent.id]: Object.assign({}, defaultEventConfig) })
+        Object.assign(configByEvent, { [wcifEvent.id]: Object.assign({
+          configByRound: wcifEvent.rounds.reduce((roundsConfig, wcifRound) => (
+            Object.assign(roundsConfig, { [wcifRound.id]: { groups: 2 } })
+          ), {})
+        }, defaultEventConfig) })
       ), {})
     );
   }
