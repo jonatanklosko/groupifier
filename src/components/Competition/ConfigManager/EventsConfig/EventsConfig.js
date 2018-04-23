@@ -20,6 +20,9 @@ export default class EventsConfig extends Component {
         generateJudges: true
       }
     }
+
+    this.handleDefaultEventConfigChange = this.handleDefaultEventConfigChange.bind(this);
+    this.handleDefaultEventConfigReady = this.handleDefaultEventConfigReady.bind(this);
   }
 
   handleDefaultEventConfigChange(config) {
@@ -92,10 +95,10 @@ export default class EventsConfig extends Component {
         <Typography variant="headline">Default configuration</Typography>
         <EventConfig
           config={defaultEventConfig}
-          onChange={this.handleDefaultEventConfigChange.bind(this)}
+          onChange={this.handleDefaultEventConfigChange}
         />
         <Button
-          onClick={this.handleDefaultEventConfigReady.bind(this)}
+          onClick={this.handleDefaultEventConfigReady}
           disabled={Object.values(defaultEventConfig).some(value => value === null)}
         >
           Ready

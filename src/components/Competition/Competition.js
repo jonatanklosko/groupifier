@@ -16,6 +16,8 @@ export default class Competition extends Component {
       wcif: null,
       loading: true
     }
+
+    this.handleWcifUpdate = this.handleWcifUpdate.bind(this);
   }
 
   componentDidMount() {
@@ -39,10 +41,10 @@ export default class Competition extends Component {
         <Switch>
           <Route exact path={match.url} render={() => <CompetitionMenu baseUrl={match.url} />} />
           <Route path={`${match.url}/roles`} render={
-            () => <RolesManager wcif={wcif} onWcifUpdate={this.handleWcifUpdate.bind(this)} />
+            () => <RolesManager wcif={wcif} onWcifUpdate={this.handleWcifUpdate} />
           } />
           <Route path={`${match.url}/config`} render={
-            () => <ConfigManager wcif={wcif} onWcifUpdate={this.handleWcifUpdate.bind(this)} />
+            () => <ConfigManager wcif={wcif} onWcifUpdate={this.handleWcifUpdate} />
           } />
         </Switch>
       </div>

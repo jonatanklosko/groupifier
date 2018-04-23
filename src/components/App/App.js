@@ -17,6 +17,9 @@ export default class App extends Component {
     this.state = {
       isSignedIn: Auth.isSignedIn()
     };
+
+    this.handleSignIn = this.handleSignIn.bind(this);
+    this.handleSignOut = this.handleSignOut.bind(this);
   }
 
   handleSignIn() {
@@ -35,8 +38,8 @@ export default class App extends Component {
           <CssBaseline />
           <Header
             isSignedIn={this.state.isSignedIn}
-            onSignIn={this.handleSignIn.bind(this)}
-            onSignOut={this.handleSignOut.bind(this)}
+            onSignIn={this.handleSignIn}
+            onSignOut={this.handleSignOut}
           />
           <Grid container justify="center">
             <Grid item xs={12} md={8} style={{ padding: 16 }}>

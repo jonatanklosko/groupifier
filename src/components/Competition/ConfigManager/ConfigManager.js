@@ -16,6 +16,9 @@ export default class ConfigManager extends Component {
       localWcif: props.wcif,
       tabValue: 0
     }
+
+    this.handleWcifChange = this.handleWcifChange.bind(this);
+    this.handleTabChange = this.handleTabChange.bind(this);
   }
 
   handleWcifChange(wcif) {
@@ -34,7 +37,7 @@ export default class ConfigManager extends Component {
       <Grid container spacing={8} justify="flex-end">
         <Grid item xs={12}>
           <AppBar position="static" color="default">
-            <Tabs value={tabValue} onChange={this.handleTabChange.bind(this)} centered>
+            <Tabs value={tabValue} onChange={this.handleTabChange} centered>
               <Tab label="Events" />
               <Tab label="General" />
             </Tabs>
@@ -42,7 +45,7 @@ export default class ConfigManager extends Component {
         </Grid>
         <Grid item xs={12}>
           {tabValue === 0 && (
-            <EventsConfig wcif={localWcif} onWcifChange={this.handleWcifChange.bind(this)} />
+            <EventsConfig wcif={localWcif} onWcifChange={this.handleWcifChange} />
           )}
           {tabValue === 1 && (
             <Paper>

@@ -23,6 +23,9 @@ export default class RolesManager extends Component {
       page: 0,
       searchString: ''
     }
+
+    this.handleSearchChange = this.handleSearchChange.bind(this);
+    this.handleChangePage = this.handleChangePage.bind(this);
   }
 
   handleSearchChange(event) {
@@ -65,7 +68,7 @@ export default class RolesManager extends Component {
         <Grid item xs={12}>
           <Paper>
             <Toolbar>
-              <TextField label="Search" value={searchString} onChange={this.handleSearchChange.bind(this)} />
+              <TextField label="Search" value={searchString} onChange={this.handleSearchChange} />
             </Toolbar>
             <div style={{ overflowX: 'auto' }}>
               <Table>
@@ -100,7 +103,7 @@ export default class RolesManager extends Component {
               rowsPerPage={rowsPerPage}
               rowsPerPageOptions={rowsPerPageOptions}
               page={page}
-              onChangePage={this.handleChangePage.bind(this)}
+              onChangePage={this.handleChangePage}
             />
           </Paper>
         </Grid>
