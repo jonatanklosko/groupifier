@@ -23,13 +23,14 @@ export default class EventsConfig extends Component {
 
     this.handleDefaultEventConfigChange = this.handleDefaultEventConfigChange.bind(this);
     this.handleDefaultEventConfigReady = this.handleDefaultEventConfigReady.bind(this);
+    this.handleEventConfigChange = this.handleEventConfigChange.bind(this);
   }
 
   handleDefaultEventConfigChange(config) {
     this.setState({ defaultEventConfig: config });
   }
 
-  handleEventConfigChange(eventId, config) {
+  handleEventConfigChange(config, eventId) {
     const { wcif } = this.props;
     this.handleEventsConfigChange({ [eventId]: config })
   }
@@ -83,8 +84,9 @@ export default class EventsConfig extends Component {
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
               <EventConfig
+                eventId={wcifEvent.id}
                 config={configByEvent[wcifEvent.id]}
-                onChange={this.handleEventConfigChange.bind(this, wcifEvent.id)}
+                onChange={this.handleEventConfigChange}
               />
             </ExpansionPanelDetails>
           </ExpansionPanel>
