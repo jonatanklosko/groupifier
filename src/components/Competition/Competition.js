@@ -16,8 +16,6 @@ export default class Competition extends Component {
       wcif: null,
       loading: true
     }
-
-    this.handleWcifUpdate = this.handleWcifUpdate.bind(this);
   }
 
   componentDidMount() {
@@ -25,9 +23,9 @@ export default class Competition extends Component {
       .then(wcif => this.setState({ wcif, loading: false }))
   }
 
-  handleWcifUpdate(wcif) {
+  handleWcifUpdate = wcif => {
     this.setState({ wcif });
-  }
+  };
 
   render() {
     const { wcif, loading } = this.state;

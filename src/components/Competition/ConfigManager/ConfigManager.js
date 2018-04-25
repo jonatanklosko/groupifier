@@ -16,18 +16,15 @@ export default class ConfigManager extends Component {
       localWcif: props.wcif,
       tabValue: 0
     }
-
-    this.handleWcifChange = this.handleWcifChange.bind(this);
-    this.handleTabChange = this.handleTabChange.bind(this);
   }
 
-  handleWcifChange(wcif) {
+  handleWcifChange = wcif => {
     this.setState({ localWcif: wcif });
-  }
+  };
 
-  handleTabChange(event, value) {
+  handleTabChange = (event, value) => {
     this.setState({ tabValue: value });
-  }
+  };
 
   render() {
     const { tabValue, localWcif } = this.state;

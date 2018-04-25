@@ -23,18 +23,15 @@ export default class RolesManager extends Component {
       page: 0,
       searchString: ''
     }
-
-    this.handleSearchChange = this.handleSearchChange.bind(this);
-    this.handleChangePage = this.handleChangePage.bind(this);
   }
 
-  handleSearchChange(event) {
+  handleSearchChange = event => {
     this.setState({ searchString: event.target.value });
-  }
+  };
 
-  handleChangePage(event, page) {
+  handleChangePage = (event, page) => {
     this.setState({ page });
-  }
+  };
 
   handleRoleChange(roleId, personWcaUserId, event) {
     const { localWcif } = this.state;

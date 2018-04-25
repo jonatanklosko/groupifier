@@ -8,29 +8,21 @@ import PositiveIntegerInput from '../../../common/PositiveIntegerInput/PositiveI
 import { setIn } from '../../../../logic/helpers';
 
 export default class EventConfig extends PureComponent {
-  constructor(props) {
-    super(props);
-
-    this.handleInputChange = this.handleInputChange.bind(this);
-    this.handleCheckboxChangeNumerically = this.handleCheckboxChangeNumerically.bind(this);
-    this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
-  }
-
-  handleInputChange(value, event) {
+  handleInputChange = (value, event) => {
     const { eventId, config, onChange } = this.props;
     onChange(
       setIn(config, event.target.name.split('.'), value),
       eventId
     );
-  }
+  };
 
-  handleCheckboxChangeNumerically(event) {
+  handleCheckboxChangeNumerically = event => {
     this.handleInputChange(event.target.checked ? null : 0, event);
-  }
+  };
 
-  handleCheckboxChange(event) {
+  handleCheckboxChange = event => {
     this.handleInputChange(event.target.checked, event);
-  }
+  };
 
   render() {
     const { config } = this.props;

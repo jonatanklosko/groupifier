@@ -20,21 +20,17 @@ export default class EventsConfig extends Component {
         generateJudges: true
       }
     }
-
-    this.handleDefaultEventConfigChange = this.handleDefaultEventConfigChange.bind(this);
-    this.handleDefaultEventConfigReady = this.handleDefaultEventConfigReady.bind(this);
-    this.handleEventConfigChange = this.handleEventConfigChange.bind(this);
   }
 
-  handleDefaultEventConfigChange(config) {
+  handleDefaultEventConfigChange = config => {
     this.setState({ defaultEventConfig: config });
-  }
+  };
 
-  handleEventConfigChange(config, eventId) {
+  handleEventConfigChange = (config, eventId) => {
     this.handleEventsConfigChange({ [eventId]: config })
-  }
+  };
 
-  handleDefaultEventConfigReady() {
+  handleDefaultEventConfigReady = () => {
     const { defaultEventConfig } = this.state;
     const { wcif } = this.props;
 
@@ -47,7 +43,7 @@ export default class EventsConfig extends Component {
         }, defaultEventConfig) })
       ), {})
     );
-  }
+  };
 
   handleEventsConfigChange(eventsConfig) {
     const { wcif } = this.props;

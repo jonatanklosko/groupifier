@@ -17,19 +17,16 @@ export default class App extends Component {
     this.state = {
       isSignedIn: Auth.isSignedIn()
     };
-
-    this.handleSignIn = this.handleSignIn.bind(this);
-    this.handleSignOut = this.handleSignOut.bind(this);
   }
 
-  handleSignIn() {
+  handleSignIn = () => {
     Auth.signIn();
-  }
+  };
 
-  handleSignOut() {
+  handleSignOut = () => {
     Auth.signOut();
     this.setState({ isSignedIn: false })
-  }
+  };
 
   render() {
     return (
