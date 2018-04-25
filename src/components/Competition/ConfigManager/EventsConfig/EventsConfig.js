@@ -5,9 +5,9 @@ import Icon from 'material-ui/Icon';
 import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
 
-import Events from '../../../../logic/Events';
-
 import EventConfig from '../EventConfig/EventConfig';
+import Events from '../../../../logic/Events';
+import { mergeIn } from '../../../../logic/helpers';
 
 export default class EventsConfig extends Component {
   constructor(props) {
@@ -47,19 +47,9 @@ export default class EventsConfig extends Component {
 
   handleEventsConfigChange(eventsConfig) {
     const { wcif } = this.props;
-    this.props.onWcifChange({
-      ...wcif,
-      extensions: {
-        ...wcif.extensions,
-        'Groupifier': {
-          ...wcif.extensions['Groupifier'],
-          configByEvent: {
-            ...wcif.extensions['Groupifier'].configByEvent,
-            ...eventsConfig
-          }
-        }
-      }
-    });
+    this.props.onWcifChange(
+      mergeIn(wcif, ['extensions', 'Groupifier', 'configByEvent'], eventsConfig)
+    );
   }
 
   render() {
