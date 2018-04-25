@@ -30,7 +30,7 @@ export default class ConfigManager extends Component {
   }
 
   render() {
-    const { defaultEventConfig, tabValue, localWcif, configByEvent } = this.state;
+    const { tabValue, localWcif } = this.state;
     const { onWcifUpdate } = this.props;
 
     return (
