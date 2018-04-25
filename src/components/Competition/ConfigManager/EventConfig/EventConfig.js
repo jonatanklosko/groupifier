@@ -1,14 +1,10 @@
 import React, { PureComponent } from 'react';
 import Checkbox from 'material-ui/Checkbox';
-import { FormControl, FormControlLabel } from 'material-ui/Form';
+import { FormControlLabel } from 'material-ui/Form';
 import Grid from 'material-ui/Grid';
-import { InputLabel } from 'material-ui/Input';
-import { MenuItem } from 'material-ui/Menu';
-import Select from 'material-ui/Select';
-import Typography from 'material-ui/Typography';
 
+import RoundConfig from '../RoundConfig/RoundConfig';
 import PositiveIntegerInput from '../../../common/PositiveIntegerInput/PositiveIntegerInput';
-import Events from '../../../../logic/Events';
 import { setIn } from '../../../../logic/helpers';
 
 export default class EventConfig extends PureComponent {
@@ -39,22 +35,17 @@ export default class EventConfig extends PureComponent {
     this.handleInputChange(event.target.checked, event);
   };
 
-  handleSeparateGroupsCheckboxChange = event => {
-    this.handleInputChange(event.target.checked ? { roundId: this.roundIds[0], groups: null } : null, event);
-  };
-
-  handleSelectChange = event => {
-    this.handleInputChange(event.target.value, event);
-  };
+  handleRoundConfigChange = (roundConfig, roundId) => {
+    const { eventId, config, onChange } = this.props;
+    onChange(
+      setIn(config, ['configByRound', roundId], roundConfig),
+      eventId
+    );
+  }
 
   render() {
     const { config } = this.props;
     const { stations, scramblers, runners, generateJudges } = config;
-
-    const roundIdToString = roundId => {
-      const [, eventId, roundNumber] = roundId.match(/(\w+)-r(\d+)/);
-      return `${Events.nameById(eventId)} Round ${roundNumber}`;
-    }
 
     return (
       <Grid container>
@@ -110,48 +101,13 @@ export default class EventConfig extends PureComponent {
             <Grid container direction="column" spacing={16}>
               {Object.entries(config.configByRound).map(([roundId, roundConfig], index) =>
                 <Grid item key={roundId}>
-                  <Typography variant="body2">Round {index + 1}</Typography>
-                  <PositiveIntegerInput
-                    label="Groups"
-                    helperText="X people in group"
-                    value={roundConfig.groups}
-                    name={`configByRound.${roundId}.groups`}
-                    onChange={this.handleInputChange}
+                  <RoundConfig
+                    roundId={roundId}
+                    config={roundConfig}
+                    label={`Round ${index + 1}`}
+                    roundIds={this.roundIds}
+                    onChange={this.handleRoundConfigChange}
                   />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={roundConfig.separateGroups !== null}
-                        name={`configByRound.${roundId}.separateGroups`}
-                        onChange={this.handleSeparateGroupsCheckboxChange}
-                      />
-                    }
-                    label="Separate groups for people participating in another event"
-                  />
-                  {roundConfig.separateGroups && (
-                    <div>
-                      <FormControl style={{width:201}}>
-                        <InputLabel htmlFor="age-simple">Event</InputLabel>
-                        <Select
-                          value={roundConfig.separateGroups.roundId}
-                          name={`configByRound.${roundId}.separateGroups.roundId`}
-                          inputProps={{ id: 'round-id' }}
-                          onChange={this.handleSelectChange}
-                        >
-                          {this.roundIds.map(roundId =>
-                            <MenuItem key={roundId} value={roundId}>{roundIdToString(roundId)}</MenuItem>
-                          )}
-                        </Select>
-                      </FormControl>
-                      <PositiveIntegerInput
-                        label="Groups"
-                        helperText="X people in group"
-                        name={`configByRound.${roundId}.separateGroups.groups`}
-                        value={roundConfig.separateGroups.groups}
-                        onChange={this.handleInputChange}
-                      />
-                    </div>
-                  )}
                 </Grid>
               )}
             </Grid>
