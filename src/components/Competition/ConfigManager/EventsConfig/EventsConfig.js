@@ -8,6 +8,7 @@ import Typography from 'material-ui/Typography';
 import EventConfig from '../EventConfig/EventConfig';
 import Events from '../../../../logic/Events';
 import { mergeIn } from '../../../../logic/helpers';
+import { suggestedGroupCount } from '../../../../logic/groups';
 
 export default class EventsConfig extends Component {
   constructor(props) {
@@ -32,16 +33,19 @@ export default class EventsConfig extends Component {
 
   handleDefaultEventConfigReady = () => {
     const { defaultEventConfig } = this.state;
-    const { wcif } = this.props;
+    const { wcif, competitorsByRound } = this.props;
 
     this.handleEventsConfigChange(
-      wcif.events.reduce((configByEvent, wcifEvent) => (
-        Object.assign(configByEvent, { [wcifEvent.id]: Object.assign({
-          configByRound: wcifEvent.rounds.reduce((roundsConfig, wcifRound) => (
-            Object.assign(roundsConfig, { [wcifRound.id]: { groups: 2, separateGroups: null } })
-          ), {})
-        }, defaultEventConfig) })
-      ), {})
+      wcif.events.reduce((configByEvent, wcifEvent) => {
+        configByEvent[wcifEvent.id] = { ...defaultEventConfig, configByRound: {} };
+        wcifEvent.rounds.forEach(round =>
+          configByEvent[wcifEvent.id].configByRound[round.id] = {
+            groups: suggestedGroupCount(competitorsByRound[round.id].length, wcifEvent.Id, defaultEventConfig.stations, 2),
+            separateGroups: null
+          }
+        )
+        return configByEvent;
+      }, {})
     );
   };
 

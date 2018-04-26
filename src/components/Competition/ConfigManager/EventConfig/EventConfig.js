@@ -3,8 +3,8 @@ import Checkbox from 'material-ui/Checkbox';
 import { FormControlLabel } from 'material-ui/Form';
 import Grid from 'material-ui/Grid';
 
-import RoundConfig from '../RoundConfig/RoundConfig';
 import PositiveIntegerInput from '../../../common/PositiveIntegerInput/PositiveIntegerInput';
+import RoundConfig from '../RoundConfig/RoundConfig';
 import { setIn } from '../../../../logic/helpers';
 
 export default class EventConfig extends PureComponent {
