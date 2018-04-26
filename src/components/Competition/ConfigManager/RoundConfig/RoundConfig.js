@@ -16,20 +16,23 @@ const roundIdToName = roundId => {
 }
 
 export default class RoundConfig extends PureComponent {
-  handleInputChange = (value, event) => {
+  handlePropertyChange = (propertyPath, value) => {
     const { roundId, config, onChange } = this.props;
-    onChange(
-      setIn(config, event.target.name.split('.'), value),
-      roundId
-    );
+    onChange(setIn(config, propertyPath, value), roundId);
+  };
+
+  handleInputChange = (event, value) => {
+    this.handlePropertyChange(event.target.name.split('.'), value);
   };
 
   handleSeparateGroupsCheckboxChange = event => {
-    this.handleInputChange(event.target.checked ? { roundId: this.props.roundIds[0], groups: null } : null, event);
+    const { name, checked } = event.target;
+    this.handlePropertyChange(name.split('.'), checked ? { roundId: this.props.roundIds[0], groups: null } : null);
   };
 
   handleSelectChange = event => {
-    this.handleInputChange(event.target.value, event);
+    const { name, value } = event.target;
+    this.handlePropertyChange(name.split('.'), value);
   };
 
   render() {

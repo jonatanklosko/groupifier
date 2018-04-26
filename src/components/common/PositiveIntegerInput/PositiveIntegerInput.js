@@ -5,7 +5,7 @@ export default class PositiveIntegerInput extends PureComponent {
   handleTextFieldChange = event => {
     const newValue = event.target.value.length > 0 ? parseInt(event.target.value, 10) : null;
     if (newValue === null || (!Number.isNaN(newValue) && newValue >= 1)) {
-      this.props.onChange(newValue, event);
+      this.props.onChange(event, newValue);
     }
   };
 
