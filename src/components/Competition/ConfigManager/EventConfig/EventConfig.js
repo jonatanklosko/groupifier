@@ -43,7 +43,7 @@ export default class EventConfig extends PureComponent {
   };
 
   render() {
-    const { config } = this.props;
+    const { config, competitorsByRound } = this.props;
     const { stations, scramblers, runners, generateJudges } = config;
 
     return (
@@ -106,6 +106,7 @@ export default class EventConfig extends PureComponent {
                     label={`Round ${index + 1}`}
                     roundIds={this.roundIds}
                     onChange={this.handleRoundConfigChange}
+                    competitorsByRound={competitorsByRound}
                   />
                 </Grid>
               )}

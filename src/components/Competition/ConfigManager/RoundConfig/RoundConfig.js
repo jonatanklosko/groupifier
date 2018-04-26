@@ -7,13 +7,8 @@ import Select from 'material-ui/Select';
 import Typography from 'material-ui/Typography';
 
 import PositiveIntegerInput from '../../../common/PositiveIntegerInput/PositiveIntegerInput';
-import Events from '../../../../logic/Events';
 import { setIn } from '../../../../logic/helpers';
-
-const roundIdToName = roundId => {
-  const [, eventId, roundNumber] = roundId.match(/(\w+)-r(\d+)/);
-  return `${Events.nameById(eventId)} Round ${roundNumber}`;
-}
+import { roundIdToName } from '../../../../logic/formatters';
 
 export default class RoundConfig extends PureComponent {
   handlePropertyChange = (propertyPath, value) => {
@@ -35,16 +30,24 @@ export default class RoundConfig extends PureComponent {
     this.handlePropertyChange(name.split('.'), value);
   };
 
+  groupSizeText(competitors, groups) {
+    return groups ? `${Math.ceil(competitors.length / groups)} people in group` : '';
+  }
+
   render() {
-    const { config, label, roundIds } = this.props;
+    const { config, label, roundIds, competitorsByRound, roundId } = this.props;
     const { groups, separateGroups } = config;
+
+    const separateGroupsCompetitors = separateGroups ? competitorsByRound[separateGroups.roundId] : [];
+    const competitors = competitorsByRound[roundId]
+      .filter(person => !separateGroupsCompetitors.includes(person));
 
     return (
       <div>
         <Typography variant="body2">{label}</Typography>
         <PositiveIntegerInput
           label="Groups"
-          helperText="X people in group"
+          helperText={this.groupSizeText(competitors, groups)}
           value={groups}
           name="groups"
           onChange={this.handleInputChange}
@@ -76,7 +79,7 @@ export default class RoundConfig extends PureComponent {
             </FormControl>
             <PositiveIntegerInput
               label="Groups"
-              helperText="X people in group"
+              helperText={this.groupSizeText(separateGroupsCompetitors, separateGroups.groups)}
               name="separateGroups.groups"
               value={separateGroups.groups}
               onChange={this.handleInputChange}

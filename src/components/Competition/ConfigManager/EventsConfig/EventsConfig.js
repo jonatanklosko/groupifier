@@ -53,7 +53,7 @@ export default class EventsConfig extends Component {
   }
 
   render() {
-    const { wcif } = this.props;
+    const { wcif, competitorsByRound } = this.props;
     const { defaultEventConfig } = this.state;
 
     const configByEvent = wcif.extensions['Groupifier'].configByEvent;
@@ -71,6 +71,7 @@ export default class EventsConfig extends Component {
               <EventConfig
                 eventId={wcifEvent.id}
                 wcifEvents={wcif.events}
+                competitorsByRound={competitorsByRound}
                 config={configByEvent[wcifEvent.id]}
                 onChange={this.handleEventConfigChange}
               />

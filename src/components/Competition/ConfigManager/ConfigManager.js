@@ -8,6 +8,7 @@ import Tabs, { Tab } from 'material-ui/Tabs';
 import Typography from 'material-ui/Typography';
 
 import EventsConfig from './EventsConfig/EventsConfig';
+import { getPredictedCompetitorsByRound } from '../../../logic/competitors';
 
 export default class ConfigManager extends Component {
   constructor(props) {
@@ -15,7 +16,8 @@ export default class ConfigManager extends Component {
     this.state = {
       localWcif: props.wcif,
       tabValue: 0
-    }
+    };
+    this.competitorsByRound = getPredictedCompetitorsByRound(props.wcif);
   }
 
   handleWcifChange = wcif => {
@@ -42,7 +44,7 @@ export default class ConfigManager extends Component {
         </Grid>
         <Grid item xs={12}>
           {tabValue === 0 && (
-            <EventsConfig wcif={localWcif} onWcifChange={this.handleWcifChange} />
+            <EventsConfig wcif={localWcif} onWcifChange={this.handleWcifChange} competitorsByRound={this.competitorsByRound} />
           )}
           {tabValue === 1 && (
             <Paper>
