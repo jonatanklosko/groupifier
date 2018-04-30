@@ -40,7 +40,7 @@ export default class EventsConfig extends Component {
         configByEvent[wcifEvent.id] = { ...defaultEventConfig, configByRound: {} };
         wcifEvent.rounds.forEach(round =>
           configByEvent[wcifEvent.id].configByRound[round.id] = {
-            groups: suggestedGroupCount(competitorsByRound[round.id].length, wcifEvent.Id, defaultEventConfig.stations, 2),
+            groups: suggestedGroupCount(competitorsByRound[round.id].length, wcifEvent.id, defaultEventConfig.stations, 2),
             separateGroups: null
           }
         )

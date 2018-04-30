@@ -1,7 +1,7 @@
 import Events from './Events';
 
 export const suggestedGroupCount = (competitorCount, eventId, stations, minGroupCount) => {
-  if(Events.isSelfsufficient(eventId)) {
+  if (Events.isSelfsufficient(eventId)) {
     return 1;
   } else {
     const preferredGroupSize = stations * 1.7;
