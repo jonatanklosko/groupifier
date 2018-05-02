@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import Button from 'material-ui/Button';
-import ExpansionPanel, { ExpansionPanelDetails, ExpansionPanelSummary } from 'material-ui/ExpansionPanel';
-import Icon from 'material-ui/Icon';
 import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
 
 import EventConfig from '../EventConfig/EventConfig';
-import Events from '../../../../logic/Events';
-import { mergeIn } from '../../../../logic/helpers';
+import EventPanel from '../EventPanel/EventPanel';
+import { getGroupifierData, setGroupifierData } from '../../../../logic/wcifExtensions';
 import { suggestedGroupCount } from '../../../../logic/groups';
 
 export default class EventsConfig extends Component {
@@ -27,62 +25,52 @@ export default class EventsConfig extends Component {
     this.setState({ defaultEventConfig: config });
   };
 
-  handleEventConfigChange = (config, eventId) => {
-    this.handleEventsConfigChange({ [eventId]: config })
-  };
-
   handleDefaultEventConfigReady = () => {
     const { defaultEventConfig } = this.state;
     const { wcif, competitorsByRound } = this.props;
 
     this.handleEventsConfigChange(
-      wcif.events.reduce((configByEvent, wcifEvent) => {
-        configByEvent[wcifEvent.id] = { ...defaultEventConfig, configByRound: {} };
-        wcifEvent.rounds.forEach(round =>
-          configByEvent[wcifEvent.id].configByRound[round.id] = {
-            groups: suggestedGroupCount(competitorsByRound[round.id].length, wcifEvent.id, defaultEventConfig.stations, 2),
-            separateGroups: null
-          }
-        )
-        return configByEvent;
-      }, {})
+      wcif.events.map(wcifEvent => ({
+          ...setGroupifierData('Event', wcifEvent, { ...defaultEventConfig }),
+          rounds: wcifEvent.rounds.map(round =>
+            setGroupifierData('Round', round, {
+              groups: suggestedGroupCount(competitorsByRound[round.id].length, wcifEvent.id, defaultEventConfig.stations, 2),
+              separateGroups: null
+            })
+          )
+        })
+      )
     );
   };
 
-  handleEventsConfigChange(eventsConfig) {
-    const { wcif } = this.props;
-    this.props.onWcifChange(
-      mergeIn(wcif, ['extensions', 'Groupifier', 'configByEvent'], eventsConfig)
+
+  handleEventChange = (updatedWcifEvent) => {
+    this.handleEventsConfigChange(
+      this.props.wcif.events.map(wcifEvent => wcifEvent.id === updatedWcifEvent.id ? updatedWcifEvent : wcifEvent)
     );
+  };
+
+  handleEventsConfigChange(events) {
+    const { wcif } = this.props;
+    this.props.onWcifChange({ ...wcif, events });
   }
 
   render() {
     const { wcif, competitorsByRound } = this.props;
     const { defaultEventConfig } = this.state;
 
-    const configByEvent = wcif.extensions['Groupifier'].configByEvent;
+    const showEventsConfig = wcif.events.some(wcifEvent => getGroupifierData(wcifEvent));
 
-    return configByEvent ? (
-      <div>
-        {wcif.events.map(wcifEvent =>
-          <ExpansionPanel key={wcifEvent.id}>
-            <ExpansionPanelSummary expandIcon={<Icon>expand_more</Icon>}>
-              <Typography variant="subheading">
-                {Events.nameById(wcifEvent.id)}
-              </Typography>
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails>
-              <EventConfig
-                eventId={wcifEvent.id}
-                wcifEvents={wcif.events}
-                competitorsByRound={competitorsByRound}
-                config={configByEvent[wcifEvent.id]}
-                onChange={this.handleEventConfigChange}
-              />
-            </ExpansionPanelDetails>
-          </ExpansionPanel>
-        )}
-      </div>
+    return showEventsConfig ? (
+      wcif.events.map(wcifEvent =>
+        <EventPanel
+          key={wcifEvent.id}
+          wcifEvent={wcifEvent}
+          wcifEvents={wcif.events}
+          competitorsByRound={competitorsByRound}
+          onChange={this.handleEventChange}
+        />
+      )
     ) : (
       <Paper style={{ padding: 16 }}>
         <Typography variant="headline">Default configuration</Typography>

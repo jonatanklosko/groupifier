@@ -7,13 +7,17 @@ import Select from 'material-ui/Select';
 import Typography from 'material-ui/Typography';
 
 import PositiveIntegerInput from '../../../common/PositiveIntegerInput/PositiveIntegerInput';
+import { getGroupifierData, setGroupifierData } from '../../../../logic/wcifExtensions';
 import { setIn } from '../../../../logic/helpers';
 import { roundIdToName } from '../../../../logic/formatters';
 
 export default class RoundConfig extends PureComponent {
   handlePropertyChange = (propertyPath, value) => {
-    const { roundId, config, onChange } = this.props;
-    onChange(setIn(config, propertyPath, value), roundId);
+    const { round, onChange } = this.props;
+    const config = getGroupifierData(round);
+    onChange(
+      setGroupifierData('Round', round, setIn(config, propertyPath, value))
+    );
   };
 
   handleInputChange = (event, value) => {
@@ -35,11 +39,11 @@ export default class RoundConfig extends PureComponent {
   }
 
   render() {
-    const { config, label, roundIds, competitorsByRound, roundId } = this.props;
-    const { groups, separateGroups } = config;
+    const { round, label, roundIds, competitorsByRound } = this.props;
+    const { groups, separateGroups } = getGroupifierData(round);
 
     const separateGroupsCompetitors = separateGroups ? competitorsByRound[separateGroups.roundId] : [];
-    const competitors = competitorsByRound[roundId]
+    const competitors = competitorsByRound[round.id]
       .filter(person => !separateGroupsCompetitors.includes(person));
 
     return (
