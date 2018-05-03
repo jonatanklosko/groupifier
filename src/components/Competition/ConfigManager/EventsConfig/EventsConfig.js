@@ -29,7 +29,7 @@ export default class EventsConfig extends Component {
     const { defaultEventConfig } = this.state;
     const { wcif, competitorsByRound } = this.props;
 
-    this.handleEventsConfigChange(
+    this.handleEventsChange(
       wcif.events.map(wcifEvent => ({
           ...setGroupifierData('Event', wcifEvent, { ...defaultEventConfig }),
           rounds: wcifEvent.rounds.map(round =>
@@ -43,16 +43,15 @@ export default class EventsConfig extends Component {
     );
   };
 
-
-  handleEventChange = (updatedWcifEvent) => {
-    this.handleEventsConfigChange(
+  handleEventChange = updatedWcifEvent => {
+    this.handleEventsChange(
       this.props.wcif.events.map(wcifEvent => wcifEvent.id === updatedWcifEvent.id ? updatedWcifEvent : wcifEvent)
     );
   };
 
-  handleEventsConfigChange(events) {
-    const { wcif } = this.props;
-    this.props.onWcifChange({ ...wcif, events });
+  handleEventsChange(events) {
+    const { wcif, onWcifChange } = this.props;
+    onWcifChange({ ...wcif, events });
   }
 
   render() {

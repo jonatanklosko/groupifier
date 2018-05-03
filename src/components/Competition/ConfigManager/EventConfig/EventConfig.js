@@ -8,8 +8,8 @@ import { setIn } from '../../../../logic/helpers';
 
 export default class EventConfig extends PureComponent {
   handlePropertyChange = (propertyPath, value) => {
-    const { eventId, config, onChange } = this.props;
-    onChange(setIn(config, propertyPath, value), eventId);
+    const { config, onChange } = this.props;
+    onChange(setIn(config, propertyPath, value));
   };
 
   handleInputChange = (event, value) => {

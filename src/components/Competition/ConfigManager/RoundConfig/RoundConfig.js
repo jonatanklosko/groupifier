@@ -36,7 +36,7 @@ export default class RoundConfig extends PureComponent {
 
   groupSizeText(competitors, groups) {
     return groups ? `${Math.ceil(competitors.length / groups)} people in group` : '';
-  }
+  };
 
   render() {
     const { round, label, roundIds, competitorsByRound } = this.props;
