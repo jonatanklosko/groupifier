@@ -58,7 +58,6 @@ export default class EventPanel extends PureComponent {
                   <Grid item key={round.id}>
                     <RoundConfig
                       round={round}
-                      label={`Round ${index + 1}`}
                       roundIds={this.roundIds}
                       competitorsByRound={competitorsByRound}
                       onChange={this.handleRoundChange}

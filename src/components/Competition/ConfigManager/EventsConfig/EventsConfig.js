@@ -31,7 +31,7 @@ export default class EventsConfig extends Component {
 
     this.handleEventsChange(
       wcif.events.map(wcifEvent => ({
-          ...setGroupifierData('Event', wcifEvent, { ...defaultEventConfig }),
+          ...setGroupifierData('Event', wcifEvent, defaultEventConfig),
           rounds: wcifEvent.rounds.map(round =>
             setGroupifierData('Round', round, {
               groups: suggestedGroupCount(competitorsByRound[round.id].length, wcifEvent.id, defaultEventConfig.stations, 2),

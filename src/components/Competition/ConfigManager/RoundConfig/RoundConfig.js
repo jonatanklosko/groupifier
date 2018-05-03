@@ -9,7 +9,7 @@ import Typography from 'material-ui/Typography';
 import PositiveIntegerInput from '../../../common/PositiveIntegerInput/PositiveIntegerInput';
 import { getGroupifierData, setGroupifierData } from '../../../../logic/wcifExtensions';
 import { setIn } from '../../../../logic/helpers';
-import { roundIdToName } from '../../../../logic/formatters';
+import { roundIdToName, roundIdToShortName } from '../../../../logic/formatters';
 
 export default class RoundConfig extends PureComponent {
   handlePropertyChange = (propertyPath, value) => {
@@ -35,11 +35,13 @@ export default class RoundConfig extends PureComponent {
   };
 
   groupSizeText(competitors, groups) {
-    return groups ? `${Math.ceil(competitors.length / groups)} people in group` : '';
+    if (!groups) return '';
+    const groupSize = Math.ceil(competitors.length / groups);
+    return `${groupSize} ${groupSize === 1 ? 'person' : 'people'} in group`;
   };
 
   render() {
-    const { round, label, roundIds, competitorsByRound } = this.props;
+    const { round, roundIds, competitorsByRound } = this.props;
     const { groups, separateGroups } = getGroupifierData(round);
 
     const separateGroupsCompetitors = separateGroups ? competitorsByRound[separateGroups.roundId] : [];
@@ -48,12 +50,12 @@ export default class RoundConfig extends PureComponent {
 
     return (
       <div>
-        <Typography variant="body2">{label}</Typography>
+        <Typography variant="body2">{roundIdToShortName(round.id)}</Typography>
         <PositiveIntegerInput
           label="Groups"
-          helperText={this.groupSizeText(competitors, groups)}
           value={groups}
           name="groups"
+          helperText={this.groupSizeText(competitors, groups)}
           onChange={this.handleInputChange}
         />
         <FormControlLabel
@@ -68,7 +70,7 @@ export default class RoundConfig extends PureComponent {
         />
         {separateGroups && (
           <div>
-            <FormControl style={{width:201}}>
+            <FormControl style={{ width: 201 }}>
               <InputLabel htmlFor="round-id">Event</InputLabel>
               <Select
                 inputProps={{ id: 'round-id' }}
@@ -77,15 +79,17 @@ export default class RoundConfig extends PureComponent {
                 onChange={this.handleSelectChange}
               >
                 {roundIds.map(roundId =>
-                  <MenuItem key={roundId} value={roundId}>{roundIdToName(roundId)}</MenuItem>
+                  <MenuItem key={roundId} value={roundId}>
+                    {roundIdToName(roundId)}
+                  </MenuItem>
                 )}
               </Select>
             </FormControl>
             <PositiveIntegerInput
               label="Groups"
-              helperText={this.groupSizeText(separateGroupsCompetitors, separateGroups.groups)}
               name="separateGroups.groups"
               value={separateGroups.groups}
+              helperText={this.groupSizeText(separateGroupsCompetitors, separateGroups.groups)}
               onChange={this.handleInputChange}
             />
           </div>
