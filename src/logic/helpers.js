@@ -32,3 +32,14 @@ export const setIn = (object, properyChain, value) =>
  */
 export const mergeIn = (object, properyChain, newValue) =>
   updateIn(object, properyChain, currentValue => ({ ...currentValue, ...newValue }));
+
+
+export const getIn = (object, [property, ...propertyChain], defaultValue = null) =>
+  object ? (
+    propertyChain.length === 0
+      ? (object.hasOwnProperty(property) ? object[property] : defaultValue)
+      : getIn(object[property], propertyChain, defaultValue)
+  ) : defaultValue;
+
+export const differ = (obj1, obj2, propertyChain) =>
+  getIn(obj1, propertyChain) !== getIn(obj2, propertyChain);
