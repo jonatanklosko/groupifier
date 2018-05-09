@@ -34,6 +34,14 @@ export const mergeIn = (object, properyChain, newValue) =>
   updateIn(object, properyChain, currentValue => ({ ...currentValue, ...newValue }));
 
 
+/**
+ * Returns object's value at the specified path or the default value if it doesn't exist.
+ *
+ * @param {Object} object
+ * @param {Array} propertyChain
+ * @param {*} defaultValue
+ * @returns {*}
+ */
 export const getIn = (object, [property, ...propertyChain], defaultValue = null) =>
   object ? (
     propertyChain.length === 0
@@ -41,5 +49,13 @@ export const getIn = (object, [property, ...propertyChain], defaultValue = null)
       : getIn(object[property], propertyChain, defaultValue)
   ) : defaultValue;
 
+/**
+ * Checkes if value at the specified path is the same for both of the given objects.
+ *
+ * @param {Object} obj1
+ * @param {Object} obj1
+ * @param {Array} propertyChain
+ * @returns {boolean}
+ */
 export const differ = (obj1, obj2, propertyChain) =>
   getIn(obj1, propertyChain) !== getIn(obj2, propertyChain);
