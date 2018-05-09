@@ -87,7 +87,6 @@ export default class EventsConfig extends Component {
         <EventPanel
           key={wcifEvent.id}
           wcifEvent={wcifEvent}
-          wcifEvents={wcif.events}
           competitorsByRound={competitorsByRound}
           onChange={this.handleEventChange}
         />

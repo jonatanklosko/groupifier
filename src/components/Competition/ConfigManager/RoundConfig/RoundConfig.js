@@ -26,7 +26,7 @@ export default class RoundConfig extends PureComponent {
 
   handleSeparateGroupsCheckboxChange = event => {
     const { name, checked } = event.target;
-    this.handlePropertyChange(name.split('.'), checked ? { roundId: this.props.roundIds[0], groups: null } : null);
+    this.handlePropertyChange(name.split('.'), checked ? { roundId: this.props.otherEventsRoundIds[0], groups: null } : null);
   };
 
   handleSelectChange = event => {
@@ -41,7 +41,7 @@ export default class RoundConfig extends PureComponent {
   };
 
   render() {
-    const { round, roundIds, competitorsByRound } = this.props;
+    const { round, otherEventsRoundIds, competitorsByRound } = this.props;
     const { groups, separateGroups } = getGroupifierData(round);
 
     const separateGroupsCompetitors = separateGroups ? competitorsByRound[separateGroups.roundId] : [];
@@ -78,7 +78,7 @@ export default class RoundConfig extends PureComponent {
                 name="separateGroups.roundId"
                 onChange={this.handleSelectChange}
               >
-                {roundIds.map(roundId =>
+                {otherEventsRoundIds.map(roundId =>
                   <MenuItem key={roundId} value={roundId}>
                     {roundIdToName(roundId)}
                   </MenuItem>

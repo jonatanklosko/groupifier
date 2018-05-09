@@ -1,6 +1,6 @@
 import Events from './Events';
 
-const parseRoundId = roundId => {
+export const parseRoundId = roundId => {
   const [, eventId, roundNumber] = roundId.match(/(\w+)-r(\d+)/);
   return { eventId, roundNumber };
 };

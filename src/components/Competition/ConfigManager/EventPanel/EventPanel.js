@@ -8,17 +8,15 @@ import EventConfig from '../EventConfig/EventConfig';
 import Events from '../../../../logic/Events';
 import RoundConfig from '../RoundConfig/RoundConfig';
 import { getGroupifierData, setGroupifierData } from '../../../../logic/wcifExtensions';
+import { parseRoundId } from '../../../../logic/formatters';
 
 export default class EventPanel extends PureComponent {
   constructor(props) {
     super(props);
 
-    const { wcifEvent, wcifEvents } = props;
-    this.roundIds = wcifEvents
-      .filter(_wcifEvent => _wcifEvent.id !== wcifEvent.id)
-      .reduce((roundIds, wcifEvent) =>
-        roundIds.concat(wcifEvent.rounds.map(round => round.id))
-      , []);
+    const { wcifEvent, competitorsByRound } = props;
+    this.otherEventsRoundIds = Object.keys(competitorsByRound)
+      .filter(roundId => parseRoundId(roundId).eventId !== wcifEvent.id);
   }
 
   handleRoundChange = updatedRound => {
@@ -58,7 +56,7 @@ export default class EventPanel extends PureComponent {
                   <Grid item key={round.id}>
                     <RoundConfig
                       round={round}
-                      roundIds={this.roundIds}
+                      otherEventsRoundIds={this.otherEventsRoundIds}
                       competitorsByRound={competitorsByRound}
                       onChange={this.handleRoundChange}
                     />
