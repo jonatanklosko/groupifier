@@ -8,7 +8,9 @@ import Tabs, { Tab } from 'material-ui/Tabs';
 import Typography from 'material-ui/Typography';
 
 import EventsConfig from './EventsConfig/EventsConfig';
+import { getGroupifierData } from '../../../logic/wcifExtensions';
 import { getPredictedCompetitorsByRound } from '../../../logic/competitors';
+import { isPresentDeep } from '../../../logic/helpers';
 
 export default class ConfigManager extends Component {
   constructor(props) {
@@ -27,6 +29,14 @@ export default class ConfigManager extends Component {
   handleTabChange = (event, value) => {
     this.setState({ tabValue: value });
   };
+
+  wcifConfigComplete() {
+    return this.state.localWcif.events.every(wcifEvent => {
+      const config = getGroupifierData(wcifEvent);
+      const roundsConfig = wcifEvent.rounds.map(getGroupifierData);
+      return isPresentDeep(config) && roundsConfig.every(isPresentDeep);
+    });
+  }
 
   render() {
     const { tabValue, localWcif } = this.state;
@@ -64,6 +74,7 @@ export default class ConfigManager extends Component {
             onClick={() => onWcifUpdate(localWcif)}
             component={Link}
             to={`/competitions/${localWcif.id}`}
+            disabled={!this.wcifConfigComplete()}
           >
             Done
           </Button>

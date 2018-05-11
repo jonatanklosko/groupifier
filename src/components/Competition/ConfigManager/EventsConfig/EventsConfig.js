@@ -5,7 +5,7 @@ import Typography from 'material-ui/Typography';
 
 import EventConfig from '../EventConfig/EventConfig';
 import EventPanel from '../EventPanel/EventPanel';
-import { differ } from '../../../../logic/helpers';
+import { differ, isPresentDeep } from '../../../../logic/helpers';
 import { getGroupifierData, setGroupifierData } from '../../../../logic/wcifExtensions';
 import { suggestedGroupCount } from '../../../../logic/groups';
 
@@ -67,7 +67,7 @@ export default class EventsConfig extends Component {
          separateGroups: separateGroups ? {
            ...separateGroups,
            groups: suggestedGroupCount(separateGroupsCompetitors.length, newEvent.id, newEventConfig.stations, 1)
-         } : null
+         } : false
         });
       });
       return { ...newEvent, rounds };
@@ -100,7 +100,7 @@ export default class EventsConfig extends Component {
         />
         <Button
           onClick={this.handleDefaultEventConfigReady}
-          disabled={Object.values(defaultEventConfig).some(value => value === null)}
+          disabled={!isPresentDeep(defaultEventConfig)}
         >
           Ready
         </Button>

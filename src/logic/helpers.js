@@ -50,7 +50,7 @@ export const getIn = (object, [property, ...propertyChain], defaultValue = null)
   ) : defaultValue;
 
 /**
- * Checkes if value at the specified path is the same for both of the given objects.
+ * Checks if value at the specified path is the same for both of the given objects.
  *
  * @param {Object} obj1
  * @param {Object} obj1
@@ -59,3 +59,23 @@ export const getIn = (object, [property, ...propertyChain], defaultValue = null)
  */
 export const differ = (obj1, obj2, propertyChain) =>
   getIn(obj1, propertyChain) !== getIn(obj2, propertyChain);
+
+/**
+ * Checks if the given value is an object.
+ *
+ * @param {*} value
+ * @returns {boolean}
+ */
+const isObject = obj => obj === Object(obj);
+
+/**
+ * When given an object, deeply checks if it doesn't contain null values.
+ * Otherwise, checks if the given value is not null.
+ *
+ * @param {*} value
+ * @returns {boolean}
+ */
+export const isPresentDeep = value =>
+  isObject(value)
+    ? Object.values(value).every(isPresentDeep)
+    : value != null;

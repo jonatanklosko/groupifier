@@ -26,7 +26,7 @@ export default class RoundConfig extends PureComponent {
 
   handleSeparateGroupsCheckboxChange = event => {
     const { name, checked } = event.target;
-    this.handlePropertyChange(name.split('.'), checked ? { roundId: this.props.otherEventsRoundIds[0], groups: null } : null);
+    this.handlePropertyChange(name.split('.'), checked ? { roundId: this.props.otherEventsRoundIds[0], groups: null } : false);
   };
 
   handleSelectChange = event => {
@@ -61,7 +61,7 @@ export default class RoundConfig extends PureComponent {
         <FormControlLabel
           control={
             <Checkbox
-              checked={separateGroups !== null}
+              checked={separateGroups !== false}
               name="separateGroups"
               onChange={this.handleSeparateGroupsCheckboxChange}
             />
