@@ -6,7 +6,8 @@ import Paper from 'material-ui/Paper';
 
 const menuItems = [
   { path: '/roles', text: "Edit roles", icon: 'perm_contact_calendar' },
-  { path: '/config', text: "Configure groups", icon: 'settings' }
+  { path: '/config', text: "Configure groups", icon: 'settings' },
+  { path: '/groupify', text: "Create groups", icon: 'people' }
 ];
 
 const CompetitionMenu = ({ baseUrl }) => (
