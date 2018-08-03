@@ -26,6 +26,14 @@ export default class EventConfig extends PureComponent {
     this.handlePropertyChange(name, checked);
   };
 
+  componentDidUpdate(prevProps) {
+    ['scramblers', 'runners'].forEach(name => {
+      if (prevProps.config[name] !== this.props.config[name]) {
+        document.querySelector(`input[type="number"][name="${name}"]`).focus();
+      }
+    });
+  }
+
   render() {
     const { stations, scramblers, runners, generateJudges } = this.props.config;
 
