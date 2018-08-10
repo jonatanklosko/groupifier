@@ -7,6 +7,7 @@ import Paper from 'material-ui/Paper';
 import Tabs, { Tab } from 'material-ui/Tabs';
 import Typography from 'material-ui/Typography';
 
+import RoomsConfig from './RoomsConfig/RoomsConfig';
 import EventsConfig from './EventsConfig/EventsConfig';
 import { getGroupifierData } from '../../../logic/wcifExtensions';
 import { getPredictedCompetitorsByRound } from '../../../logic/competitors';
@@ -47,6 +48,7 @@ export default class ConfigManager extends Component {
         <Grid item xs={12}>
           <AppBar position="static" color="default">
             <Tabs value={tabValue} onChange={this.handleTabChange} centered>
+              <Tab label="Rooms" />
               <Tab label="Events" />
               <Tab label="General" />
             </Tabs>
@@ -54,9 +56,12 @@ export default class ConfigManager extends Component {
         </Grid>
         <Grid item xs={12}>
           {tabValue === 0 && (
-            <EventsConfig wcif={localWcif} onWcifChange={this.handleWcifChange} competitorsByRound={this.competitorsByRound} />
+            <RoomsConfig wcif={localWcif} onWcifChange={this.handleWcifChange} />
           )}
           {tabValue === 1 && (
+            <EventsConfig wcif={localWcif} onWcifChange={this.handleWcifChange} competitorsByRound={this.competitorsByRound} />
+          )}
+          {tabValue === 2 && (
             <Paper>
               <Typography>General settings</Typography>
             </Paper>
