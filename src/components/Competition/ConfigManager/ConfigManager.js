@@ -39,6 +39,10 @@ export default class ConfigManager extends Component {
     });
   }
 
+  roomsConfigComplete() {
+    return this.state.localWcif.schedule.venues[0].rooms.map(getGroupifierData).every(isPresentDeep);
+  }
+
   render() {
     const { tabValue, localWcif } = this.state;
     const { onWcifUpdate } = this.props;
@@ -49,7 +53,7 @@ export default class ConfigManager extends Component {
           <AppBar position="static" color="default">
             <Tabs value={tabValue} onChange={this.handleTabChange} centered>
               <Tab label="Rooms" />
-              <Tab label="Events" />
+              <Tab label="Events" disabled={!this.roomsConfigComplete()} />
               <Tab label="General" />
             </Tabs>
           </AppBar>

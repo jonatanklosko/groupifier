@@ -1,10 +1,13 @@
 import React, { PureComponent } from 'react';
 import Checkbox from 'material-ui/Checkbox';
 import { FormControl, FormControlLabel } from 'material-ui/Form';
+import Grid from 'material-ui/Grid';
 import { InputLabel } from 'material-ui/Input';
 import { MenuItem } from 'material-ui/Menu';
 import Select from 'material-ui/Select';
 import Typography from 'material-ui/Typography';
+
+import RoundActivityConfig from '../RoundActivityConfig/RoundActivityConfig';
 
 import PositiveIntegerInput from '../../../common/PositiveIntegerInput/PositiveIntegerInput';
 import { getGroupifierData, setGroupifierData } from '../../../../logic/wcifExtensions';
@@ -41,59 +44,39 @@ export default class RoundConfig extends PureComponent {
   };
 
   render() {
-    const { round, otherEventsRoundIds, competitorsByRound } = this.props;
-    const { groups, separateGroups } = getGroupifierData(round);
+    const { round, wcif, competitorsByRound } = this.props;
+    // const { groups, separateGroups } = getGroupifierData(round);
 
-    const separateGroupsCompetitors = separateGroups ? competitorsByRound[separateGroups.roundId] : [];
-    const competitors = competitorsByRound[round.id]
-      .filter(person => !separateGroupsCompetitors.includes(person));
+    const competitors = competitorsByRound[round.id];
+
+    const flatMap = (arr, fn) =>
+      arr.reduce((xs, x) => xs.concat(fn(x)), []);
+
+    const roomsWithActivities = flatMap(wcif.schedule.venues[0].rooms, room =>
+      room.activities
+        .filter(activity => activity.activityCode === round.id)
+        .map(activity => [activity, room])
+    );
 
     return (
       <div>
-        <Typography variant="body2">{roundIdToShortName(round.id)}</Typography>
-        <PositiveIntegerInput
-          label="Groups"
-          value={groups}
-          name="groups"
-          helperText={this.groupSizeText(competitors, groups)}
-          onChange={this.handleInputChange}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={separateGroups !== false}
-              name="separateGroups"
-              onChange={this.handleSeparateGroupsCheckboxChange}
-            />
-          }
-          label="Separate groups for people participating in another event"
-        />
-        {separateGroups && (
-          <div>
-            <FormControl style={{ width: 201 }}>
-              <InputLabel htmlFor="round-id">Event</InputLabel>
-              <Select
-                inputProps={{ id: 'round-id' }}
-                value={separateGroups.roundId}
-                name="separateGroups.roundId"
-                onChange={this.handleSelectChange}
-              >
-                {otherEventsRoundIds.map(roundId =>
-                  <MenuItem key={roundId} value={roundId}>
-                    {roundIdToName(roundId)}
-                  </MenuItem>
-                )}
-              </Select>
-            </FormControl>
-            <PositiveIntegerInput
-              label="Groups"
-              name="separateGroups.groups"
-              value={separateGroups.groups}
-              helperText={this.groupSizeText(separateGroupsCompetitors, separateGroups.groups)}
-              onChange={this.handleInputChange}
-            />
-          </div>
+        <Typography variant="subheading">{roundIdToShortName(round.id)}</Typography>
+        <Grid container spacing={16}>
+        {roomsWithActivities.map(([activity, room]) =>
+          <Grid item xs key={room.id}>
+            <Typography variant="body2">
+              <span style={{
+                  display: 'inline-block',
+                  width: 10, height: 10, marginRight: 5,
+                  borderRadius: '100%', backgroundColor: room.color
+                }}
+              />
+              <span>{room.name}</span>
+            </Typography>
+            <RoundActivityConfig />
+          </Grid>
         )}
+      </Grid>
       </div>
     );
   }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Typography from 'material-ui/Typography';
 
-import PositiveIntegerInput from '../../../common/PositiveIntegerInput/PositiveIntegerInput';
+import ZeroablePositiveIntegerInput from '../../../common/ZeroablePositiveIntegerInput/ZeroablePositiveIntegerInput';
 import { setIn } from '../../../../logic/helpers';
 import { getGroupifierData, setGroupifierData } from '../../../../logic/wcifExtensions';
 
@@ -33,7 +33,7 @@ export default class RoomConfig extends Component {
           />
           <span>{room.name}</span>
         </Typography>
-        <PositiveIntegerInput
+        <ZeroablePositiveIntegerInput
           label="Timing stations"
           value={this.roomData.stations}
           name="stations"

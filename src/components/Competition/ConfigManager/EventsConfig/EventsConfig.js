@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import Button from 'material-ui/Button';
+import Checkbox from 'material-ui/Checkbox';
+import Grid from 'material-ui/Grid';
+import { FormControlLabel } from 'material-ui/Form';
 import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
 
-import EventConfig from '../EventConfig/EventConfig';
 import EventPanel from '../EventPanel/EventPanel';
 import { differ, isPresentDeep } from '../../../../logic/helpers';
 import { getGroupifierData, setGroupifierData } from '../../../../logic/wcifExtensions';
@@ -12,27 +14,15 @@ import { suggestedGroupCount } from '../../../../logic/groups';
 export default class EventsConfig extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      defaultEventConfig: {
-        stations: null,
-        scramblers: null,
-        runners: null,
-        generateJudges: true
-      }
-    }
+    this.state = {};
   }
 
-  handleDefaultEventConfigChange = config => {
-    this.setState({ defaultEventConfig: config });
-  };
-
-  handleDefaultEventConfigReady = () => {
-    const { defaultEventConfig } = this.state;
+  handleReady = () => {
     const { wcif, competitorsByRound } = this.props;
 
     this.handleEventsChange(
       wcif.events.map(wcifEvent =>
-        setGroupifierData('Event', wcifEvent, defaultEventConfig)
+        setGroupifierData('Event', wcifEvent, {})
       )
     );
   };
@@ -78,7 +68,6 @@ export default class EventsConfig extends Component {
 
   render() {
     const { wcif, competitorsByRound } = this.props;
-    const { defaultEventConfig } = this.state;
 
     const showEventsConfig = wcif.events.some(wcifEvent => getGroupifierData(wcifEvent));
 
@@ -86,6 +75,7 @@ export default class EventsConfig extends Component {
       wcif.events.map(wcifEvent =>
         <EventPanel
           key={wcifEvent.id}
+          wcif={wcif}
           wcifEvent={wcifEvent}
           competitorsByRound={competitorsByRound}
           onChange={this.handleEventChange}
@@ -93,15 +83,30 @@ export default class EventsConfig extends Component {
       )
     ) : (
       <Paper style={{ padding: 16 }}>
-        <Typography variant="headline">Default configuration</Typography>
-        <EventConfig
-          config={defaultEventConfig}
-          onChange={this.handleDefaultEventConfigChange}
-        />
-        <Button
-          onClick={this.handleDefaultEventConfigReady}
-          disabled={!isPresentDeep(defaultEventConfig)}
-        >
+        <Typography variant="headline">Generate configuration</Typography>
+        <Grid direction="column">
+          <Grid item>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="runners"
+                />
+              }
+              label="Do you use runners system?"
+            />
+          </Grid>
+          <Grid item>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="assignJudges"
+                />
+              }
+              label="Should judges be assigned?"
+            />
+          </Grid>
+        </Grid>
+        <Button onClick={this.handleReady}>
           Ready
         </Button>
       </Paper>
