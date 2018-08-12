@@ -14,59 +14,23 @@ import { suggestedGroupCount } from '../../../../logic/groups';
 export default class EventsConfig extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      runners: false,
+      assignJudges: false
+    };
   }
 
-  handleReady = () => {
+  handleCheckboxChange = event => {
+    const { name, checked } = event.target;
+    this.setState({ [name]: checked });
+  };
+
+  handleNext = () => {
     const { wcif, competitorsByRound } = this.props;
-
-    this.handleEventsChange(
-      wcif.events.map(wcifEvent =>
-        setGroupifierData('Event', wcifEvent, {})
-      )
-    );
   };
-
-  handleEventChange = updatedWcifEvent => {
-    this.handleEventsChange(
-      this.props.wcif.events.map(wcifEvent => wcifEvent.id === updatedWcifEvent.id ? updatedWcifEvent : wcifEvent)
-    );
-  };
-
-  handleEventsChange(events) {
-    const { wcif, onWcifChange, competitorsByRound } = this.props;
-
-    const eventsWithUpdatedGroups = events.map(newEvent => {
-      const oldEvent = wcif.events.find(oldEvent => oldEvent.id === newEvent.id);
-      if (newEvent === oldEvent) return newEvent;
-      const [newEventConfig, oldEventConfig] = [newEvent, oldEvent].map(getGroupifierData);
-      const stationsChanged = differ(newEventConfig, oldEventConfig, ['stations']);
-      const rounds = newEvent.rounds.map(newRound => {
-        const oldRound = oldEvent.rounds.find(oldRound => oldRound.id === newRound.id);
-        if (!stationsChanged && newRound === oldRound) return newRound;
-        const [newRoundConfig, oldRoundConfig] = [newRound, oldRound].map(getGroupifierData);
-        const separateGroupsRoundChanged = differ(newRoundConfig, oldRoundConfig, ['separateGroups', 'roundId']);
-        if (!separateGroupsRoundChanged && !stationsChanged) return newRound;
-        const { separateGroups } = newRoundConfig || {};
-        const separateGroupsCompetitors = separateGroups ? competitorsByRound[separateGroups.roundId] : [];
-        const competitors = competitorsByRound[newRound.id]
-          .filter(person => !separateGroupsCompetitors.includes(person));
-        return setGroupifierData('Round', newRound, {
-         ...newRoundConfig,
-         groups: suggestedGroupCount(competitors.length, newEvent.id, newEventConfig.stations, 2),
-         separateGroups: separateGroups ? {
-           ...separateGroups,
-           groups: suggestedGroupCount(separateGroupsCompetitors.length, newEvent.id, newEventConfig.stations, 1)
-         } : false
-        });
-      });
-      return { ...newEvent, rounds };
-    });
-
-    onWcifChange({ ...wcif, events: eventsWithUpdatedGroups });
-  }
 
   render() {
+    const { runners, assignJudges } = this.state;
     const { wcif, competitorsByRound } = this.props;
 
     const showEventsConfig = wcif.events.some(wcifEvent => getGroupifierData(wcifEvent));
@@ -84,13 +48,11 @@ export default class EventsConfig extends Component {
     ) : (
       <Paper style={{ padding: 16 }}>
         <Typography variant="headline">Generate configuration</Typography>
-        <Grid direction="column">
+        <Grid container direction="column">
           <Grid item>
             <FormControlLabel
               control={
-                <Checkbox
-                  name="runners"
-                />
+                <Checkbox checked={runners} name="runners" onChange={this.handleCheckboxChange} />
               }
               label="Do you use runners system?"
             />
@@ -98,16 +60,14 @@ export default class EventsConfig extends Component {
           <Grid item>
             <FormControlLabel
               control={
-                <Checkbox
-                  name="assignJudges"
-                />
+                <Checkbox checked={assignJudges} name="assignJudges" onChange={this.handleCheckboxChange} />
               }
               label="Should judges be assigned?"
             />
           </Grid>
         </Grid>
-        <Button onClick={this.handleReady}>
-          Ready
+        <Button onClick={this.handleNext}>
+          Next
         </Button>
       </Paper>
     );
