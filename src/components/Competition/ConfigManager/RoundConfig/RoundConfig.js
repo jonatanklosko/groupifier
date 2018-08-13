@@ -52,7 +52,7 @@ export default class RoundConfig extends PureComponent {
     const flatMap = (arr, fn) =>
       arr.reduce((xs, x) => xs.concat(fn(x)), []);
 
-    const roomsWithActivities = flatMap(wcif.schedule.venues[0].rooms, room =>
+    const activitiesWithRooms = flatMap(wcif.schedule.venues[0].rooms, room =>
       room.activities
         .filter(activity => activity.activityCode === round.id)
         .map(activity => [activity, room])
@@ -62,7 +62,7 @@ export default class RoundConfig extends PureComponent {
       <div>
         <Typography variant="subheading">{roundIdToShortName(round.id)}</Typography>
         <Grid container spacing={16}>
-        {roomsWithActivities.map(([activity, room]) =>
+        {activitiesWithRooms.map(([activity, room]) =>
           <Grid item xs key={room.id}>
             <Typography variant="body2">
               <span style={{
