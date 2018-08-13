@@ -6,11 +6,14 @@ import Grid from 'material-ui/Grid';
 import PositiveIntegerInput from '../../../common/PositiveIntegerInput/PositiveIntegerInput';
 import ZeroablePositiveIntegerInput from '../../../common/ZeroablePositiveIntegerInput/ZeroablePositiveIntegerInput';
 import { setIn } from '../../../../logic/helpers';
+import { getGroupifierData, setGroupifierData } from '../../../../logic/wcifExtensions';
 
 export default class RoundActivityConfig extends PureComponent {
   handlePropertyChange = (property, value) => {
-    const { config, onChange } = this.props;
-    onChange(setIn(config, [property], value));
+    const { activity, onChange } = this.props;
+    onChange(
+      setGroupifierData('Activity', activity, setIn(getGroupifierData(activity), [property], value))
+    );
   };
 
   handleInputChange = (event, value) => {
@@ -23,35 +26,42 @@ export default class RoundActivityConfig extends PureComponent {
   };
 
   render() {
+    const { groups, scramblers, runners, assignJudges } = getGroupifierData(this.props.activity);
+
     return (
       <Grid container direction="column">
         <Grid item>
           <PositiveIntegerInput
             label="Groups"
-            value={''}
-            name="Groups"
+            value={groups}
+            name="groups"
             helperText={'21 people in group'}
+            onChange={this.handleInputChange}
           />
         </Grid>
         <Grid item>
           <ZeroablePositiveIntegerInput
             label="Scramblers"
-            value={''}
+            value={scramblers}
             name="scramblers"
+            onChange={this.handleInputChange}
           />
         </Grid>
         <Grid item>
           <ZeroablePositiveIntegerInput
             label="Runners"
-            value={''}
+            value={runners}
             name="runners"
+            onChange={this.handleInputChange}
           />
         </Grid>
         <Grid item>
           <FormControlLabel
             control={
               <Checkbox
+                checked={assignJudges}
                 name="assignJudges"
+                onChange={this.handleCheckboxChange}
               />
             }
             label="Assign judges"

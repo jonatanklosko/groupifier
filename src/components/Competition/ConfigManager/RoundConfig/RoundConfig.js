@@ -11,41 +11,30 @@ import RoundActivityConfig from '../RoundActivityConfig/RoundActivityConfig';
 
 import PositiveIntegerInput from '../../../common/PositiveIntegerInput/PositiveIntegerInput';
 import { getGroupifierData, setGroupifierData } from '../../../../logic/wcifExtensions';
-import { setIn } from '../../../../logic/helpers';
+import { setIn, updateIn } from '../../../../logic/helpers';
 import { roundIdToName, roundIdToShortName } from '../../../../logic/formatters';
 
 export default class RoundConfig extends PureComponent {
-  handlePropertyChange = (propertyPath, value) => {
-    const { round, onChange } = this.props;
-    const config = getGroupifierData(round);
-    onChange(
-      setGroupifierData('Round', round, setIn(config, propertyPath, value))
-    );
-  };
-
-  handleInputChange = (event, value) => {
-    this.handlePropertyChange(event.target.name.split('.'), value);
-  };
-
-  handleSeparateGroupsCheckboxChange = event => {
-    const { name, checked } = event.target;
-    this.handlePropertyChange(name.split('.'), checked ? { roundId: this.props.otherEventsRoundIds[0], groups: null } : false);
-  };
-
-  handleSelectChange = event => {
-    const { name, value } = event.target;
-    this.handlePropertyChange(name.split('.'), value);
-  };
-
   groupSizeText(competitors, groups) {
     if (!groups) return '';
     const groupSize = Math.ceil(competitors.length / groups);
     return `${groupSize} ${groupSize === 1 ? 'person' : 'people'} in group`;
   };
 
+  handleActivityChange = updatedActivity => {
+    const { wcif, onWcifChange } = this.props;
+    onWcifChange(
+      updateIn(wcif, ['schedule', 'venues', '0', 'rooms'], rooms =>
+        rooms.map(room => ({
+          ...room,
+          activities: room.activities.map(activity => activity.id === updatedActivity.id ? updatedActivity : activity)
+        }))
+      )
+    );
+  };
+
   render() {
     const { round, wcif, competitorsByRound } = this.props;
-    // const { groups, separateGroups } = getGroupifierData(round);
 
     const competitors = competitorsByRound[round.id];
 
@@ -73,7 +62,7 @@ export default class RoundConfig extends PureComponent {
               />
               <span>{room.name}</span>
             </Typography>
-            <RoundActivityConfig />
+            <RoundActivityConfig activity={activity} onChange={this.handleActivityChange} />
           </Grid>
         )}
       </Grid>

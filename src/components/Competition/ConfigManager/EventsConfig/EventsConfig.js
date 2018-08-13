@@ -81,7 +81,9 @@ export default class EventsConfig extends Component {
     const { runners, assignJudges } = this.state;
     const { wcif, competitorsByRound } = this.props;
 
-    const showEventsConfig = wcif.events.some(wcifEvent => getGroupifierData(wcifEvent));
+    const showEventsConfig = wcif.schedule.venues[0].rooms.some(room =>
+      room.activities.some(getGroupifierData)
+    );
 
     return showEventsConfig ? (
       wcif.events.map(wcifEvent =>
@@ -90,7 +92,7 @@ export default class EventsConfig extends Component {
           wcif={wcif}
           wcifEvent={wcifEvent}
           competitorsByRound={competitorsByRound}
-          onChange={this.handleEventChange}
+          onWcifChange={this.props.onWcifChange}
         />
       )
     ) : (

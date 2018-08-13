@@ -24,7 +24,7 @@ export default class EventPanel extends PureComponent {
   };
 
   render() {
-    const { wcifEvent, wcif, competitorsByRound } = this.props;
+    const { wcifEvent, wcif, competitorsByRound, onWcifChange } = this.props;
 
     return (
       <ExpansionPanel>
@@ -42,7 +42,7 @@ export default class EventPanel extends PureComponent {
                   wcif={wcif}
                   otherEventsRoundIds={this.otherEventsRoundIds}
                   competitorsByRound={competitorsByRound}
-                  onChange={this.handleRoundChange}
+                  onWcifChange={onWcifChange}
                 />
               </Grid>
             )}
