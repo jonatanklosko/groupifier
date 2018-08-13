@@ -15,12 +15,6 @@ import { setIn, updateIn } from '../../../../logic/helpers';
 import { roundIdToName, roundIdToShortName } from '../../../../logic/formatters';
 
 export default class RoundConfig extends PureComponent {
-  groupSizeText(competitors, groups) {
-    if (!groups) return '';
-    const groupSize = Math.ceil(competitors.length / groups);
-    return `${groupSize} ${groupSize === 1 ? 'person' : 'people'} in group`;
-  };
-
   handleActivityChange = updatedActivity => {
     const { wcif, onWcifChange } = this.props;
     onWcifChange(
@@ -62,7 +56,11 @@ export default class RoundConfig extends PureComponent {
               />
               <span>{room.name}</span>
             </Typography>
-            <RoundActivityConfig activity={activity} onChange={this.handleActivityChange} />
+            <RoundActivityConfig
+              activity={activity}
+              onChange={this.handleActivityChange}
+              roundCompetitors={competitorsByRound[round.id]}
+            />
           </Grid>
         )}
       </Grid>

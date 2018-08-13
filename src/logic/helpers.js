@@ -79,3 +79,15 @@ export const isPresentDeep = value =>
   isObject(value)
     ? Object.values(value).every(isPresentDeep)
     : value != null;
+
+/**
+ * Pluralizes a word according to the given number.
+ * When no plural form given, uses singular form with an 's' appended.
+ *
+ * @param {number} count
+ * @param {string} singular
+ * @param {string} plural
+ * @returns {string}
+ */
+export const pluralize = (count, singular, plural) =>
+  `${count} ${count === 1 ? singular : (plural || singular + 's')}`

@@ -5,7 +5,7 @@ import Grid from 'material-ui/Grid';
 
 import PositiveIntegerInput from '../../../common/PositiveIntegerInput/PositiveIntegerInput';
 import ZeroablePositiveIntegerInput from '../../../common/ZeroablePositiveIntegerInput/ZeroablePositiveIntegerInput';
-import { setIn } from '../../../../logic/helpers';
+import { setIn, pluralize } from '../../../../logic/helpers';
 import { getGroupifierData, setGroupifierData } from '../../../../logic/wcifExtensions';
 
 export default class RoundActivityConfig extends PureComponent {
@@ -26,7 +26,13 @@ export default class RoundActivityConfig extends PureComponent {
   };
 
   render() {
-    const { groups, scramblers, runners, assignJudges } = getGroupifierData(this.props.activity);
+    const { activity, roundCompetitors } = this.props;
+    const { groups, scramblers, runners, assignJudges, density } = getGroupifierData(activity);
+
+    const competitors = Math.floor(roundCompetitors.length * density);
+    const groupSizeText = groups
+      ? pluralize(Math.ceil(competitors / groups), 'person', 'people') + ' in group'
+      : '';
 
     return (
       <Grid container direction="column">
@@ -35,7 +41,7 @@ export default class RoundActivityConfig extends PureComponent {
             label="Groups"
             value={groups}
             name="groups"
-            helperText={'21 people in group'}
+            helperText={groupSizeText}
             onChange={this.handleInputChange}
           />
         </Grid>
