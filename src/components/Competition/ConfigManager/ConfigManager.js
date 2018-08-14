@@ -32,10 +32,12 @@ export default class ConfigManager extends Component {
   };
 
   wcifConfigComplete() {
-    return this.state.localWcif.events.every(wcifEvent => {
-      const config = getGroupifierData(wcifEvent);
-      const roundsConfig = wcifEvent.rounds.map(getGroupifierData);
-      return isPresentDeep(config) && roundsConfig.every(isPresentDeep);
+    return this.state.localWcif.schedule.venues[0].rooms.every(room => {
+      const config = getGroupifierData(room);
+      const activitiesConfig = room.activities
+        .filter(({ activityCode }) => !activityCode.startsWith('other-'))
+        .map(getGroupifierData);
+      return isPresentDeep(config) && activitiesConfig.every(isPresentDeep);
     });
   }
 
