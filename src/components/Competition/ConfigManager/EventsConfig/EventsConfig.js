@@ -15,8 +15,9 @@ export default class EventsConfig extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      runners: false,
-      assignJudges: false
+      assignScramblers: true,
+      assignRunners: true,
+      assignJudges: true
     };
   }
 
@@ -26,7 +27,7 @@ export default class EventsConfig extends Component {
   };
 
   handleNext = () => {
-    const { runners, assignJudges } = this.state;
+    const { assignScramblers, assignRunners, assignJudges } = this.state;
     const { wcif, competitorsByRound, onWcifChange } = this.props;
 
     const flatMap = (arr, fn) =>
@@ -60,8 +61,8 @@ export default class EventsConfig extends Component {
           setGroupifierData('Activity', activity, {
             density,
             groups: suggestedGroupCount(Math.floor(density * competitors.length), wcifEvent.id, stations, 2),
-            scramblers: suggestedScramblerCount(stations),
-            runners: runners ? suggestedRunnerCount(stations) : 0,
+            scramblers: assignScramblers ? suggestedScramblerCount(stations) : 0,
+            runners: assignRunners ? suggestedRunnerCount(stations) : 0,
             assignJudges
           })
         );
@@ -78,7 +79,7 @@ export default class EventsConfig extends Component {
   };
 
   render() {
-    const { runners, assignJudges } = this.state;
+    const { assignScramblers, assignRunners, assignJudges } = this.state;
     const { wcif, competitorsByRound } = this.props;
 
     const showEventsConfig = wcif.schedule.venues[0].rooms.some(room =>
@@ -99,22 +100,20 @@ export default class EventsConfig extends Component {
       <Paper style={{ padding: 16 }}>
         <Typography variant="headline">Generate configuration</Typography>
         <Grid container direction="column">
-          <Grid item>
-            <FormControlLabel
-              control={
-                <Checkbox checked={runners} name="runners" onChange={this.handleCheckboxChange} />
-              }
-              label="Do you use runners system?"
-            />
-          </Grid>
-          <Grid item>
-            <FormControlLabel
-              control={
-                <Checkbox checked={assignJudges} name="assignJudges" onChange={this.handleCheckboxChange} />
-              }
-              label="Should judges be assigned?"
-            />
-          </Grid>
+          {[['scramblers', 'assignScramblers'], ['runners', 'assignRunners'], ['judges', 'assignJudges']].map(([role, property]) =>
+            <Grid item key={role}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={this.state[property]}
+                    name={property}
+                    onChange={this.handleCheckboxChange}
+                  />
+                }
+                label={`Should ${role} be assigned?`}
+              />
+            </Grid>
+          )}
         </Grid>
         <Button onClick={this.handleNext}>
           Next
