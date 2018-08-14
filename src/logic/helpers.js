@@ -80,3 +80,9 @@ export const isPresentDeep = value =>
  */
 export const pluralize = (count, singular, plural) =>
   `${count} ${count === 1 ? singular : (plural || singular + 's')}`
+
+export const flatMap = (arr, fn) =>
+  arr.reduce((xs, x) => xs.concat(fn(x)), []);
+
+export const zip = (...arrs) =>
+  arrs[0].map((_, i) => arrs.map(arr => arr[i]));

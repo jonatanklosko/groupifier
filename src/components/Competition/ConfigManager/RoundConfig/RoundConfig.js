@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography';
 
 import RoundActivityConfig from '../RoundActivityConfig/RoundActivityConfig';
 
-import { updateIn } from '../../../../logic/helpers';
+import { updateIn, flatMap } from '../../../../logic/helpers';
 import { roundIdToShortName } from '../../../../logic/formatters';
 
 export default class RoundConfig extends PureComponent {
@@ -22,9 +22,6 @@ export default class RoundConfig extends PureComponent {
 
   render() {
     const { round, wcif, competitorsByRound } = this.props;
-
-    const flatMap = (arr, fn) =>
-      arr.reduce((xs, x) => xs.concat(fn(x)), []);
 
     const activitiesWithRooms = flatMap(wcif.schedule.venues[0].rooms, room =>
       room.activities
