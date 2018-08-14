@@ -16,12 +16,12 @@ export default class ZeroablePositiveIntegerInput extends PureComponent {
   }
 
   render() {
-    const { value, ...props } = this.props;
+    const { value, disabled, ...props } = this.props;
 
     return (
       <Fragment>
-        <PositiveIntegerInput {...props} value={value} disabled={value === 0} />
-        <Checkbox name={props.name} checked={value !== 0} onChange={this.handleCheckboxChange} />
+        <PositiveIntegerInput {...props} value={value} disabled={value === 0 || disabled} />
+        <Checkbox name={props.name} checked={value !== 0} onChange={this.handleCheckboxChange} disabled={disabled} />
       </Fragment>
     );
   }

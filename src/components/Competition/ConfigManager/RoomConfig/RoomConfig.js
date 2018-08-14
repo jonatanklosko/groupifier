@@ -20,7 +20,7 @@ export default class RoomConfig extends Component {
   };
 
   render() {
-    const { room } = this.props;
+    const { room, disabled } = this.props;
 
     return (
       <div>
@@ -38,6 +38,7 @@ export default class RoomConfig extends Component {
           value={this.roomData.stations}
           name="stations"
           onChange={this.handleInputChange}
+          disabled={disabled}
         />
       </div>
     );
