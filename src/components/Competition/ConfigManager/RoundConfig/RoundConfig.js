@@ -1,19 +1,11 @@
 import React, { PureComponent } from 'react';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
 
 import RoundActivityConfig from '../RoundActivityConfig/RoundActivityConfig';
 
-import PositiveIntegerInput from '../../../common/PositiveIntegerInput/PositiveIntegerInput';
-import { getGroupifierData, setGroupifierData } from '../../../../logic/wcifExtensions';
-import { setIn, updateIn } from '../../../../logic/helpers';
-import { roundIdToName, roundIdToShortName } from '../../../../logic/formatters';
+import { updateIn } from '../../../../logic/helpers';
+import { roundIdToShortName } from '../../../../logic/formatters';
 
 export default class RoundConfig extends PureComponent {
   handleActivityChange = updatedActivity => {
@@ -30,8 +22,6 @@ export default class RoundConfig extends PureComponent {
 
   render() {
     const { round, wcif, competitorsByRound } = this.props;
-
-    const competitors = competitorsByRound[round.id];
 
     const flatMap = (arr, fn) =>
       arr.reduce((xs, x) => xs.concat(fn(x)), []);

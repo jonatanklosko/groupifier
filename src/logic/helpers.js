@@ -50,17 +50,6 @@ export const getIn = (object, [property, ...propertyChain], defaultValue = null)
   ) : defaultValue;
 
 /**
- * Checks if value at the specified path is the same for both of the given objects.
- *
- * @param {Object} obj1
- * @param {Object} obj1
- * @param {Array} propertyChain
- * @returns {boolean}
- */
-export const differ = (obj1, obj2, propertyChain) =>
-  getIn(obj1, propertyChain) !== getIn(obj2, propertyChain);
-
-/**
  * Checks if the given value is an object.
  *
  * @param {*} value

@@ -7,7 +7,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
 import EventPanel from '../EventPanel/EventPanel';
-import { differ, isPresentDeep, updateIn } from '../../../../logic/helpers';
+import { updateIn } from '../../../../logic/helpers';
 import { getGroupifierData, setGroupifierData } from '../../../../logic/wcifExtensions';
 import { suggestedGroupCount } from '../../../../logic/groups';
 
@@ -79,7 +79,6 @@ export default class EventsConfig extends Component {
   };
 
   render() {
-    const { assignScramblers, assignRunners, assignJudges } = this.state;
     const { wcif, competitorsByRound } = this.props;
 
     const showEventsConfig = wcif.schedule.venues[0].rooms.some(room =>

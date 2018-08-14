@@ -8,8 +8,7 @@ import Typography from '@material-ui/core/Typography';
 
 import Events from '../../../../logic/Events';
 import RoundConfig from '../RoundConfig/RoundConfig';
-import { getGroupifierData, setGroupifierData } from '../../../../logic/wcifExtensions';
-import { parseRoundId } from '../../../../logic/formatters';
+import { setGroupifierData } from '../../../../logic/wcifExtensions';
 
 export default class EventPanel extends PureComponent {
   handleRoundChange = updatedRound => {
