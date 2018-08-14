@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { HashRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
-import CssBaseline from 'material-ui/CssBaseline';
-import Grid from 'material-ui/Grid';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Grid from '@material-ui/core/Grid';
 
 import Competition from '../Competition/Competition';
 import CompetitionList from '../CompetitionList/CompetitionList';
@@ -53,7 +53,7 @@ export default class App extends Component {
               }
             </Grid>
           </Grid>
-          <Route exact path="/" component={Footer}/>
+          <Route exact path="/" component={Footer} />
         </div>
       </Router>
     );

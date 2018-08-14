@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { LinearProgress } from 'material-ui/Progress';
-import Typography from 'material-ui/Typography';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Typography from '@material-ui/core/Typography';
 
 import CompetitionMenu from './CompetitionMenu/CompetitionMenu';
 import ConfigManager from './ConfigManager/ConfigManager';

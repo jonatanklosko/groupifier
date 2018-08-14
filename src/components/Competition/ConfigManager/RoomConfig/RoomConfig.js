@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Typography from 'material-ui/Typography';
+import Typography from '@material-ui/core/Typography';
 
 import ZeroablePositiveIntegerInput from '../../../common/ZeroablePositiveIntegerInput/ZeroablePositiveIntegerInput';
 import { setIn } from '../../../../logic/helpers';

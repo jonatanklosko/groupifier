@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import Button from 'material-ui/Button';
-import Checkbox from 'material-ui/Checkbox';
-import Grid from 'material-ui/Grid';
-import { FormControlLabel } from 'material-ui/Form';
-import Paper from 'material-ui/Paper';
-import Typography from 'material-ui/Typography';
+import Button from '@material-ui/core/Button';
+import Checkbox from '@material-ui/core/Checkbox';
+import Grid from '@material-ui/core/Grid';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
 
 import EventPanel from '../EventPanel/EventPanel';
 import { differ, isPresentDeep, updateIn } from '../../../../logic/helpers';

@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
-import Checkbox from 'material-ui/Checkbox';
-import { FormControlLabel } from 'material-ui/Form';
-import Grid from 'material-ui/Grid';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Grid from '@material-ui/core/Grid';
 
 import PositiveIntegerInput from '../../../common/PositiveIntegerInput/PositiveIntegerInput';
 import ZeroablePositiveIntegerInput from '../../../common/ZeroablePositiveIntegerInput/ZeroablePositiveIntegerInput';

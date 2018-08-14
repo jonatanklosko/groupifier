@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import { Link } from 'react-router-dom';
-import Button from 'material-ui/Button'
+import Button from '@material-ui/core/Button'
 
 import Header from './Header';
 

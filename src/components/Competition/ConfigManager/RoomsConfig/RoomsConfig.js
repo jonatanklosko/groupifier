@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import Grid from 'material-ui/Grid';
-import Paper from 'material-ui/Paper';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
 
 import RoomConfig from '../RoomConfig/RoomConfig';
 import { updateIn } from '../../../../logic/helpers';

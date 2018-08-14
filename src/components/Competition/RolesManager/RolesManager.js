@@ -1,12 +1,17 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import Button from 'material-ui/Button';
-import Checkbox from 'material-ui/Checkbox';
-import Grid from 'material-ui/Grid';
-import Paper from 'material-ui/Paper';
-import Table, { TableBody, TableCell, TableHead, TableRow, TablePagination } from 'material-ui/Table';
-import TextField from 'material-ui/TextField';
-import Toolbar from 'material-ui/Toolbar';
+import Button from '@material-ui/core/Button';
+import Checkbox from '@material-ui/core/Checkbox';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import TablePagination from '@material-ui/core/TablePagination';
+import TextField from '@material-ui/core/TextField';
+import Toolbar from '@material-ui/core/Toolbar';
 
 const roles = [
   { id: 'scrambler', name: 'Scrambler' },

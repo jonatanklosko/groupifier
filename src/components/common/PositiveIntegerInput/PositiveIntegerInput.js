@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import TextField from 'material-ui/TextField';
+import TextField from '@material-ui/core/TextField';
 
 export default class PositiveIntegerInput extends PureComponent {
   /* Prevent from entering characters like minus, plus and dot.

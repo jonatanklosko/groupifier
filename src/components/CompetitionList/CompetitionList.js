@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { LinearProgress } from 'material-ui/Progress';
-import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
-import ListSubheader from 'material-ui/List/ListSubheader';
-import Paper from 'material-ui/Paper';
-import Icon from 'material-ui/Icon';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import Paper from '@material-ui/core/Paper';
+import Icon from '@material-ui/core/Icon';
 
 import WcaApi from '../../logic/WcaApi';
 

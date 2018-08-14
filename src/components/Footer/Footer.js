@@ -1,7 +1,7 @@
 import React from 'react';
-import Icon from 'material-ui/Icon';
-import Grid from 'material-ui/Grid';
-import Typography from 'material-ui/Typography';
+import Icon from '@material-ui/core/Icon';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
 
 import './Footer.css';
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import Button from 'material-ui/Button';
-import Grid from 'material-ui/Grid';
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
 
 export default class GroupsCreator extends Component {
   constructor(props) {

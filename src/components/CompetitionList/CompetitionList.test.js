@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import { LinearProgress } from 'material-ui/Progress';
-import { ListItemText } from 'material-ui/List';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import ListItemText from '@material-ui/core/ListItemText';
 
 import CompetitionList from './CompetitionList';
 import WcaApi from '../../logic/WcaApi';
