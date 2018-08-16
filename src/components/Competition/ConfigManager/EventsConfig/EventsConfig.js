@@ -7,10 +7,8 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
 import EventPanel from '../EventPanel/EventPanel';
-import { updateIn, flatMap, zip } from '../../../../logic/helpers';
-import { getGroupifierData, setGroupifierData } from '../../../../logic/wcifExtensions';
-import { suggestedGroupCount } from '../../../../logic/groups';
-import { isActivityConfigurable } from '../../../../logic/activities';
+import { getGroupifierData } from '../../../../logic/wcifExtensions';
+import { populateActivitiesConfig } from '../../../../logic/activities';
 
 export default class EventsConfig extends Component {
   constructor(props) {
@@ -27,52 +25,9 @@ export default class EventsConfig extends Component {
     this.setState({ [name]: checked });
   };
 
-  handleNext = () => {
-    const { assignScramblers, assignRunners, assignJudges } = this.state;
+  handleNextClick = () => {
     const { wcif, competitorsByRound, onWcifChange } = this.props;
-
-    const activityDuration = activity =>
-      new Date(activity.endTime) - new Date(activity.startTime)
-
-    const suggestedScramblerCount = stations =>
-      Math.floor(Math.log2(stations + 1));
-
-    const suggestedRunnerCount = stations =>
-      Math.floor(Math.log(stations + 2) / Math.log(3));
-
-    const activitiesWithStations = flatMap(wcif.schedule.venues[0].rooms, room =>
-      room.activities
-        .filter(isActivityConfigurable)
-        .map(activity => [activity, getGroupifierData(room).stations])
-    );
-    const activities = flatMap(wcif.events, wcifEvent => {
-      return flatMap(wcifEvent.rounds, round => {
-        const competitors = competitorsByRound[round.id];
-        const roundActivitiesWithStations = activitiesWithStations
-          .filter(([activity, stations]) => activity.activityCode.startsWith(round.id));
-        const densities = roundActivitiesWithStations
-          .map(([activity, stations]) => stations * activityDuration(activity));
-        const densitiesSum = densities.reduce((x, y) => x + y, 0);
-        const normalizedDensities = densities.map(density => densitiesSum !== 0 ? density / densitiesSum : 1 / densities.length);
-        return zip(roundActivitiesWithStations, normalizedDensities).map(([[activity, stations], density]) =>
-          setGroupifierData('Activity', activity, {
-            density,
-            groups: suggestedGroupCount(Math.floor(density * competitors.length), wcifEvent.id, stations, 2),
-            scramblers: assignScramblers ? suggestedScramblerCount(stations) : 0,
-            runners: assignRunners ? suggestedRunnerCount(stations) : 0,
-            assignJudges
-          })
-        );
-      });
-    });
-
-    const newWcif = updateIn(wcif, ['schedule', 'venues', '0', 'rooms'], rooms =>
-      rooms.map(room => ({
-        ...room,
-        activities: room.activities.map(activity => activities.find(({ id }) => id === activity.id) || activity)
-      }))
-    );
-    onWcifChange(newWcif);
+    onWcifChange(populateActivitiesConfig(wcif, competitorsByRound, this.state));
   };
 
   render() {
@@ -111,7 +66,7 @@ export default class EventsConfig extends Component {
             </Grid>
           )}
         </Grid>
-        <Button onClick={this.handleNext}>
+        <Button onClick={this.handleNextClick}>
           Next
         </Button>
       </Paper>
