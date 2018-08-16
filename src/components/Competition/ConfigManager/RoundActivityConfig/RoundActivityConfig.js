@@ -30,18 +30,18 @@ export default class RoundActivityConfig extends PureComponent {
     const { groups, scramblers, runners, assignJudges, density } = getGroupifierData(activity);
 
     const stations = getGroupifierData(room).stations;
-    const competitors = Math.floor(expectedCompetitors.length * density);
+    const competitors = Math.round(expectedCompetitors.length * density);
     const groupSize = Math.round(competitors / groups);
 
     const groupsHelperText = groups
       ? pluralize(groupSize, 'person', 'people') + ' in group'
-      : '';
+      : ' ';
     const scramblersHelperText = scramblers
       ? pluralize(Math.round(groupSize / scramblers), 'cube') + ' per scrambler'
-      : '';
+      : ' ';
     const runnersHelperText = runners
       ? pluralize(Math.round(stations / runners), 'station') + ' per runner'
-      : '';
+      : ' ';
 
     return (
       <Grid container direction="column">
