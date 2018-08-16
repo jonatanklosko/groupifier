@@ -4,7 +4,6 @@ import Paper from '@material-ui/core/Paper';
 
 import RoomConfig from '../RoomConfig/RoomConfig';
 import { updateIn } from '../../../../logic/helpers';
-import { getGroupifierData } from '../../../../logic/wcifExtensions';
 import { anyActivityConfigured } from '../../../../logic/activities';
 
 export default class RoomsConfig extends Component {

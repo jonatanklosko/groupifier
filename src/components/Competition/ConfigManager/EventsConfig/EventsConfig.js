@@ -7,7 +7,6 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
 import EventPanel from '../EventPanel/EventPanel';
-import { getGroupifierData } from '../../../../logic/wcifExtensions';
 import { populateActivitiesConfig, anyActivityConfigured } from '../../../../logic/activities';
 
 export default class EventsConfig extends Component {
