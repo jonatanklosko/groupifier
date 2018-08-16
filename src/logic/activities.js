@@ -56,10 +56,13 @@ export const populateActivitiesConfig = (wcif, competitorsByRound, { assignScram
       );
     });
   });
-  return updateIn(wcif, ['schedule', 'venues', '0', 'rooms'], rooms =>
+  return activities.reduce(updateActivity, wcif);
+};
+
+export const updateActivity = (wcif, updatedActivity) =>
+  updateIn(wcif, ['schedule', 'venues', '0', 'rooms'], rooms =>
     rooms.map(room => ({
       ...room,
-      activities: room.activities.map(activity => activities.find(({ id }) => id === activity.id) || activity)
+      activities: room.activities.map(activity => activity.id === updatedActivity.id ? updatedActivity : activity)
     }))
   );
-};

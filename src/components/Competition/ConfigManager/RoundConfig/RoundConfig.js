@@ -4,21 +4,14 @@ import Typography from '@material-ui/core/Typography';
 
 import RoundActivityConfig from '../RoundActivityConfig/RoundActivityConfig';
 
-import { updateIn, flatMap } from '../../../../logic/helpers';
+import { flatMap } from '../../../../logic/helpers';
 import { roundIdToShortName } from '../../../../logic/formatters';
-import { isActivityConfigurable } from '../../../../logic/activities';
+import { isActivityConfigurable, updateActivity } from '../../../../logic/activities';
 
 export default class RoundConfig extends PureComponent {
-  handleActivityChange = updatedActivity => {
+  handleActivityChange = activity => {
     const { wcif, onWcifChange } = this.props;
-    onWcifChange(
-      updateIn(wcif, ['schedule', 'venues', '0', 'rooms'], rooms =>
-        rooms.map(room => ({
-          ...room,
-          activities: room.activities.map(activity => activity.id === updatedActivity.id ? updatedActivity : activity)
-        }))
-      )
-    );
+    onWcifChange(updateActivity(wcif, activity));
   };
 
   render() {
