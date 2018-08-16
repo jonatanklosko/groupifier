@@ -5,6 +5,7 @@ import Paper from '@material-ui/core/Paper';
 import RoomConfig from '../RoomConfig/RoomConfig';
 import { updateIn } from '../../../../logic/helpers';
 import { getGroupifierData } from '../../../../logic/wcifExtensions';
+import { anyActivityConfigured } from '../../../../logic/activities';
 
 export default class RoomsConfig extends Component {
   handleRoomChange = updatedRoom => {
@@ -18,11 +19,8 @@ export default class RoomsConfig extends Component {
 
   render() {
     const { wcif } = this.props;
-
     /* Disable rooms configuration once activities config has been populated. */
-    const disabled = wcif.schedule.venues[0].rooms.some(room =>
-      room.activities.some(getGroupifierData)
-    );
+    const disabled = anyActivityConfigured(wcif);
 
     return (
       <Paper style={{ padding: 16 }}>

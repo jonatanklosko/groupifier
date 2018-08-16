@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography';
 
 import EventPanel from '../EventPanel/EventPanel';
 import { getGroupifierData } from '../../../../logic/wcifExtensions';
-import { populateActivitiesConfig } from '../../../../logic/activities';
+import { populateActivitiesConfig, anyActivityConfigured } from '../../../../logic/activities';
 
 export default class EventsConfig extends Component {
   constructor(props) {
@@ -33,11 +33,7 @@ export default class EventsConfig extends Component {
   render() {
     const { wcif, competitorsByRound } = this.props;
 
-    const showEventsConfig = wcif.schedule.venues[0].rooms.some(room =>
-      room.activities.some(getGroupifierData)
-    );
-
-    return showEventsConfig ? (
+    return anyActivityConfigured(wcif) ? (
       wcif.events.map(wcifEvent =>
         <EventPanel
           key={wcifEvent.id}

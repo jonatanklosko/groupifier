@@ -66,3 +66,8 @@ export const updateActivity = (wcif, updatedActivity) =>
       activities: room.activities.map(activity => activity.id === updatedActivity.id ? updatedActivity : activity)
     }))
   );
+
+export const anyActivityConfigured = wcif =>
+  wcif.schedule.venues[0].rooms.some(room =>
+    room.activities.some(getGroupifierData)
+  );
