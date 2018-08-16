@@ -3,7 +3,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 
 import RoundActivityConfig from '../RoundActivityConfig/RoundActivityConfig';
-
+import RoomName from '../../../common/RoomName/RoomName';
 import { flatMap } from '../../../../logic/helpers';
 import { roundIdToShortName } from '../../../../logic/formatters';
 import { isActivityConfigurable, updateActivity } from '../../../../logic/activities';
@@ -30,15 +30,7 @@ export default class RoundConfig extends PureComponent {
         <Grid container spacing={16}>
         {activitiesWithRooms.map(([activity, room]) =>
           <Grid item xs key={room.id}>
-            <Typography variant="body2">
-              <span style={{
-                  display: 'inline-block',
-                  width: 10, height: 10, marginRight: 5,
-                  borderRadius: '100%', backgroundColor: room.color
-                }}
-              />
-              <span>{room.name}</span>
-            </Typography>
+            <RoomName room={room} />
             <RoundActivityConfig
               activity={activity}
               onChange={this.handleActivityChange}
