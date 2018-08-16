@@ -10,6 +10,7 @@ import EventPanel from '../EventPanel/EventPanel';
 import { updateIn, flatMap, zip } from '../../../../logic/helpers';
 import { getGroupifierData, setGroupifierData } from '../../../../logic/wcifExtensions';
 import { suggestedGroupCount } from '../../../../logic/groups';
+import { isActivityConfigurable } from '../../../../logic/activities';
 
 export default class EventsConfig extends Component {
   constructor(props) {
@@ -40,17 +41,19 @@ export default class EventsConfig extends Component {
       Math.floor(Math.log(stations + 2) / Math.log(3));
 
     const activitiesWithStations = flatMap(wcif.schedule.venues[0].rooms, room =>
-      room.activities.map(activity => [activity, getGroupifierData(room).stations])
+      room.activities
+        .filter(isActivityConfigurable)
+        .map(activity => [activity, getGroupifierData(room).stations])
     );
     const activities = flatMap(wcif.events, wcifEvent => {
       return flatMap(wcifEvent.rounds, round => {
         const competitors = competitorsByRound[round.id];
         const roundActivitiesWithStations = activitiesWithStations
-          .filter(([activity, stations]) => activity.activityCode === round.id);
+          .filter(([activity, stations]) => activity.activityCode.startsWith(round.id));
         const densities = roundActivitiesWithStations
           .map(([activity, stations]) => stations * activityDuration(activity));
         const densitiesSum = densities.reduce((x, y) => x + y, 0);
-        const normalizedDensities = densities.map(density => densitiesSum !== 0 ? density / densitiesSum : 0);
+        const normalizedDensities = densities.map(density => densitiesSum !== 0 ? density / densitiesSum : 1 / densities.length);
         return zip(roundActivitiesWithStations, normalizedDensities).map(([[activity, stations], density]) =>
           setGroupifierData('Activity', activity, {
             density,

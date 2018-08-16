@@ -13,6 +13,7 @@ import EventsConfig from './EventsConfig/EventsConfig';
 import { getGroupifierData } from '../../../logic/wcifExtensions';
 import { getPredictedCompetitorsByRound } from '../../../logic/competitors';
 import { isPresentDeep } from '../../../logic/helpers';
+import { isActivityConfigurable } from '../../../logic/activities';
 
 export default class ConfigManager extends Component {
   constructor(props) {
@@ -35,9 +36,7 @@ export default class ConfigManager extends Component {
   wcifConfigComplete() {
     return this.state.localWcif.schedule.venues[0].rooms.every(room => {
       const config = getGroupifierData(room);
-      const activitiesConfig = room.activities
-        .filter(({ activityCode }) => !activityCode.startsWith('other-'))
-        .map(getGroupifierData);
+      const activitiesConfig = room.activities.filter(isActivityConfigurable).map(getGroupifierData);
       return isPresentDeep(config) && activitiesConfig.every(isPresentDeep);
     });
   }

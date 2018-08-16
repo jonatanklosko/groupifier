@@ -6,6 +6,7 @@ import RoundActivityConfig from '../RoundActivityConfig/RoundActivityConfig';
 
 import { updateIn, flatMap } from '../../../../logic/helpers';
 import { roundIdToShortName } from '../../../../logic/formatters';
+import { isActivityConfigurable } from '../../../../logic/activities';
 
 export default class RoundConfig extends PureComponent {
   handleActivityChange = updatedActivity => {
@@ -25,7 +26,8 @@ export default class RoundConfig extends PureComponent {
 
     const activitiesWithRooms = flatMap(wcif.schedule.venues[0].rooms, room =>
       room.activities
-        .filter(activity => activity.activityCode === round.id)
+        .filter(activity => activity.activityCode.startsWith(round.id))
+        .filter(isActivityConfigurable)
         .map(activity => [activity, room])
     );
 
