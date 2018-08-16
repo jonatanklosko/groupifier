@@ -26,12 +26,12 @@ export default class EventsConfig extends Component {
   };
 
   handleNextClick = () => {
-    const { wcif, competitorsByRound, onWcifChange } = this.props;
-    onWcifChange(populateActivitiesConfig(wcif, competitorsByRound, this.state));
+    const { wcif, expectedCompetitorsByRound, onWcifChange } = this.props;
+    onWcifChange(populateActivitiesConfig(wcif, expectedCompetitorsByRound, this.state));
   };
 
   render() {
-    const { wcif, competitorsByRound } = this.props;
+    const { wcif, expectedCompetitorsByRound } = this.props;
 
     return anyActivityConfigured(wcif) ? (
       wcif.events.map(wcifEvent =>
@@ -39,7 +39,7 @@ export default class EventsConfig extends Component {
           key={wcifEvent.id}
           wcif={wcif}
           wcifEvent={wcifEvent}
-          competitorsByRound={competitorsByRound}
+          expectedCompetitorsByRound={expectedCompetitorsByRound}
           onWcifChange={this.props.onWcifChange}
         />
       )

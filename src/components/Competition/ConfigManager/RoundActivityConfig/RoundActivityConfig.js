@@ -26,10 +26,10 @@ export default class RoundActivityConfig extends PureComponent {
   };
 
   render() {
-    const { activity, roundCompetitors } = this.props;
+    const { activity, expectedCompetitors } = this.props;
     const { groups, scramblers, runners, assignJudges, density } = getGroupifierData(activity);
 
-    const competitors = Math.floor(roundCompetitors.length * density);
+    const competitors = Math.floor(expectedCompetitors.length * density);
     const groupSizeText = groups
       ? pluralize(Math.ceil(competitors / groups), 'person', 'people') + ' in group'
       : '';

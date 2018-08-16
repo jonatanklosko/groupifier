@@ -15,7 +15,7 @@ export default class RoundConfig extends PureComponent {
   };
 
   render() {
-    const { round, wcif, competitorsByRound } = this.props;
+    const { round, wcif, expectedCompetitorsByRound } = this.props;
 
     const activitiesWithRooms = flatMap(wcif.schedule.venues[0].rooms, room =>
       room.activities
@@ -34,7 +34,7 @@ export default class RoundConfig extends PureComponent {
             <RoundActivityConfig
               activity={activity}
               onChange={this.handleActivityChange}
-              roundCompetitors={competitorsByRound[round.id]}
+              expectedCompetitors={expectedCompetitorsByRound[round.id]}
             />
           </Grid>
         )}

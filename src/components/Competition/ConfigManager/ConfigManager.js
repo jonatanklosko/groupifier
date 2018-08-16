@@ -11,7 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import RoomsConfig from './RoomsConfig/RoomsConfig';
 import EventsConfig from './EventsConfig/EventsConfig';
 import { getGroupifierData } from '../../../logic/wcifExtensions';
-import { getPredictedCompetitorsByRound } from '../../../logic/competitors';
+import { getExpectedCompetitorsByRound } from '../../../logic/competitors';
 import { isPresentDeep } from '../../../logic/helpers';
 import { isActivityConfigurable } from '../../../logic/activities';
 
@@ -22,7 +22,7 @@ export default class ConfigManager extends Component {
       localWcif: props.wcif,
       tabValue: 0
     };
-    this.competitorsByRound = getPredictedCompetitorsByRound(props.wcif);
+    this.expectedCompetitorsByRound = getExpectedCompetitorsByRound(props.wcif);
   }
 
   handleWcifChange = wcif => {
@@ -65,7 +65,7 @@ export default class ConfigManager extends Component {
             <RoomsConfig wcif={localWcif} onWcifChange={this.handleWcifChange} />
           )}
           {tabValue === 1 && (
-            <EventsConfig wcif={localWcif} onWcifChange={this.handleWcifChange} competitorsByRound={this.competitorsByRound} />
+            <EventsConfig wcif={localWcif} onWcifChange={this.handleWcifChange} expectedCompetitorsByRound={this.expectedCompetitorsByRound} />
           )}
           {tabValue === 2 && (
             <Paper>

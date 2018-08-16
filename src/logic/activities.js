@@ -30,7 +30,7 @@ const suggestedScramblerCount = stations =>
 const suggestedRunnerCount = stations =>
   Math.floor(Math.log(stations + 2) / Math.log(3));
 
-export const populateActivitiesConfig = (wcif, competitorsByRound, { assignScramblers, assignRunners, assignJudges }) => {
+export const populateActivitiesConfig = (wcif, expectedCompetitorsByRound, { assignScramblers, assignRunners, assignJudges }) => {
   const activitiesWithStations = flatMap(wcif.schedule.venues[0].rooms, room =>
     room.activities
     .filter(isActivityConfigurable)
@@ -38,7 +38,7 @@ export const populateActivitiesConfig = (wcif, competitorsByRound, { assignScram
   );
   const activities = flatMap(wcif.events, wcifEvent => {
     return flatMap(wcifEvent.rounds, round => {
-      const competitors = competitorsByRound[round.id];
+      const competitors = expectedCompetitorsByRound[round.id];
       const roundActivitiesWithStations = activitiesWithStations
         .filter(([activity, stations]) => activity.activityCode.startsWith(round.id));
       const densities = roundActivitiesWithStations
