@@ -33,6 +33,7 @@ export default class RoundConfig extends PureComponent {
             <RoomName room={room} />
             <RoundActivityConfig
               activity={activity}
+              room={room}
               onChange={this.handleActivityChange}
               expectedCompetitors={expectedCompetitorsByRound[round.id]}
             />

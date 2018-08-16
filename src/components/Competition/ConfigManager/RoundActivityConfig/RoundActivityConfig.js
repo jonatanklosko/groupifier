@@ -26,12 +26,21 @@ export default class RoundActivityConfig extends PureComponent {
   };
 
   render() {
-    const { activity, expectedCompetitors } = this.props;
+    const { activity, room, expectedCompetitors } = this.props;
     const { groups, scramblers, runners, assignJudges, density } = getGroupifierData(activity);
 
+    const stations = getGroupifierData(room).stations;
     const competitors = Math.floor(expectedCompetitors.length * density);
-    const groupSizeText = groups
-      ? pluralize(Math.ceil(competitors / groups), 'person', 'people') + ' in group'
+    const groupSize = Math.round(competitors / groups);
+
+    const groupsHelperText = groups
+      ? pluralize(groupSize, 'person', 'people') + ' in group'
+      : '';
+    const scramblersHelperText = scramblers
+      ? pluralize(Math.round(groupSize / scramblers), 'cube') + ' per scrambler'
+      : '';
+    const runnersHelperText = runners
+      ? pluralize(Math.round(stations / runners), 'station') + ' per runner'
       : '';
 
     return (
@@ -41,8 +50,9 @@ export default class RoundActivityConfig extends PureComponent {
             label="Groups"
             value={groups}
             name="groups"
-            helperText={groupSizeText}
+            helperText={groupsHelperText}
             onChange={this.handleInputChange}
+            margin="dense"
           />
         </Grid>
         <Grid item>
@@ -50,7 +60,9 @@ export default class RoundActivityConfig extends PureComponent {
             label="Scramblers"
             value={scramblers}
             name="scramblers"
+            helperText={scramblersHelperText}
             onChange={this.handleInputChange}
+            margin="dense"
           />
         </Grid>
         <Grid item>
@@ -58,7 +70,9 @@ export default class RoundActivityConfig extends PureComponent {
             label="Runners"
             value={runners}
             name="runners"
+            helperText={runnersHelperText}
             onChange={this.handleInputChange}
+            margin="dense"
           />
         </Grid>
         <Grid item>
