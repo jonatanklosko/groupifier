@@ -9,7 +9,7 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import Paper from '@material-ui/core/Paper';
 import Icon from '@material-ui/core/Icon';
 
-import WcaApi from '../../logic/WcaApi';
+import { getUpcomingManageableCompetitions } from '../../logic/wca-api';
 
 export default class CompetitionList extends Component {
   constructor(props) {
@@ -21,7 +21,7 @@ export default class CompetitionList extends Component {
   }
 
   componentDidMount() {
-    WcaApi.getUpcomingManageableCompetitions()
+    getUpcomingManageableCompetitions()
       .then(competitions => this.setState({ competitions, loading: false }));
   }
 

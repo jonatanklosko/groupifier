@@ -8,7 +8,7 @@ import ConfigManager from './ConfigManager/ConfigManager';
 import GroupsCreator from './GroupsCreator/GroupsCreator';
 import RolesManager from './RolesManager/RolesManager';
 
-import WcaApi from '../../logic/WcaApi';
+import { getCompetitionWcif } from '../../logic/wca-api';
 
 export default class Competition extends Component {
   constructor(props) {
@@ -20,7 +20,7 @@ export default class Competition extends Component {
   }
 
   componentDidMount() {
-    WcaApi.getCompetitionWcif(this.props.match.params.competitionId)
+    getCompetitionWcif(this.props.match.params.competitionId)
       .then(wcif => this.setState({ wcif, loading: false }))
   }
 

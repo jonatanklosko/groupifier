@@ -4,14 +4,14 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import ListItemText from '@material-ui/core/ListItemText';
 
 import CompetitionList from './CompetitionList';
-import WcaApi from '../../logic/WcaApi';
+import { getUpcomingManageableCompetitions } from '../../logic/wca-api';
 
-jest.mock('../../logic/WcaApi');
+jest.mock('../../logic/wca-api');
 
 describe('CompetitionList', () => {
   it('renders linear progress until competitions are fetched', () => {
     const competitions = Promise.resolve([]);
-    WcaApi.getUpcomingManageableCompetitions.mockReturnValue(competitions);
+    getUpcomingManageableCompetitions.mockReturnValue(competitions);
     const wrapper = shallow(<CompetitionList />);
     expect(wrapper.contains(<LinearProgress />)).toEqual(true);
     return competitions.then(() => {
@@ -22,7 +22,7 @@ describe('CompetitionList', () => {
 
   it('renders appropriate message if there are no competitions', () => {
     const competitions = Promise.resolve([]);
-    WcaApi.getUpcomingManageableCompetitions.mockReturnValue(competitions);
+    getUpcomingManageableCompetitions.mockReturnValue(competitions);
     const wrapper = shallow(<CompetitionList />);
     return competitions.then(() => {
       wrapper.update();
@@ -34,7 +34,7 @@ describe('CompetitionList', () => {
 
   it('renders list of competitions if there are any', () => {
     const competitions = Promise.resolve([{ id: 'Example2018', name: 'Example 2018' }]);
-    WcaApi.getUpcomingManageableCompetitions.mockReturnValue(competitions);
+    getUpcomingManageableCompetitions.mockReturnValue(competitions);
     const wrapper = shallow(<CompetitionList />);
     return competitions.then(() => {
       wrapper.update();
