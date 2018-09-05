@@ -10,7 +10,7 @@ import Typography from '@material-ui/core/Typography';
 
 import RoomsConfig from './RoomsConfig/RoomsConfig';
 import EventsConfig from './EventsConfig/EventsConfig';
-import { getGroupifierData } from '../../../logic/wcifExtensions';
+import { getExtensionData } from '../../../logic/wcif-extensions';
 import { getExpectedCompetitorsByRound } from '../../../logic/competitors';
 import { isPresentDeep } from '../../../logic/utils';
 import { isActivityConfigurable } from '../../../logic/activities';
@@ -35,14 +35,18 @@ export default class ConfigManager extends Component {
 
   wcifConfigComplete() {
     return this.state.localWcif.schedule.venues[0].rooms.every(room => {
-      const config = getGroupifierData(room);
-      const activitiesConfig = room.activities.filter(isActivityConfigurable).map(getGroupifierData);
+      const config = getExtensionData('Room', room);
+      const activitiesConfig = room.activities
+        .filter(isActivityConfigurable)
+        .map(activity => getExtensionData('Activity', activity));
       return isPresentDeep(config) && activitiesConfig.every(isPresentDeep);
     });
   }
 
   roomsConfigComplete() {
-    return this.state.localWcif.schedule.venues[0].rooms.map(getGroupifierData).every(isPresentDeep);
+    return this.state.localWcif.schedule.venues[0].rooms
+      .map(room => getExtensionData('Room', room))
+      .every(isPresentDeep);
   }
 
   render() {

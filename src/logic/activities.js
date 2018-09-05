@@ -1,5 +1,5 @@
 import { updateIn, flatMap, zip, scaleToOne } from './utils';
-import { getGroupifierData, setGroupifierData } from './wcifExtensions';
+import { getExtensionData, setExtensionData } from './wcif-extensions';
 import { suggestedGroupCount } from './groups';
 
 const parseActivityCode = activityCode => {
@@ -26,7 +26,7 @@ const activityDuration = activity =>
 
 const activityStations = (wcif, activity) => {
   const room = wcif.schedule.venues[0].rooms.find(room => room.activities.includes(activity));
-  return getGroupifierData(room).stations;
+  return getExtensionData('Room', room).stations;
 };
 
 const suggestedScramblerCount = stations =>
@@ -49,7 +49,7 @@ export const populateActivitiesConfig = (wcif, expectedCompetitorsByRound, { ass
       ));
       return zip(roundActivities, capacities).map(([activity, capacity]) => {
         const stations = activityStations(wcif, activity);
-        return setGroupifierData('Activity', activity, {
+        return setExtensionData('Activity', activity, {
           capacity,
           groups: suggestedGroupCount(Math.floor(capacity * competitors.length), wcifEvent.id, stations),
           scramblers: assignScramblers ? suggestedScramblerCount(stations) : 0,
@@ -72,5 +72,5 @@ export const updateActivity = (wcif, updatedActivity) =>
 
 export const anyActivityConfigured = wcif =>
   wcif.schedule.venues[0].rooms.some(room =>
-    room.activities.some(getGroupifierData)
+    room.activities.some(activity => getExtensionData('Activity', activity))
   );

@@ -6,13 +6,13 @@ import Grid from '@material-ui/core/Grid';
 import PositiveIntegerInput from '../../../common/PositiveIntegerInput/PositiveIntegerInput';
 import ZeroablePositiveIntegerInput from '../../../common/ZeroablePositiveIntegerInput/ZeroablePositiveIntegerInput';
 import { setIn, pluralize } from '../../../../logic/utils';
-import { getGroupifierData, setGroupifierData } from '../../../../logic/wcifExtensions';
+import { getExtensionData, setExtensionData } from '../../../../logic/wcif-extensions';
 
 export default class RoundActivityConfig extends PureComponent {
   handlePropertyChange = (property, value) => {
     const { activity, onChange } = this.props;
     onChange(
-      setGroupifierData('Activity', activity, setIn(getGroupifierData(activity), [property], value))
+      setExtensionData('Activity', activity, setIn(getExtensionData('Activity', activity), [property], value))
     );
   };
 
@@ -27,9 +27,9 @@ export default class RoundActivityConfig extends PureComponent {
 
   render() {
     const { activity, room, expectedCompetitors } = this.props;
-    const { groups, scramblers, runners, assignJudges, capacity } = getGroupifierData(activity);
+    const { groups, scramblers, runners, assignJudges, capacity } = getExtensionData('Activity', activity);
 
-    const stations = getGroupifierData(room).stations;
+    const stations = getExtensionData('Room', room).stations;
     const competitors = Math.round(expectedCompetitors.length * capacity);
     const groupSize = Math.round(competitors / groups);
 

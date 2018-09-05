@@ -3,17 +3,17 @@ import React, { Component } from 'react';
 import RoomName from '../../../common/RoomName/RoomName';
 import ZeroablePositiveIntegerInput from '../../../common/ZeroablePositiveIntegerInput/ZeroablePositiveIntegerInput';
 import { setIn } from '../../../../logic/utils';
-import { getGroupifierData, setGroupifierData } from '../../../../logic/wcifExtensions';
+import { getExtensionData, setExtensionData } from '../../../../logic/wcif-extensions';
 
 export default class RoomConfig extends Component {
   get roomData() {
-    return getGroupifierData(this.props.room) || { stations: null };
+    return getExtensionData('Room', this.props.room) || { stations: null };
   }
 
   handleInputChange = (event, value) => {
     const { room, onChange } = this.props;
     onChange(
-      setGroupifierData('Room', room, setIn(
+      setExtensionData('Room', room, setIn(
         this.roomData, [event.target.name], value)
       )
     );
