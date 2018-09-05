@@ -6,7 +6,7 @@ import Grid from '@material-ui/core/Grid';
 import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
 
-import Events from '../../../../logic/Events';
+import { eventNameById } from '../../../../logic/events';
 import RoundConfig from '../RoundConfig/RoundConfig';
 
 export default class EventPanel extends PureComponent {
@@ -17,7 +17,7 @@ export default class EventPanel extends PureComponent {
       <ExpansionPanel>
         <ExpansionPanelSummary expandIcon={<Icon>expand_more</Icon>}>
           <Typography variant="subheading">
-            {Events.nameById(wcifEvent.id)}
+            {eventNameById(wcifEvent.id)}
           </Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>

@@ -1,9 +1,9 @@
-import Events from './Events';
+import { eventNameById } from './events';
 import { parseActivityCode } from './activities';
 
 export const roundIdToName = roundId => {
   const { eventId, roundNumber } = parseActivityCode(roundId);
-  return `${Events.nameById(eventId)} Round ${roundNumber}`;
+  return `${eventNameById(eventId)} Round ${roundNumber}`;
 };
 
 export const roundIdToShortName = roundId => {

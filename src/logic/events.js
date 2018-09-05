@@ -22,22 +22,14 @@ const events = [
 /* These events usually consist of a single group and doesn't require assigning scramblers and judges. */
 const selfsufficientEvents = ['333fm', '444bf', '555bf', '333mbf'];
 
-const Events = {
-  nameById(eventId) {
-    return this.propertyById('name', eventId);
-  },
+export const isSelfsufficient = eventId =>
+  selfsufficientEvents.includes(eventId);
 
-  shortNameById(eventId) {
-    return this.propertyById('shortName', eventId);
-  },
+export const eventNameById = eventId =>
+  propertyById('name', eventId);
 
-  propertyById(property, eventId) {
-    return events.find(event => event.id === eventId)[property];
-  },
+export const shortEventNameById = eventId =>
+  propertyById('shortName', eventId);
 
-  isSelfsufficient(eventId) {
-    return selfsufficientEvents.includes(eventId);
-  }
-}
-
-export default Events;
+const propertyById = (property, eventId) =>
+  events.find(event => event.id === eventId)[property];
