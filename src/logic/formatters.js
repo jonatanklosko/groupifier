@@ -1,15 +1,11 @@
 import Events from './Events';
-
-export const parseRoundId = roundId => {
-  const [, eventId, roundNumber] = roundId.match(/(\w+)-r(\d+)/);
-  return { eventId, roundNumber };
-};
+import { parseActivityCode } from './activities';
 
 export const roundIdToName = roundId => {
-  const { eventId, roundNumber } = parseRoundId(roundId);
+  const { eventId, roundNumber } = parseActivityCode(roundId);
   return `${Events.nameById(eventId)} Round ${roundNumber}`;
 };
 
 export const roundIdToShortName = roundId => {
-  return `Round ${parseRoundId(roundId).roundNumber}`;
+  return `Round ${parseActivityCode(roundId).roundNumber}`;
 };

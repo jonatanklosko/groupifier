@@ -2,7 +2,7 @@ import { updateIn, flatMap, zip, scaleToOne } from './utils';
 import { getExtensionData, setExtensionData } from './wcif-extensions';
 import { suggestedGroupCount } from './groups';
 
-const parseActivityCode = activityCode => {
+export const parseActivityCode = activityCode => {
   const [, e, r, g, a] = activityCode.match(/(\w+)(?:-r(\d+))?(?:-g(\d+))?(?:-a(\d+))?/);
   return {
     eventId: e,
