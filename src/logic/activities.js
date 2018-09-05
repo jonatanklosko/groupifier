@@ -1,4 +1,4 @@
-import { updateIn, flatMap, zip, scaleToOne } from './helpers';
+import { updateIn, flatMap, zip, scaleToOne } from './utils';
 import { getGroupifierData, setGroupifierData } from './wcifExtensions';
 import { suggestedGroupCount } from './groups';
 

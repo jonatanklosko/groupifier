@@ -12,7 +12,7 @@ import RoomsConfig from './RoomsConfig/RoomsConfig';
 import EventsConfig from './EventsConfig/EventsConfig';
 import { getGroupifierData } from '../../../logic/wcifExtensions';
 import { getExpectedCompetitorsByRound } from '../../../logic/competitors';
-import { isPresentDeep } from '../../../logic/helpers';
+import { isPresentDeep } from '../../../logic/utils';
 import { isActivityConfigurable } from '../../../logic/activities';
 
 export default class ConfigManager extends Component {

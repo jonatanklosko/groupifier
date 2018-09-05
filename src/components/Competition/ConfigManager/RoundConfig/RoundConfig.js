@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography';
 
 import RoundActivityConfig from '../RoundActivityConfig/RoundActivityConfig';
 import RoomName from '../../../common/RoomName/RoomName';
-import { flatMap } from '../../../../logic/helpers';
+import { flatMap } from '../../../../logic/utils';
 import { roundIdToShortName } from '../../../../logic/formatters';
 import { isActivityConfigurable, updateActivity } from '../../../../logic/activities';
 

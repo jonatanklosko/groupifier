@@ -5,7 +5,7 @@ import Grid from '@material-ui/core/Grid';
 
 import PositiveIntegerInput from '../../../common/PositiveIntegerInput/PositiveIntegerInput';
 import ZeroablePositiveIntegerInput from '../../../common/ZeroablePositiveIntegerInput/ZeroablePositiveIntegerInput';
-import { setIn, pluralize } from '../../../../logic/helpers';
+import { setIn, pluralize } from '../../../../logic/utils';
 import { getGroupifierData, setGroupifierData } from '../../../../logic/wcifExtensions';
 
 export default class RoundActivityConfig extends PureComponent {

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import RoomName from '../../../common/RoomName/RoomName';
 import ZeroablePositiveIntegerInput from '../../../common/ZeroablePositiveIntegerInput/ZeroablePositiveIntegerInput';
-import { setIn } from '../../../../logic/helpers';
+import { setIn } from '../../../../logic/utils';
 import { getGroupifierData, setGroupifierData } from '../../../../logic/wcifExtensions';
 
 export default class RoomConfig extends Component {
