@@ -1,0 +1,14 @@
+{
+  "$id": "https://jonatanklosko.github.io/groupifier/wcif-extensions/Room.json",
+  "title": "Room",
+  "description": "WCIF extension with additional room data.",
+  "type": "object",
+  "properties": {
+    "stations": {
+      "description": "The number of stations in the given room.",
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "required": ["stations"]
+}

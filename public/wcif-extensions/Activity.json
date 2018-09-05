@@ -1,0 +1,34 @@
+{
+  "$id": "https://jonatanklosko.github.io/groupifier/wcif-extensions/Activity.json",
+  "title": "Activity",
+  "description": "WCIF extension with additional activity data.",
+  "type": "object",
+  "properties": {
+    "capacity": {
+      "description": "The fraction of competitors of the corresponding round that should be assigned to the given activity.",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "groups": {
+      "description": "The number of groups for the given activity.",
+      "type": "integer",
+      "minimum": 1
+    },
+    "scramblers": {
+      "description": "The number of scramblers that should be assigned to the given activity.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "runners": {
+      "description": "The number of runners that should be assigned to the given activity.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "assignJudges": {
+      "description": "A flag indicating whether judges should be assigned to the given activity.",
+      "type": "boolean"
+    }
+  },
+  "required": ["capacity", "groups", "scramblers", "runners", "assignJudges"]
+}
