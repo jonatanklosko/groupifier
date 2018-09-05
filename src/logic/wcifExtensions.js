@@ -1,7 +1,7 @@
 const GROUPIFIER_EXTENSION_ID = 'groupifier';
 
 const groupifierExtension = (entityId, data) => ({
-  id: GROUPIFIER_EXTENSION_ID,
+  id: `${GROUPIFIER_EXTENSION_ID}.${entityId}`,
   specUrl: `${process.env.PUBLIC_URL}/wcif-extensions/${entityId}.json`,
   data
 });
