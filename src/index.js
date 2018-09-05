@@ -4,8 +4,8 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './components/App/App';
 import registerServiceWorker from './registerServiceWorker';
-import Auth from './logic/Auth';
+import { initializeAuth } from './logic/auth';
 
-Auth.initialize();
+initializeAuth();
 ReactDOM.render(<App />, document.getElementById('root'));
 registerServiceWorker();

@@ -1,4 +1,4 @@
-import Auth from './Auth';
+import { wcaAccessToken } from './auth';
 
 export const getUpcomingManageableCompetitions = () => {
   const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
@@ -17,7 +17,7 @@ const wcaApiFetch = (path, fetchOptions = {}) => {
 
   return fetch(`${baseApiUrl}${path}`, Object.assign({}, fetchOptions, {
     headers: new Headers({
-      'Authorization': `Bearer ${Auth.wcaAccessToken}`,
+      'Authorization': `Bearer ${wcaAccessToken()}`,
       'Content-Type': 'application/json'
     })
   }))

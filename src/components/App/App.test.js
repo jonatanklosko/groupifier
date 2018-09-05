@@ -3,7 +3,7 @@ import { mount } from 'enzyme';
 
 import App from './App';
 
-jest.mock('../../logic/Auth');
+jest.mock('../../logic/auth');
 
 it('renders without crashing', () => {
   mount(<App />);

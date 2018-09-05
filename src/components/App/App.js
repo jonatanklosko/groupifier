@@ -9,22 +9,22 @@ import Footer from '../Footer/Footer';
 import Header from '../Header/Header';
 import Home from '../Home/Home';
 
-import Auth from '../../logic/Auth';
+import { isSignedIn, signIn, signOut } from '../../logic/auth';
 
 export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isSignedIn: Auth.isSignedIn()
+      isSignedIn: isSignedIn()
     };
   }
 
   handleSignIn = () => {
-    Auth.signIn();
+    signIn();
   };
 
   handleSignOut = () => {
-    Auth.signOut();
+    signOut();
     this.setState({ isSignedIn: false })
   };
 
