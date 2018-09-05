@@ -1,6 +1,6 @@
 import Events from './Events';
 
-export const suggestedGroupCount = (competitorCount, eventId, stations, minGroupCount) => {
+export const suggestedGroupCount = (competitorCount, eventId, stations) => {
   if (Events.isSelfsufficient(eventId)) {
     return 1;
   } else {
@@ -9,6 +9,7 @@ export const suggestedGroupCount = (competitorCount, eventId, stations, minGroup
        this way we don't end up with much more than the perfect amount of people in a single group.
        Having more small groups is preferred over having fewer big groups. */
     const calculatedGroupCount = Math.round(competitorCount / preferredGroupSize + 0.4);
-    return Math.max(calculatedGroupCount, minGroupCount);
+    /* Suggest at least 2 groups, so that there are people to scramble. */
+    return Math.max(calculatedGroupCount, 2);
   }
 };

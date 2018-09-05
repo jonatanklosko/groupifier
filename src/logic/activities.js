@@ -52,7 +52,7 @@ export const populateActivitiesConfig = (wcif, expectedCompetitorsByRound, { ass
         const stations = activityStations(wcif, activity);
         return setGroupifierData('Activity', activity, {
           density,
-          groups: suggestedGroupCount(Math.floor(density * competitors.length), wcifEvent.id, stations, 2),
+          groups: suggestedGroupCount(Math.floor(density * competitors.length), wcifEvent.id, stations),
           scramblers: assignScramblers ? suggestedScramblerCount(stations) : 0,
           runners: assignRunners ? suggestedRunnerCount(stations) : 0,
           assignJudges
