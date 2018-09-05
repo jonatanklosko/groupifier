@@ -1,4 +1,4 @@
-import { updateIn, flatMap, zip } from './helpers';
+import { updateIn, flatMap, zip, scaleToOne } from './helpers';
 import { getGroupifierData, setGroupifierData } from './wcifExtensions';
 import { suggestedGroupCount } from './groups';
 
@@ -44,11 +44,10 @@ export const populateActivitiesConfig = (wcif, expectedCompetitorsByRound, { ass
       const competitors = expectedCompetitorsByRound[round.id];
       const roundActivities = activities
         .filter(activity => activity.activityCode.startsWith(round.id));
-      const capacities = roundActivities
-        .map(activity => activityStations(wcif, activity) * activityDuration(activity));
-      const capacitiesSum = capacities.reduce((x, y) => x + y, 0);
-      const normalizedCapacities = capacities.map(capacity => capacitiesSum !== 0 ? capacity / capacitiesSum : 1 / capacities.length);
-      return zip(roundActivities, normalizedCapacities).map(([activity, capacity]) => {
+      const capacities = scaleToOne(roundActivities.map(activity =>
+        activityStations(wcif, activity) * activityDuration(activity)
+      ));
+      return zip(roundActivities, capacities).map(([activity, capacity]) => {
         const stations = activityStations(wcif, activity);
         return setGroupifierData('Activity', activity, {
           capacity,

@@ -81,6 +81,19 @@ export const isPresentDeep = value =>
 export const pluralize = (count, singular, plural) =>
   `${count} ${count === 1 ? singular : (plural || singular + 's')}`
 
+/**
+ * Returns a new array with items summing up to 1, preserving elements proportionality.
+ * When the given array is empty, returns an empty array.
+ *
+ * @param {Array} arr
+ * @returns {Array}
+ */
+export const scaleToOne = arr => {
+  if (arr.length === 0) return [];
+  const sum = arr.reduce((x, y) => x + y, 0);
+  return arr.map(x => sum !== 0 ? x / sum : 1 / arr.length);
+};
+
 export const flatMap = (arr, fn) =>
   arr.reduce((xs, x) => xs.concat(fn(x)), []);
 
