@@ -8,22 +8,8 @@ import Typography from '@material-ui/core/Typography';
 
 import Events from '../../../../logic/Events';
 import RoundConfig from '../RoundConfig/RoundConfig';
-import { setGroupifierData } from '../../../../logic/wcifExtensions';
 
 export default class EventPanel extends PureComponent {
-  handleRoundChange = updatedRound => {
-    const { wcifEvent, onChange } = this.props;
-    onChange({
-      ...wcifEvent,
-      rounds: wcifEvent.rounds.map(round => round.id === updatedRound.id ? updatedRound : round)
-    });
-  };
-
-  handleEventConfigChange = config => {
-    const { wcifEvent, onChange } = this.props;
-    onChange(setGroupifierData('Event', wcifEvent, config));
-  };
-
   render() {
     const { wcifEvent, wcif, expectedCompetitorsByRound, onWcifChange } = this.props;
 
