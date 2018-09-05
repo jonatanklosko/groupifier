@@ -44,15 +44,15 @@ export const populateActivitiesConfig = (wcif, expectedCompetitorsByRound, { ass
       const competitors = expectedCompetitorsByRound[round.id];
       const roundActivities = activities
         .filter(activity => activity.activityCode.startsWith(round.id));
-      const densities = roundActivities
+      const capacities = roundActivities
         .map(activity => activityStations(wcif, activity) * activityDuration(activity));
-      const densitiesSum = densities.reduce((x, y) => x + y, 0);
-      const normalizedDensities = densities.map(density => densitiesSum !== 0 ? density / densitiesSum : 1 / densities.length);
-      return zip(roundActivities, normalizedDensities).map(([activity, density]) => {
+      const capacitiesSum = capacities.reduce((x, y) => x + y, 0);
+      const normalizedCapacities = capacities.map(capacity => capacitiesSum !== 0 ? capacity / capacitiesSum : 1 / capacities.length);
+      return zip(roundActivities, normalizedCapacities).map(([activity, capacity]) => {
         const stations = activityStations(wcif, activity);
         return setGroupifierData('Activity', activity, {
-          density,
-          groups: suggestedGroupCount(Math.floor(density * competitors.length), wcifEvent.id, stations),
+          capacity,
+          groups: suggestedGroupCount(Math.floor(capacity * competitors.length), wcifEvent.id, stations),
           scramblers: assignScramblers ? suggestedScramblerCount(stations) : 0,
           runners: assignRunners ? suggestedRunnerCount(stations) : 0,
           assignJudges
