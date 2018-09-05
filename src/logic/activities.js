@@ -2,7 +2,7 @@ import { updateIn, flatMap, zip } from './helpers';
 import { getGroupifierData, setGroupifierData } from './wcifExtensions';
 import { suggestedGroupCount } from './groups';
 
-export const parseActivityCode = activityCode => {
+const parseActivityCode = activityCode => {
   const [, e, r, g, a] = activityCode.match(/(\w+)(?:-r(\d+))?(?:-g(\d+))?(?:-a(\d+))?/);
   return {
     eventId: e,
@@ -21,7 +21,7 @@ export const isActivityConfigurable = activity => {
     && (['333fm', '333mbf'].includes(eventId) ? attemptNumber === 1 : !attemptNumber);
 };
 
-export const activityDuration = activity =>
+const activityDuration = activity =>
   new Date(activity.endTime) - new Date(activity.startTime)
 
 const suggestedScramblerCount = stations =>
@@ -33,8 +33,8 @@ const suggestedRunnerCount = stations =>
 export const populateActivitiesConfig = (wcif, expectedCompetitorsByRound, { assignScramblers, assignRunners, assignJudges }) => {
   const activitiesWithStations = flatMap(wcif.schedule.venues[0].rooms, room =>
     room.activities
-    .filter(isActivityConfigurable)
-    .map(activity => [activity, getGroupifierData(room).stations])
+      .filter(isActivityConfigurable)
+      .map(activity => [activity, getGroupifierData(room).stations])
   );
   const activities = flatMap(wcif.events, wcifEvent => {
     return flatMap(wcifEvent.rounds, round => {
