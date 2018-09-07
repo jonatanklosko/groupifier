@@ -15,7 +15,8 @@ export default class EventsConfig extends Component {
     this.state = {
       assignScramblers: true,
       assignRunners: true,
-      assignJudges: true
+      assignJudges: true,
+      expandedPanel: null
     };
   }
 
@@ -29,8 +30,12 @@ export default class EventsConfig extends Component {
     onWcifChange(populateActivitiesConfig(wcif, expectedCompetitorsByRound, this.state));
   };
 
+  handlePanelChange = (panel, expanded) => {
+    this.setState({ expandedPanel: expanded ? panel : null });
+  };
+
   render() {
-    const { wcif, expectedCompetitorsByRound } = this.props;
+    const { wcif, expectedCompetitorsByRound, onWcifChange } = this.props;
 
     return anyActivityConfigured(wcif) ? (
       wcif.events.map(wcifEvent =>
@@ -39,7 +44,9 @@ export default class EventsConfig extends Component {
           wcif={wcif}
           wcifEvent={wcifEvent}
           expectedCompetitorsByRound={expectedCompetitorsByRound}
-          onWcifChange={this.props.onWcifChange}
+          onWcifChange={onWcifChange}
+          expanded={this.state.expandedPanel === wcifEvent.id}
+          onPanelChange={this.handlePanelChange}
         />
       )
     ) : (

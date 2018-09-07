@@ -10,11 +10,16 @@ import { eventNameById } from '../../../../logic/events';
 import RoundConfig from '../RoundConfig/RoundConfig';
 
 export default class EventPanel extends PureComponent {
+  handlePanelChange = (event, expanded) => {
+    const { wcifEvent, onPanelChange } = this.props;
+    onPanelChange(wcifEvent.id, expanded);
+  };
+
   render() {
-    const { wcifEvent, wcif, expectedCompetitorsByRound, onWcifChange } = this.props;
+    const { wcifEvent, wcif, expectedCompetitorsByRound, onWcifChange, expanded } = this.props;
 
     return (
-      <ExpansionPanel>
+      <ExpansionPanel onChange={this.handlePanelChange} expanded={expanded}>
         <ExpansionPanelSummary expandIcon={<Icon>expand_more</Icon>}>
           <Typography variant="subheading">
             {eventNameById(wcifEvent.id)}
