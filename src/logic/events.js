@@ -19,12 +19,6 @@ const events = [
   { id: '333mbf', name: '3x3x3 Multi-Blind',  shortName: 'MBLD'  }
 ];
 
-/* These events usually consist of a single group and doesn't require assigning scramblers and judges. */
-const selfsufficientEvents = ['333fm', '444bf', '555bf', '333mbf'];
-
-export const isSelfsufficient = eventId =>
-  selfsufficientEvents.includes(eventId);
-
 export const eventNameById = eventId =>
   propertyById('name', eventId);
 
