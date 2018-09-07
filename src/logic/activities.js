@@ -45,7 +45,7 @@ export const populateActivitiesConfig = (wcif, expectedCompetitorsByRound, { ass
         const stations = activityStations(wcif, activity);
         return setExtensionData('Activity', activity, {
           capacity,
-          groups: suggestedGroupCount(Math.floor(capacity * competitors.length), stations),
+          groups: suggestedGroupCount(Math.round(capacity * competitors.length), stations),
           scramblers: assignScramblers ? suggestedScramblerCount(stations) : 0,
           runners: assignRunners ? suggestedRunnerCount(stations) : 0,
           assignJudges
