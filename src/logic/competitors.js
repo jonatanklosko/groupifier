@@ -1,11 +1,11 @@
-import { activityCodeToName } from './activities';
+import { parseActivityCode, activityCodeToName } from './activities';
 
 const best = (person, eventId, type = 'single') => {
   const personalBest = person.personalBests.find(pb => pb.eventId === eventId && pb.type === type);
   return personalBest ? personalBest.best : Infinity;
 };
 
-const advancingCompetitors = (sortedCompetitors, advancementCondition, eventId) => {
+const competitorsExpectedToAdvance = (sortedCompetitors, advancementCondition, eventId) => {
   switch (advancementCondition.type) {
     case 'ranking':
       return sortedCompetitors.slice(0, advancementCondition.level);
@@ -19,7 +19,7 @@ const advancingCompetitors = (sortedCompetitors, advancementCondition, eventId) 
   }
 };
 
-const getExpectedCompetitorsByRound = wcif =>
+export const getExpectedCompetitorsByRound = wcif =>
   wcif.events.reduce((expectedCompetitorsByRound, wcifEvent) => {
     const [firstRound, ...nextRounds] = wcifEvent.rounds;
     expectedCompetitorsByRound[firstRound.id] = wcif.persons
@@ -28,13 +28,38 @@ const getExpectedCompetitorsByRound = wcif =>
     nextRounds.reduce(([round, competitors], nextRound) => {
       const advancementCondition = round.advancementCondition;
       if (!advancementCondition) throw new Error(`Mising advancement condition for ${activityCodeToName(round.id)}.`);
-      const nextRoundCompetitors = advancingCompetitors(competitors, advancementCondition, wcifEvent.id);
+      const nextRoundCompetitors = competitorsExpectedToAdvance(competitors, advancementCondition, wcifEvent.id);
       expectedCompetitorsByRound[nextRound.id] = nextRoundCompetitors;
       return [nextRound, nextRoundCompetitors];
     }, [firstRound, expectedCompetitorsByRound[firstRound.id]]);
     return expectedCompetitorsByRound;
   }, {});
 
-export {
-  getExpectedCompetitorsByRound
+const advancingResults = (results, advancementCondition) => {
+  switch (advancementCondition.type) {
+    case 'ranking':
+      return results.filter(result => result.ranking <= advancementCondition.level);
+    case 'percent':
+      return results.filter(result => result.ranking <= Math.floor(results.length * advancementCondition.level * 0.01));
+    case 'attemptResult':
+      return results.filter(result => result.attempts.some(attempt => attempt.result < advancementCondition.level));
+    default:
+      throw new Error(`Unrecognised AdvancementCondition type: '${advancementCondition.type}'`);
+  }
+};
+
+export const competitorsForRound = (wcif, roundId) => {
+  const { eventId, roundNumber } = parseActivityCode(roundId);
+  if (roundNumber === 1) {
+    return wcif.persons.filter(({ registration }) =>
+      registration && registration.status === 'accepted' && registration.eventIds.includes(eventId)
+    );
+  } else {
+    const previousRound = wcif.events
+      .find(wcifEvent => wcifEvent.id === eventId).rounds
+      .find(round => parseActivityCode(round.id).roundNumber === roundNumber - 1);
+    const { results, advancementCondition } = previousRound;
+    return advancingResults(results, advancementCondition)
+      .map(result => wcif.persons.find(person => person.registrantId === result.personId));
+  }
 };
