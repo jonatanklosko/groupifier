@@ -1,6 +1,7 @@
 import { updateIn, flatMap, zip, scaleToOne } from './utils';
 import { getExtensionData, setExtensionData } from './wcif-extensions';
 import { suggestedGroupCount, suggestedScramblerCount, suggestedRunnerCount } from './formulas';
+import { eventNameById } from './events';
 
 export const parseActivityCode = activityCode => {
   const [, e, r, g, a] = activityCode.match(/(\w+)(?:-r(\d+))?(?:-g(\d+))?(?:-a(\d+))?/);
@@ -12,6 +13,16 @@ export const parseActivityCode = activityCode => {
   };
 };
 
+export const activityCodeToName = activityCode => {
+  const { eventId, roundNumber, groupNumber, attemptNumber } = parseActivityCode(activityCode);
+  return [
+    eventId ? eventNameById(eventId) : '',
+    roundNumber ? `Round ${roundNumber}` : '',
+    groupNumber ? `Group ${groupNumber}` : '',
+    attemptNumber ? `Attempt ${attemptNumber}` : ''
+  ].join(', ');
+};
+
 /* We store configuration in round activities.
    In case of FM and MBLD use the first attempt activity instead
    (as there's no top level round activity for these). */
@@ -21,7 +32,7 @@ export const isActivityConfigurable = activity => {
     && (['333fm', '333mbf'].includes(eventId) ? attemptNumber === 1 : !attemptNumber);
 };
 
-const activityDuration = activity =>
+export const activityDuration = activity =>
   new Date(activity.endTime) - new Date(activity.startTime)
 
 const activityStations = (wcif, activity) => {

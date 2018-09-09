@@ -1,4 +1,4 @@
-import { roundIdToName } from './formatters';
+import { activityCodeToName } from './activities';
 
 const best = (person, eventId, type = 'single') => {
   const personalBest = person.personalBests.find(pb => pb.eventId === eventId && pb.type === type);
@@ -27,7 +27,7 @@ const getExpectedCompetitorsByRound = wcif =>
       .sort((person1, person2) => best(person1, wcifEvent.id) - best(person2, wcifEvent.id));
     nextRounds.reduce(([round, competitors], nextRound) => {
       const advancementCondition = round.advancementCondition;
-      if (!advancementCondition) throw new Error(`Mising advancement condition for ${roundIdToName(round.id)}.`);
+      if (!advancementCondition) throw new Error(`Mising advancement condition for ${activityCodeToName(round.id)}.`);
       const nextRoundCompetitors = advancingCompetitors(competitors, advancementCondition, wcifEvent.id);
       expectedCompetitorsByRound[nextRound.id] = nextRoundCompetitors;
       return [nextRound, nextRoundCompetitors];
