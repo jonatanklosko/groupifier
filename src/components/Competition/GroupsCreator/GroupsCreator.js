@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 
+import { wipStuff } from '../../../logic/groups';
+
 export default class GroupsCreator extends Component {
   constructor(props) {
     super(props);
@@ -16,7 +18,7 @@ export default class GroupsCreator extends Component {
   };
 
   createGroups = () => {
-
+    wipStuff(this.state.localWcif);
   };
 
   render() {
@@ -26,7 +28,7 @@ export default class GroupsCreator extends Component {
     return (
       <Grid container spacing={8} justify="flex-end">
         <Grid item xs={12}>
-          <Button onClick={this.createGroups()}>
+          <Button onClick={this.createGroups}>
             Create groups
           </Button>
         </Grid>
