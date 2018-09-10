@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 
-import { wipStuff } from '../../../logic/groups';
+import { createGroupActivities } from '../../../logic/groups';
 
 export default class GroupsCreator extends Component {
   constructor(props) {
@@ -18,7 +18,7 @@ export default class GroupsCreator extends Component {
   };
 
   createGroups = () => {
-    wipStuff(this.state.localWcif);
+    console.log(createGroupActivities(this.state.localWcif));
   };
 
   render() {
