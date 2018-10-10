@@ -1,4 +1,5 @@
 import { parseActivityCode, activityCodeToName } from './activities';
+import { sortBy } from './utils';
 
 const best = (person, eventId, type = 'single') => {
   const personalBest = person.personalBests.find(pb => pb.eventId === eventId && pb.type === type);
@@ -22,9 +23,10 @@ const competitorsExpectedToAdvance = (sortedCompetitors, advancementCondition, e
 export const getExpectedCompetitorsByRound = wcif =>
   wcif.events.reduce((expectedCompetitorsByRound, wcifEvent) => {
     const [firstRound, ...nextRounds] = wcifEvent.rounds;
-    expectedCompetitorsByRound[firstRound.id] = wcif.persons
-      .filter(person => person.registration && person.registration.eventIds.includes(wcifEvent.id))
-      .sort((person1, person2) => best(person1, wcifEvent.id) - best(person2, wcifEvent.id));
+    const registeredCompetitors = wcif.persons.filter(person =>
+      person.registration && person.registration.eventIds.includes(wcifEvent.id)
+    );
+    expectedCompetitorsByRound[firstRound.id] = sortBy(registeredCompetitors, competitor => best(competitor, wcifEvent.id));
     nextRounds.reduce(([round, competitors], nextRound) => {
       const advancementCondition = round.advancementCondition;
       if (!advancementCondition) throw new Error(`Mising advancement condition for ${activityCodeToName(round.id)}.`);
@@ -51,15 +53,16 @@ const advancingResults = (results, advancementCondition) => {
 export const competitorsForRound = (wcif, roundId) => {
   const { eventId, roundNumber } = parseActivityCode(roundId);
   if (roundNumber === 1) {
-    return wcif.persons.filter(({ registration }) =>
+    const registeredCompetitors = wcif.persons.filter(({ registration }) =>
       registration && registration.status === 'accepted' && registration.eventIds.includes(eventId)
     );
+    return sortBy(registeredCompetitors, competitor => -best(competitor, eventId));
   } else {
     const previousRound = wcif.events
       .find(wcifEvent => wcifEvent.id === eventId).rounds
       .find(round => parseActivityCode(round.id).roundNumber === roundNumber - 1);
     const { results, advancementCondition } = previousRound;
-    return advancingResults(results, advancementCondition)
+    return sortBy(advancingResults(results, advancementCondition), result => -result.ranking)
       .map(result => wcif.persons.find(person => person.registrantId === result.personId));
   }
 };

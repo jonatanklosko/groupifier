@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 
-import { createGroupActivities } from '../../../logic/groups';
+import { createGroupActivities, assignGroups } from '../../../logic/groups';
 
 export default class GroupsCreator extends Component {
   constructor(props) {
@@ -18,7 +18,10 @@ export default class GroupsCreator extends Component {
   };
 
   createGroups = () => {
-    console.log(createGroupActivities(this.state.localWcif));
+    const updatedWcif = createGroupActivities(this.state.localWcif);
+    const start = performance.now();
+    console.log(assignGroups(updatedWcif));
+    console.log('Took', performance.now() - start);
   };
 
   render() {

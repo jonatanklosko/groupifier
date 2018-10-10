@@ -29,7 +29,7 @@ export default class RoundConfig extends PureComponent {
         <Typography variant="subheading">{roundIdToShortName(round.id)}</Typography>
         <Grid container spacing={16}>
         {activitiesWithRooms.map(([activity, room]) =>
-          <Grid item xs key={room.id}>
+          <Grid item xs key={activity.id}>
             <RoomName room={room} />
             <RoundActivityConfig
               activity={activity}

@@ -94,8 +94,34 @@ export const scaleToOne = arr => {
   return arr.map(x => sum !== 0 ? x / sum : 1 / arr.length);
 };
 
+/**
+ * Applies the given function to the elements and returns the first truthy value of these calls.
+ *
+ * @param {Array} arr
+ * @returns {*}
+ */
+export const firstResult = (arr, fn) =>
+  arr.reduce((result, x) => result || fn(x), null);
+
 export const flatMap = (arr, fn) =>
   arr.reduce((xs, x) => xs.concat(fn(x)), []);
 
 export const zip = (...arrs) =>
   arrs[0].map((_, i) => arrs.map(arr => arr[i]));
+
+export const findLast = (arr, predicate) =>
+  arr.reduceRight((found, x) =>
+    found !== undefined ? found : (predicate(x) ? x : undefined)
+  , undefined);
+
+export const intersection = (xs, ys) =>
+  xs.filter(x => ys.includes(x))
+
+const sortCompare = (x, y) =>
+  x < y ? -1 : (x > y ? 1 : 0);
+
+export const sortBy = (arr, fn) =>
+  arr.slice().sort((x, y) => sortCompare(fn(x), fn(y)));
+
+export const addMilliseconds = (isoString, milliseconds) =>
+  new Date(new Date(isoString).getTime() + milliseconds).toISOString();

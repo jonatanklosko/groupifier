@@ -1,4 +1,4 @@
-import { updateIn, flatMap, zip, scaleToOne } from './utils';
+import { updateIn, flatMap, zip, scaleToOne, firstResult } from './utils';
 import { getExtensionData, setExtensionData } from './wcif-extensions';
 import { suggestedGroupCount, suggestedScramblerCount, suggestedRunnerCount } from './formulas';
 import { eventNameById } from './events';
@@ -16,11 +16,11 @@ export const parseActivityCode = activityCode => {
 export const activityCodeToName = activityCode => {
   const { eventId, roundNumber, groupNumber, attemptNumber } = parseActivityCode(activityCode);
   return [
-    eventId ? eventNameById(eventId) : '',
-    roundNumber ? `Round ${roundNumber}` : '',
-    groupNumber ? `Group ${groupNumber}` : '',
-    attemptNumber ? `Attempt ${attemptNumber}` : ''
-  ].join(', ');
+    eventId && eventNameById(eventId),
+    roundNumber && `Round ${roundNumber}`,
+    groupNumber && `Group ${groupNumber}`,
+    attemptNumber && `Attempt ${attemptNumber}`
+  ].filter(x => x).join(', ');
 };
 
 /* We store configuration in round activities.
@@ -78,4 +78,29 @@ export const updateActivity = (wcif, updatedActivity) =>
 export const anyActivityConfigured = wcif =>
   wcif.schedule.venues[0].rooms.some(room =>
     room.activities.some(activity => getExtensionData('Activity', activity))
+  );
+
+export const activitiesOverlap = (first, second) =>
+  first.startTime < second.endTime && second.startTime < first.endTime;
+
+const allActivities = wcif => {
+  const allChildActivities = ({ childActivities }) =>
+    childActivities.length > 0
+      ? [...childActivities, ...flatMap(childActivities, allChildActivities)]
+      : childActivities;
+  const activities = flatMap(wcif.schedule.venues[0].rooms, room => room.activities);
+  return [...activities, ...flatMap(activities, allChildActivities)];
+};
+
+export const maxActivityId = wcif =>
+  Math.max(...allActivities(wcif).map(activity => activity.id));
+
+const activityByIdRecursive = (activities, activityId) =>
+  firstResult(activities, activity =>
+    activity.id === activityId ? activity : activityByIdRecursive(activity.childActivities, activityId)
+  );
+
+export const activityById = (wcif, activityId) =>
+  firstResult(wcif.schedule.venues[0].rooms, room =>
+    activityByIdRecursive(room.activities, activityId)
   );
