@@ -14,10 +14,10 @@ import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
 
 const roles = [
-  { id: 'scrambler', name: 'Scrambler' },
-  { id: 'judge', name: 'Judge' },
-  { id: 'runner', name: 'Runner' },
-  { id: 'dataentry', name: 'Data entry' },
+  { id: 'staff-scrambler', name: 'Scrambler' },
+  { id: 'staff-judge', name: 'Judge' },
+  { id: 'staff-runner', name: 'Runner' },
+  { id: 'staff-dataentry', name: 'Data entry' },
 ];
 
 export default class RolesManager extends Component {
