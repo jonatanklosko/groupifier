@@ -18,10 +18,12 @@ export default class GroupsCreator extends Component {
   };
 
   createGroups = () => {
-    const updatedWcif = createGroupActivities(this.state.localWcif);
+    const wcifWithGroups = createGroupActivities(this.state.localWcif);
     const start = performance.now();
-    console.log(assignGroups(updatedWcif));
+    const wcifWithAssignments = assignGroups(wcifWithGroups);
+    console.log(wcifWithAssignments);
     console.log('Took', performance.now() - start);
+    this.setState({ localWcif: wcifWithAssignments });
   };
 
   render() {

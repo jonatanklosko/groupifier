@@ -9,6 +9,8 @@ export const createGroupActivities = wcif => {
   return rounds.reduce((wcif, round) => {
     /* For FMC and MBLD the activities are already scheduled, and there is always a single group. */
     if (hasDistributedAttempts(round.id)) return wcif;
+    /* If there are already groups created, don't override them. */
+    if (roundGroupActivities(wcif, round.id).length > 0) return wcif;
     const roundActivities = activities.filter(activity => activity.activityCode === round.id);
     const currentActivityId = maxActivityId(wcif);
     const activitiesWithGroups = roundActivities.map(activity => {
@@ -40,13 +42,13 @@ export const createGroupActivities = wcif => {
     });
     return activitiesWithGroups.reduce(updateActivity, wcif);
   }, wcif);
-}
+};
 
 export const assignGroups = wcif => {
   const activities = flatMap(wcif.schedule.venues[0].rooms, room => room.activities);
   const roundsToAssign = wcif.events
     .map(wcifEvent => wcifEvent.rounds.find(round => (round.results || []).length === 0))
-    .filter(round => round);
+    .filter(round => round && !groupsAssigned(wcif, round.id));
   /* Sort rounds by the number of groups, so the further the more possible timeframes there are. */
   const sortedRoundsToAssign = sortBy(roundsToAssign, round => {
     if (hasDistributedAttempts(round.id)) return -Infinity;
@@ -111,6 +113,21 @@ export const assignGroups = wcif => {
 
 const hasDistributedAttempts = roundId =>
   ['333fm', '333mbf'].includes(parseActivityCode(roundId).eventId);
+
+const groupsAssigned = (wcif, roundId) =>
+  roundGroupActivities(wcif, roundId).some(activity =>
+    wcif.persons.some(person =>
+      (person.assignments || []).some(assignment => assignment.activityId === activity.id)
+    )
+  );
+
+const roundGroupActivities = (wcif, roundId) =>
+  flatMap(wcif.schedule.venues[0].rooms, room =>
+    flatMap(
+      room.activities.filter(({ activityCode }) => activityCode.startsWith(roundId)),
+      activity => hasDistributedAttempts(roundId) ? [activity] : activity.childActivities
+    )
+  );
 
 const assignActivity = (competitors, activity) =>
   competitors.map(competitor => ({
