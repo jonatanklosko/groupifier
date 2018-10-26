@@ -1,7 +1,5 @@
 export const suggestedGroupCount = (competitorCount, stations) => {
-  if (stations === 0) {
-    return 1;
-  }
+  if (stations === 0) return 1;
   const preferredGroupSize = stations * 1.7;
   /* We calculate the number of perfectly-sized groups, and round it up starting from x.1,
      this way we don't end up with much more than the perfect amount of people in a single group.

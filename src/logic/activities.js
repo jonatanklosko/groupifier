@@ -104,3 +104,16 @@ export const activityById = (wcif, activityId) =>
   firstResult(wcif.schedule.venues[0].rooms, room =>
     activityByIdRecursive(room.activities, activityId)
   );
+
+export const hasDistributedAttempts = roundId =>
+  ['333fm', '333mbf'].includes(parseActivityCode(roundId).eventId);
+
+export const roundActivities = (wcif, roundId) =>
+  flatMap(wcif.schedule.venues[0].rooms, room =>
+    room.activities.filter(({ activityCode }) => activityCode.startsWith(roundId))
+  );
+
+export const roundGroupActivities = (wcif, roundId) =>
+  flatMap(roundActivities(wcif, roundId), activity =>
+    hasDistributedAttempts(roundId) ? [activity] : activity.childActivities
+  );

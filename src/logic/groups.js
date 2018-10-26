@@ -1,6 +1,8 @@
 import { zip, flatMap, scaleToOne, findLast, intersection, updateIn, sortBy, addMilliseconds } from './utils';
 import { getExtensionData } from './wcif-extensions';
-import { activityDuration, activityCodeToName, updateActivity, activitiesOverlap, parseActivityCode, maxActivityId, activityById } from './activities';
+import { activityDuration, activityCodeToName, updateActivity, activitiesOverlap,
+         parseActivityCode, maxActivityId, activityById, roundActivities,
+         roundGroupActivities, hasDistributedAttempts } from './activities';
 import { competitorsForRound } from './competitors';
 
 export const createGroupActivities = wcif => {
@@ -97,24 +99,11 @@ export const assignGroups = wcif => {
   }, wcif);
 };
 
-const hasDistributedAttempts = roundId =>
-  ['333fm', '333mbf'].includes(parseActivityCode(roundId).eventId);
-
 const groupsAssigned = (wcif, roundId) =>
   roundGroupActivities(wcif, roundId).some(activity =>
     wcif.persons.some(person =>
       (person.assignments || []).some(assignment => assignment.activityId === activity.id)
     )
-  );
-
-const roundActivities = (wcif, roundId) =>
-  flatMap(wcif.schedule.venues[0].rooms, room =>
-    room.activities.filter(({ activityCode }) => activityCode.startsWith(roundId))
-  );
-
-const roundGroupActivities = (wcif, roundId) =>
-  flatMap(roundActivities(wcif, roundId), activity =>
-    hasDistributedAttempts(roundId) ? [activity] : activity.childActivities
   );
 
 const assignActivity = (competitors, activity) =>
