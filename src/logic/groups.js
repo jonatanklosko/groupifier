@@ -5,15 +5,13 @@ import { competitorsForRound } from './competitors';
 
 export const createGroupActivities = wcif => {
   const rounds = flatMap(wcif.events, wcifEvent => wcifEvent.rounds);
-  const activities = flatMap(wcif.schedule.venues[0].rooms, room => room.activities);
   return rounds.reduce((wcif, round) => {
     /* For FMC and MBLD the activities are already scheduled, and there is always a single group. */
     if (hasDistributedAttempts(round.id)) return wcif;
     /* If there are already groups created, don't override them. */
     if (roundGroupActivities(wcif, round.id).length > 0) return wcif;
-    const roundActivities = activities.filter(activity => activity.activityCode === round.id);
     const currentActivityId = maxActivityId(wcif);
-    const activitiesWithGroups = roundActivities.map(activity => {
+    const activitiesWithGroups = roundActivities(wcif, round.id).map(activity => {
       const { groups } = getExtensionData('Activity', activity);
       const totalDuration = activityDuration(activity);
       const groupDuration = totalDuration / groups;
@@ -45,27 +43,21 @@ export const createGroupActivities = wcif => {
 };
 
 export const assignGroups = wcif => {
-  const activities = flatMap(wcif.schedule.venues[0].rooms, room => room.activities);
   const roundsToAssign = wcif.events
     .map(wcifEvent => wcifEvent.rounds.find(round => (round.results || []).length === 0))
     .filter(round => round && !groupsAssigned(wcif, round.id));
   /* Sort rounds by the number of groups, so the further the more possible timeframes there are. */
-  const sortedRoundsToAssign = sortBy(roundsToAssign, round => {
-    if (hasDistributedAttempts(round.id)) return -Infinity;
-    const roundActivities = activities.filter(activity => activity.activityCode.startsWith(round.id));
-    return roundActivities.reduce((groupCount, activity) =>
-      groupCount + getExtensionData('Activity', activity).groups
-    , 0);
-  });
+  const sortedRoundsToAssign = sortBy(roundsToAssign, round =>
+    hasDistributedAttempts(round.id) ? -Infinity : roundGroupActivities(wcif, round.id).length
+  );
   return sortedRoundsToAssign.reduce((wcif, round) => {
-    const roundActivities = activities.filter(activity => activity.activityCode.startsWith(round.id));
     const competitors = competitorsForRound(wcif, round.id);
     if (hasDistributedAttempts(round.id)) {
       /* In this case roundActivities are attempt activities, so we assign them all to the given person. */
-      const updatedCompetitors = roundActivities.reduce(assignActivity, competitors);
+      const updatedCompetitors = roundActivities(wcif, round.id).reduce(assignActivity, competitors);
       return updatePeople(wcif, updatedCompetitors);
     }
-    const groupActivitiesWithCapacity = flatMap(roundActivities, activity => {
+    const groupActivitiesWithCapacity = flatMap(roundActivities(wcif, round.id), activity => {
       const { capacity } = getExtensionData('Activity', activity);
       return activity.childActivities.map(groupActivity =>
         [groupActivity, capacity / activity.childActivities.length]
@@ -80,7 +72,6 @@ export const assignGroups = wcif => {
       competitors: []
     }));
     const sortedInitialGroups = sortBy(initialGroups, ({ activity }) => parseActivityCode(activity.activityCode).groupNumber);
-
     const groups = competitors.reduce((groups, competitor) => {
       const possibleGroups = groups.filter(group => availableDuring(wcif, group.activity, competitor));
       const preferredGroups = possibleGroups.filter(group => !overlapsAllCrucialPeople(wcif, groups, group.activity, competitor));
@@ -99,7 +90,6 @@ export const assignGroups = wcif => {
         return addCompetitorToGroupEnd(groups, notFullGroups[0].id, competitor);
       }
     }, sortedInitialGroups);
-
     const updatedCompetitors = flatMap(groups, ({ activity, competitors }) =>
       assignActivity(competitors, activity)
     );
@@ -117,12 +107,14 @@ const groupsAssigned = (wcif, roundId) =>
     )
   );
 
-const roundGroupActivities = (wcif, roundId) =>
+const roundActivities = (wcif, roundId) =>
   flatMap(wcif.schedule.venues[0].rooms, room =>
-    flatMap(
-      room.activities.filter(({ activityCode }) => activityCode.startsWith(roundId)),
-      activity => hasDistributedAttempts(roundId) ? [activity] : activity.childActivities
-    )
+    room.activities.filter(({ activityCode }) => activityCode.startsWith(roundId))
+  );
+
+const roundGroupActivities = (wcif, roundId) =>
+  flatMap(roundActivities(wcif, roundId), activity =>
+    hasDistributedAttempts(roundId) ? [activity] : activity.childActivities
   );
 
 const assignActivity = (competitors, activity) =>
