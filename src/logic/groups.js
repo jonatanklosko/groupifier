@@ -76,7 +76,7 @@ export const assignGroups = wcif => {
     const sortedInitialGroups = sortBy(initialGroups, ({ activity }) => parseActivityCode(activity.activityCode).groupNumber);
     const groups = competitors.reduce((groups, competitor) => {
       const possibleGroups = groups.filter(group => availableDuring(wcif, group.activity, competitor));
-      const preferredGroups = possibleGroups.filter(group => !overlapsAllCrucialPeople(wcif, groups, group.activity, competitor));
+      const preferredGroups = possibleGroups.filter(group => !overlapsEveryoneWithSameRole(wcif, groups, group.activity, competitor));
       const potentialGroups = preferredGroups.length > 0 ? preferredGroups : possibleGroups;
       const notFullGroups = groups.filter(({ size, competitors }) => competitors.length < size);
       if (potentialGroups.length > 0) {
@@ -128,7 +128,7 @@ const availableDuring = (wcif, activity, competitor) =>
     activitiesOverlap(activityById(wcif, activityId), activity)
   );
 
-const overlapsAllCrucialPeople = (wcif, groups, activity, competitor) =>
+const overlapsEveryoneWithSameRole = (wcif, groups, activity, competitor) =>
   intersection(['dataentry', 'delegate', 'organizer'], competitor.roles)
     .some(role => {
       const others = wcif.persons.filter(person => person.roles.includes(role));
@@ -164,7 +164,7 @@ const moveSomeoneRight = (wcif, groups, groupId) => {
     if (updatedGroups) return updatedGroups;
     const competitorToMove = findLast(group.competitors, competitor =>
       availableDuring(wcif, furtherGroup.activity, competitor)
-      && !overlapsAllCrucialPeople(wcif, groups, furtherGroup.activity, competitor)
+      && !overlapsEveryoneWithSameRole(wcif, groups, furtherGroup.activity, competitor)
     );
     if (!competitorToMove) return null; // Try the next group.
     if (furtherGroup.competitors.length < furtherGroup.size) {
@@ -183,7 +183,7 @@ const moveSomeoneLeft = (wcif, groups, groupId) => {
     if (updatedGroups) return updatedGroups;
     const competitorToMove = group.competitors.find(competitor =>
       availableDuring(wcif, previousGroup.activity, competitor)
-      && !overlapsAllCrucialPeople(wcif, groups, previousGroup.activity, competitor)
+      && !overlapsEveryoneWithSameRole(wcif, groups, previousGroup.activity, competitor)
     );
     if (!competitorToMove) return null; // Try the previous group.
     const groupsWithSpot = moveSomeoneRight(wcif, groups, previousGroup.id);
