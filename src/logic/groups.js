@@ -63,9 +63,7 @@ export const assignGroups = wcif => {
     if (hasDistributedAttempts(round.id)) {
       /* In this case roundActivities are attempt activities, so we assign them all to the given person. */
       const updatedCompetitors = roundActivities.reduce(assignActivity, competitors);
-      return updateIn(wcif, ['persons'], persons => persons.map(person =>
-        updatedCompetitors.find(competitor => competitor.wcaUserId === person.wcaUserId) || person
-      ));
+      return updatePeople(wcif, updatedCompetitors);
     }
     const groupActivitiesWithCapacity = flatMap(roundActivities, activity => {
       const { capacity } = getExtensionData('Activity', activity);
@@ -105,9 +103,7 @@ export const assignGroups = wcif => {
     const updatedCompetitors = flatMap(groups, ({ activity, competitors }) =>
       assignActivity(competitors, activity)
     );
-    return updateIn(wcif, ['persons'], persons => persons.map(person =>
-      updatedCompetitors.find(competitor => competitor.wcaUserId === person.wcaUserId) || person
-    ));
+    return updatePeople(wcif, updatedCompetitors);
   }, wcif);
 };
 
@@ -134,6 +130,11 @@ const assignActivity = (competitors, activity) =>
     ...competitor,
     assignments: [...(competitor.assignments || []), { activityId: activity.id, assignmentCode: 'competitor' }]
   }));
+
+const updatePeople = (wcif, updatedPeople) =>
+  updateIn(wcif, ['persons'], persons => persons.map(person =>
+    updatedPeople.find(updatedPerson => updatedPerson.wcaUserId === person.wcaUserId) || person
+  ));
 
 const calculateGroupSizes = ([capacity, ...capacities], competitorCount) => {
   if (!capacity) return [];
