@@ -1,4 +1,4 @@
-import { parseActivityCode, activityCodeToName } from './activities';
+import { parseActivityCode, activityCodeToName, activityById } from './activities';
 import { sortBy } from './utils';
 
 export const best = (person, eventId, type) => {
@@ -80,3 +80,8 @@ export const age = person => {
 
 export const staffAssignments = person =>
   (person.assignments || []).filter(({ assignmentCode }) => assignmentCode.startsWith('staff-'));
+
+export const staffAssignmentsForEvent = (wcif, person, eventId) =>
+  staffAssignments(person).filter(({ activityId }) =>
+    parseActivityCode(activityById(wcif, activityId).activityCode).eventId === eventId
+  );
