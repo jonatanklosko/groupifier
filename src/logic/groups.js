@@ -3,7 +3,7 @@ import { getExtensionData } from './wcif-extensions';
 import { activityDuration, activityCodeToName, updateActivity, activitiesOverlap,
          parseActivityCode, maxActivityId, activityById, roundActivities,
          roundGroupActivities, hasDistributedAttempts } from './activities';
-import { competitorsForRound, bestAverageAndSingle, age, assignmentsOfType } from './competitors';
+import { competitorsForRound, bestAverageAndSingle, age, staffAssignments } from './competitors';
 
 export const createGroupActivities = wcif => {
   const rounds = flatMap(wcif.events, wcifEvent => wcifEvent.rounds);
@@ -114,18 +114,19 @@ const assignScrambling = (wcif, roundsToAssign) => {
     if (hasDistributedAttempts(round.id)) return wcif;
     return roundActivities(wcif, round.id).reduce((wcif, activity) => {
       const { scramblers } = getExtensionData('Activity', activity);
+      if (scramblers === 0) return wcif;
       const staffScramblers = wcif.persons.filter(person => person.roles.includes('staff-scrambler')) ;
       const competitors = difference(competitorsForRound(wcif, round.id), staffScramblers);
       return activity.childActivities.reduce((wcif, groupActivity) => {
         const available = people => people.filter(person => availableDuring(wcif, groupActivity, person));
         const sortedAvailableStaff = sortByArray(available(staffScramblers), competitor => [
-          Math.floor(assignmentsOfType(competitor, 'staff-scrambler').length / 3),
+          Math.floor(staffAssignments(competitor).length / 3),
           ...bestAverageAndSingle(competitor, parseActivityCode(round.id).eventId)
         ]);
         const sortedAvailableCompetitors = sortByArray(available(competitors), competitor => [
           age(competitor) >= 10 ? -1 : 1,
           intersection(['dataentry', 'delegate', 'organizer'], competitor.roles).length,
-          assignmentsOfType(competitor, 'staff-scrambler').length < 6 ? -1 : 1,
+          staffAssignments(competitor).length < 6 ? -1 : 1,
           ...bestAverageAndSingle(competitor, parseActivityCode(round.id).eventId)
         ]);
         const potentialScramblers = [...sortedAvailableStaff, ...sortedAvailableCompetitors];
@@ -136,7 +137,31 @@ const assignScrambling = (wcif, roundsToAssign) => {
   }, wcif);
 };
 
-const assignJudging = (wcif, roundsToAssign) => wcif;
+const assignJudging = (wcif, roundsToAssign) => {
+  return roundsToAssign.reduce((wcif, round) => {
+    if (hasDistributedAttempts(round.id)) return wcif;
+    return roundActivities(wcif, round.id).reduce((wcif, activity) => {
+      const { stations, assignJudges } = getExtensionData('Activity', activity);
+      if (!assignJudges) return wcif;
+      const staffJudges = wcif.persons.filter(person => person.roles.includes('staff-judge')) ;
+      const people = difference(wcif.persons, staffJudges);
+      return activity.childActivities.reduce((wcif, groupActivity) => {
+        const available = people => people.filter(person => availableDuring(wcif, groupActivity, person));
+        const sortedAvailableStaff = sortByArray(available(staffJudges), competitor => [
+          Math.floor(staffAssignments(competitor).length / 3)
+        ]);
+        const sortedAvailablePeople = sortByArray(available(people), competitor => [
+          age(competitor) >= 10 ? -1 : 1,
+          intersection(['dataentry', 'delegate', 'organizer'], competitor.roles).length,
+          staffAssignments(competitor).length < 6 ? -1 : 1
+        ]);
+        const potentialJudges = [...sortedAvailableStaff, ...sortedAvailablePeople];
+        const updatedPeople = assignActivity(groupActivity, 'staff-judge', potentialJudges.slice(0, stations));
+        return updatePeople(wcif, updatedPeople);
+      }, wcif);
+    }, wcif);
+  }, wcif);
+};
 
 const groupsAssigned = (wcif, roundId) =>
   roundGroupActivities(wcif, roundId).some(activity =>

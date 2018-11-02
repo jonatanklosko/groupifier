@@ -78,5 +78,5 @@ export const age = person => {
   return Math.floor(diffMs / (1000 * 60 * 60 * 24 * 365.2425));
 }
 
-export const assignmentsOfType = (person, type) =>
-  (person.assignments || []).filter(({ assignmentCode }) => assignmentCode === type);
+export const staffAssignments = person =>
+  (person.assignments || []).filter(({ assignmentCode }) => assignmentCode.startsWith('staff-'));
