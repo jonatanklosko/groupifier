@@ -1,5 +1,5 @@
 import { parseActivityCode, activityCodeToName, activityById } from './activities';
-import { sortBy } from './utils';
+import { sortBy, sortByArray } from './utils';
 
 export const best = (person, eventId, type) => {
   if (!['single', 'average'].includes(type)) {
@@ -32,7 +32,9 @@ export const getExpectedCompetitorsByRound = wcif =>
     const registeredCompetitors = wcif.persons.filter(person =>
       person.registration && person.registration.eventIds.includes(wcifEvent.id)
     );
-    expectedCompetitorsByRound[firstRound.id] = sortBy(registeredCompetitors, competitor => best(competitor, wcifEvent.id, 'single'));
+    expectedCompetitorsByRound[firstRound.id] = sortByArray(registeredCompetitors,
+      competitor => bestAverageAndSingle(competitor, wcifEvent.id)
+    );
     nextRounds.reduce(([round, competitors], nextRound) => {
       const advancementCondition = round.advancementCondition;
       if (!advancementCondition) throw new Error(`Mising advancement condition for ${activityCodeToName(round.id)}.`);
@@ -62,7 +64,9 @@ export const competitorsForRound = (wcif, roundId) => {
     const registeredCompetitors = wcif.persons.filter(({ registration }) =>
       registration && registration.status === 'accepted' && registration.eventIds.includes(eventId)
     );
-    return sortBy(registeredCompetitors, competitor => -best(competitor, eventId, 'single'));
+    return sortByArray(registeredCompetitors,
+      competitor => bestAverageAndSingle(competitor, eventId).map(result => -result)
+    );
   } else {
     const previousRound = wcif.events
       .find(wcifEvent => wcifEvent.id === eventId).rounds
