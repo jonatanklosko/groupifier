@@ -1,7 +1,10 @@
 import { parseActivityCode, activityCodeToName } from './activities';
 import { sortBy } from './utils';
 
-const best = (person, eventId, type = 'single') => {
+export const best = (person, eventId, type) => {
+  if (!['single', 'average'].includes(type)) {
+    throw new Error(`Personal best type must be either 'single' or 'average'. Received '${type}'.`);
+  }
   const personalBest = person.personalBests.find(pb => pb.eventId === eventId && pb.type === type);
   return personalBest ? personalBest.best : Infinity;
 };
@@ -14,7 +17,7 @@ const competitorsExpectedToAdvance = (sortedCompetitors, advancementCondition, e
       return sortedCompetitors.slice(0, Math.floor(sortedCompetitors.length * advancementCondition.level * 0.01));
     case 'attemptResult':
       /* Assume that competitors having personal best better than the advancement condition will make it to the next round. */
-      return sortedCompetitors.filter(person => best(person, eventId) < advancementCondition.level);
+      return sortedCompetitors.filter(person => best(person, eventId, 'single') < advancementCondition.level);
     default:
       throw new Error(`Unrecognised AdvancementCondition type: '${advancementCondition.type}'`);
   }
@@ -26,7 +29,7 @@ export const getExpectedCompetitorsByRound = wcif =>
     const registeredCompetitors = wcif.persons.filter(person =>
       person.registration && person.registration.eventIds.includes(wcifEvent.id)
     );
-    expectedCompetitorsByRound[firstRound.id] = sortBy(registeredCompetitors, competitor => best(competitor, wcifEvent.id));
+    expectedCompetitorsByRound[firstRound.id] = sortBy(registeredCompetitors, competitor => best(competitor, wcifEvent.id, 'single'));
     nextRounds.reduce(([round, competitors], nextRound) => {
       const advancementCondition = round.advancementCondition;
       if (!advancementCondition) throw new Error(`Mising advancement condition for ${activityCodeToName(round.id)}.`);
@@ -56,7 +59,7 @@ export const competitorsForRound = (wcif, roundId) => {
     const registeredCompetitors = wcif.persons.filter(({ registration }) =>
       registration && registration.status === 'accepted' && registration.eventIds.includes(eventId)
     );
-    return sortBy(registeredCompetitors, competitor => -best(competitor, eventId));
+    return sortBy(registeredCompetitors, competitor => -best(competitor, eventId, 'single'));
   } else {
     const previousRound = wcif.events
       .find(wcifEvent => wcifEvent.id === eventId).rounds
@@ -66,3 +69,8 @@ export const competitorsForRound = (wcif, roundId) => {
       .map(result => wcif.persons.find(person => person.registrantId === result.personId));
   }
 };
+
+export const age = person => {
+  const diffMs = Date.now() - new Date(person.birthdate).getTime();
+  return Math.floor(diffMs / (1000 * 60 * 60 * 24 * 365.2425));
+}

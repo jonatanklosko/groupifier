@@ -117,11 +117,17 @@ export const findLast = (arr, predicate) =>
 export const intersection = (xs, ys) =>
   xs.filter(x => ys.includes(x))
 
+export const uniq = xs =>
+  [...new Set(xs)];
+
 const sortCompare = (x, y) =>
   x < y ? -1 : (x > y ? 1 : 0);
 
 export const sortBy = (arr, fn) =>
   arr.slice().sort((x, y) => sortCompare(fn(x), fn(y)));
+
+export const sortByArray = (arr, fn) =>
+  arr.slice().sort((x, y) => firstResult(zip(fn(x), fn(y)), ([a, b]) => sortCompare(a, b)));
 
 export const addMilliseconds = (isoString, milliseconds) =>
   new Date(new Date(isoString).getTime() + milliseconds).toISOString();
