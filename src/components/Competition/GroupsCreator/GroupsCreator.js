@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
 
 import { createGroupActivities, assignTasks } from '../../../logic/groups';
+import { roundsMissingAssignments } from '../../../logic/activities';
 
 export default class GroupsCreator extends Component {
   constructor(props) {
@@ -33,9 +35,13 @@ export default class GroupsCreator extends Component {
     return (
       <Grid container spacing={8} justify="flex-end">
         <Grid item xs={12}>
-          <Button onClick={this.createGroups}>
-            Create groups
-          </Button>
+          {roundsMissingAssignments(localWcif).length > 0 && (
+            <SnackbarContent message="There are rounds with no tasks assigned" action={
+              <Button onClick={this.createGroups} color="secondary" size="small">
+                Assign tasks
+              </Button>
+            }/>
+          )}
         </Grid>
         <Grid item>
           <Button variant="contained" component={Link} to={`/competitions/${localWcif.id}`}>

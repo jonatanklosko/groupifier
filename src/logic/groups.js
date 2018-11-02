@@ -2,7 +2,7 @@ import { zip, flatMap, scaleToOne, findLast, intersection, updateIn, sortBy, sor
 import { getExtensionData } from './wcif-extensions';
 import { activityDuration, activityCodeToName, updateActivity, activitiesOverlap,
          parseActivityCode, maxActivityId, activityById, roundActivities,
-         roundGroupActivities, groupActivitiesAssigned, hasDistributedAttempts } from './activities';
+         roundGroupActivities, roundsMissingAssignments, hasDistributedAttempts } from './activities';
 import { competitorsForRound, bestAverageAndSingle, age, staffAssignments, staffAssignmentsForEvent } from './competitors';
 
 export const createGroupActivities = wcif => {
@@ -46,9 +46,7 @@ export const createGroupActivities = wcif => {
 
 export const assignTasks = wcif => {
   /* TODO: Create groups if there are none. */
-  const roundsToAssign = wcif.events
-    .map(wcifEvent => wcifEvent.rounds.find(round => (round.results || []).length === 0))
-    .filter(round => round && !groupActivitiesAssigned(wcif, round.id));
+  const roundsToAssign = roundsMissingAssignments(wcif);
   return [assignGroups, assignScrambling, assignRunning, assignJudging]
     .reduce((wcif, assignmentFn) => assignmentFn(wcif, roundsToAssign), wcif);
 };

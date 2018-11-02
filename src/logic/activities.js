@@ -124,3 +124,8 @@ export const groupActivitiesAssigned = (wcif, roundId) =>
       (person.assignments || []).some(assignment => assignment.activityId === activity.id)
     )
   );
+
+export const roundsMissingAssignments = wcif =>
+  wcif.events
+    .map(wcifEvent => wcifEvent.rounds.find(round => (round.results || []).length === 0))
+    .filter(round => round && !groupActivitiesAssigned(wcif, round.id));
