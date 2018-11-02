@@ -117,3 +117,10 @@ export const roundGroupActivities = (wcif, roundId) =>
   flatMap(roundActivities(wcif, roundId), activity =>
     hasDistributedAttempts(roundId) ? [activity] : activity.childActivities
   );
+
+export const groupActivitiesAssigned = (wcif, roundId) =>
+  roundGroupActivities(wcif, roundId).some(activity =>
+    wcif.persons.some(person =>
+      (person.assignments || []).some(assignment => assignment.activityId === activity.id)
+    )
+  );

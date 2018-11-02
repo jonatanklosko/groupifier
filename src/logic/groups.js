@@ -2,7 +2,7 @@ import { zip, flatMap, scaleToOne, findLast, intersection, updateIn, sortBy, sor
 import { getExtensionData } from './wcif-extensions';
 import { activityDuration, activityCodeToName, updateActivity, activitiesOverlap,
          parseActivityCode, maxActivityId, activityById, roundActivities,
-         roundGroupActivities, hasDistributedAttempts } from './activities';
+         roundGroupActivities, groupActivitiesAssigned, hasDistributedAttempts } from './activities';
 import { competitorsForRound, bestAverageAndSingle, age, staffAssignments, staffAssignmentsForEvent } from './competitors';
 
 export const createGroupActivities = wcif => {
@@ -48,7 +48,7 @@ export const assignTasks = wcif => {
   /* TODO: Create groups if there are none. */
   const roundsToAssign = wcif.events
     .map(wcifEvent => wcifEvent.rounds.find(round => (round.results || []).length === 0))
-    .filter(round => round && !groupsAssigned(wcif, round.id));
+    .filter(round => round && !groupActivitiesAssigned(wcif, round.id));
   return [assignGroups, assignScrambling, assignRunning, assignJudging]
     .reduce((wcif, assignmentFn) => assignmentFn(wcif, roundsToAssign), wcif);
 };
@@ -106,6 +106,63 @@ const assignGroups = (wcif, roundsToAssign) => {
     return updatePeople(wcif, updatedCompetitors);
   }, wcif);
 };
+
+const calculateGroupSizes = ([capacity, ...capacities], competitorCount) => {
+  if (!capacity) return [];
+  const groupSize = Math.round(capacity * competitorCount);
+  return [groupSize, ...calculateGroupSizes(scaleToOne(capacities), competitorCount - groupSize)];
+};
+
+const moveSomeoneRight = (wcif, groups, groupId) => {
+  const group = groups.find(({ id }) => id === groupId);
+  return groups.slice(groups.indexOf(group) + 1).reduce((updatedGroups, furtherGroup) => {
+    if (updatedGroups) return updatedGroups;
+    const competitorToMove = findLast(group.competitors, competitor =>
+      availableDuring(wcif, furtherGroup.activity, competitor)
+      && !overlapsEveryoneWithSameRole(wcif, groups, furtherGroup.activity, competitor)
+    );
+    if (!competitorToMove) return null; // Try the next group.
+    if (furtherGroup.competitors.length < furtherGroup.size) {
+      return moveCompetitorToGroupStart(groups, groupId, furtherGroup.id, competitorToMove);
+    } else if (furtherGroup.competitors.length === furtherGroup.size) {
+      const groupsWithSpot = moveSomeoneRight(wcif, groups, furtherGroup.id);
+      return groupsWithSpot && moveCompetitorToGroupStart(groupsWithSpot, groupId, furtherGroup.id, competitorToMove);
+    }
+    return null;
+  }, null);
+};
+
+const moveSomeoneLeft = (wcif, groups, groupId) => {
+  const group = groups.find(({ id }) => id === groupId);
+  return groups.slice(0, groups.indexOf(group)).reduceRight((updatedGroups, previousGroup) => {
+    if (updatedGroups) return updatedGroups;
+    const competitorToMove = group.competitors.find(competitor =>
+      availableDuring(wcif, previousGroup.activity, competitor)
+      && !overlapsEveryoneWithSameRole(wcif, groups, previousGroup.activity, competitor)
+    );
+    if (!competitorToMove) return null; // Try the previous group.
+    const groupsWithSpot = moveSomeoneRight(wcif, groups, previousGroup.id);
+    return groupsWithSpot && moveCompetitorToGroupEnd(groupsWithSpot, groupId, previousGroup.id, competitorToMove);
+  }, null);
+};
+
+const updateCompetitorsInGroup = (groups, groupId, updater) =>
+  groups.map(group => group.id === groupId ? updateIn(group, ['competitors'], updater) : group);
+
+const addCompetitorToGroupStart = (groups, groupId, competitor) =>
+  updateCompetitorsInGroup(groups, groupId, competitors => [competitor, ...competitors]);
+
+const addCompetitorToGroupEnd = (groups, groupId, competitor) =>
+  updateCompetitorsInGroup(groups, groupId, competitors => [...competitors, competitor]);
+
+const removeCompetitorFromGroup = (groups, groupId, competitor) =>
+  updateCompetitorsInGroup(groups, groupId, competitors => competitors.filter(other => other !== competitor));
+
+const moveCompetitorToGroupStart = (groups, fromGroupId, toGroupId, competitor) =>
+  addCompetitorToGroupStart(removeCompetitorFromGroup(groups, fromGroupId, competitor), toGroupId, competitor);
+
+const moveCompetitorToGroupEnd = (groups, fromGroupId, toGroupId, competitor) =>
+  addCompetitorToGroupEnd(removeCompetitorFromGroup(groups, fromGroupId, competitor), toGroupId, competitor);
 
 const assignScrambling = (wcif, roundsToAssign) => {
   /* Sort rounds by the number of competitors, so the further the more people able to scramble there are. */
@@ -193,13 +250,6 @@ const assignJudging = (wcif, roundsToAssign) => {
   }, wcif);
 };
 
-const groupsAssigned = (wcif, roundId) =>
-  roundGroupActivities(wcif, roundId).some(activity =>
-    wcif.persons.some(person =>
-      (person.assignments || []).some(assignment => assignment.activityId === activity.id)
-    )
-  );
-
 const assignActivity = (activity, assignmentCode, competitors) =>
   competitors.map(competitor => ({
     ...competitor,
@@ -210,12 +260,6 @@ const updatePeople = (wcif, updatedPeople) =>
   updateIn(wcif, ['persons'], persons => persons.map(person =>
     updatedPeople.find(updatedPerson => updatedPerson.wcaUserId === person.wcaUserId) || person
   ));
-
-const calculateGroupSizes = ([capacity, ...capacities], competitorCount) => {
-  if (!capacity) return [];
-  const groupSize = Math.round(capacity * competitorCount);
-  return [groupSize, ...calculateGroupSizes(scaleToOne(capacities), competitorCount - groupSize)];
-};
 
 const availableDuring = (wcif, activity, competitor) =>
   !(competitor.assignments || []).some(({ activityId }) =>
@@ -233,54 +277,3 @@ const overlapsEveryoneWithSameRole = (wcif, groups, activity, competitor) =>
         )
       );
     });
-
-const updateCompetitorsInGroup = (groups, groupId, updater) =>
-  groups.map(group => group.id === groupId ? updateIn(group, ['competitors'], updater) : group);
-
-const addCompetitorToGroupStart = (groups, groupId, competitor) =>
-  updateCompetitorsInGroup(groups, groupId, competitors => [competitor, ...competitors]);
-
-const addCompetitorToGroupEnd = (groups, groupId, competitor) =>
-  updateCompetitorsInGroup(groups, groupId, competitors => [...competitors, competitor]);
-
-const removeCompetitorFromGroup = (groups, groupId, competitor) =>
-  updateCompetitorsInGroup(groups, groupId, competitors => competitors.filter(other => other !== competitor));
-
-const moveCompetitorToGroupStart = (groups, fromGroupId, toGroupId, competitor) =>
-  addCompetitorToGroupStart(removeCompetitorFromGroup(groups, fromGroupId, competitor), toGroupId, competitor);
-
-const moveCompetitorToGroupEnd = (groups, fromGroupId, toGroupId, competitor) =>
-  addCompetitorToGroupEnd(removeCompetitorFromGroup(groups, fromGroupId, competitor), toGroupId, competitor);
-
-const moveSomeoneRight = (wcif, groups, groupId) => {
-  const group = groups.find(({ id }) => id === groupId);
-  return groups.slice(groups.indexOf(group) + 1).reduce((updatedGroups, furtherGroup) => {
-    if (updatedGroups) return updatedGroups;
-    const competitorToMove = findLast(group.competitors, competitor =>
-      availableDuring(wcif, furtherGroup.activity, competitor)
-      && !overlapsEveryoneWithSameRole(wcif, groups, furtherGroup.activity, competitor)
-    );
-    if (!competitorToMove) return null; // Try the next group.
-    if (furtherGroup.competitors.length < furtherGroup.size) {
-      return moveCompetitorToGroupStart(groups, groupId, furtherGroup.id, competitorToMove);
-    } else if (furtherGroup.competitors.length === furtherGroup.size) {
-      const groupsWithSpot = moveSomeoneRight(wcif, groups, furtherGroup.id);
-      return groupsWithSpot && moveCompetitorToGroupStart(groupsWithSpot, groupId, furtherGroup.id, competitorToMove);
-    }
-    return null;
-  }, null);
-};
-
-const moveSomeoneLeft = (wcif, groups, groupId) => {
-  const group = groups.find(({ id }) => id === groupId);
-  return groups.slice(0, groups.indexOf(group)).reduceRight((updatedGroups, previousGroup) => {
-    if (updatedGroups) return updatedGroups;
-    const competitorToMove = group.competitors.find(competitor =>
-      availableDuring(wcif, previousGroup.activity, competitor)
-      && !overlapsEveryoneWithSameRole(wcif, groups, previousGroup.activity, competitor)
-    );
-    if (!competitorToMove) return null; // Try the previous group.
-    const groupsWithSpot = moveSomeoneRight(wcif, groups, previousGroup.id);
-    return groupsWithSpot && moveCompetitorToGroupEnd(groupsWithSpot, groupId, previousGroup.id, competitorToMove);
-  }, null);
-};
