@@ -28,7 +28,7 @@ export const createGroupActivities = wcif => {
       }));
       return { ...activity, childActivities: groupActivities };
     });
-    sortBy(
+    sortByArray(
       flatMap(activitiesWithGroups, activity => activity.childActivities),
       ({ startTime, endTime }) => [startTime, endTime]
     ).forEach((groupActivity, index) => {
