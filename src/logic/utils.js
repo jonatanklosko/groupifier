@@ -131,8 +131,12 @@ const sortCompare = (x, y) =>
 export const sortBy = (arr, fn) =>
   arr.slice().sort((x, y) => sortCompare(fn(x), fn(y)));
 
-export const sortByArray = (arr, fn) =>
-  arr.slice().sort((x, y) => firstResult(zip(fn(x), fn(y)), ([a, b]) => sortCompare(a, b)));
+export const sortByArray = (arr, fn) => {
+  const values = new Map(arr.map(x => [x, fn(x)])); /* Compute every value once. */
+  return arr.slice().sort((x, y) =>
+    firstResult(zip(values.get(x), values.get(y)), ([a, b]) => sortCompare(a, b))
+  );
+}
 
 export const addMilliseconds = (isoString, milliseconds) =>
   new Date(new Date(isoString).getTime() + milliseconds).toISOString();
