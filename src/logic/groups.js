@@ -49,7 +49,7 @@ export const assignTasks = wcif => {
   const roundsToAssign = wcif.events
     .map(wcifEvent => wcifEvent.rounds.find(round => (round.results || []).length === 0))
     .filter(round => round && !groupsAssigned(wcif, round.id));
-  return [assignGroups, assignScrambling, assignJudging]
+  return [assignGroups, assignScrambling, assignJudging, assignRunning]
     .reduce((wcif, assignmentFn) => assignmentFn(wcif, roundsToAssign), wcif);
 };
 
@@ -157,6 +157,32 @@ const assignJudging = (wcif, roundsToAssign) => {
         ]);
         const potentialJudges = [...sortedAvailableStaff, ...sortedAvailablePeople];
         const updatedPeople = assignActivity(groupActivity, 'staff-judge', potentialJudges.slice(0, stations));
+        return updatePeople(wcif, updatedPeople);
+      }, wcif);
+    }, wcif);
+  }, wcif);
+};
+
+const assignRunning = (wcif, roundsToAssign) => {
+  return roundsToAssign.reduce((wcif, round) => {
+    if (hasDistributedAttempts(round.id)) return wcif;
+    return roundActivities(wcif, round.id).reduce((wcif, activity) => {
+      const { runners } = getExtensionData('Activity', activity);
+      if (runners === 0) return wcif;
+      const staffRunners = wcif.persons.filter(person => person.roles.includes('staff-runner')) ;
+      const people = difference(wcif.persons, staffRunners);
+      return activity.childActivities.reduce((wcif, groupActivity) => {
+        const available = people => people.filter(person => availableDuring(wcif, groupActivity, person));
+        const sortedAvailableStaff = sortByArray(available(staffRunners), competitor => [
+          Math.floor(staffAssignments(competitor).length / 3)
+        ]);
+        const sortedAvailablePeople = sortByArray(available(people), competitor => [
+          age(competitor) >= 10 ? -1 : 1,
+          intersection(['dataentry', 'delegate', 'organizer'], competitor.roles).length,
+          staffAssignments(competitor).length < 6 ? -1 : 1
+        ]);
+        const potentialJudges = [...sortedAvailableStaff, ...sortedAvailablePeople];
+        const updatedPeople = assignActivity(groupActivity, 'staff-runner', potentialJudges.slice(0, runners));
         return updatePeople(wcif, updatedPeople);
       }, wcif);
     }, wcif);
