@@ -26,7 +26,7 @@ export default class EventPanel extends PureComponent {
           </Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
-          <Grid container direction="column" spacing={16}>
+          <Grid container direction="row" spacing={16}>
             {wcifEvent.rounds.map(round =>
               <Grid item key={round.id}>
                 <RoundConfig
