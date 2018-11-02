@@ -25,21 +25,23 @@ export default class EventPanel extends PureComponent {
             {eventNameById(wcifEvent.id)}
           </Typography>
         </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
-          <Grid container direction="row" spacing={16}>
-            {wcifEvent.rounds.map(round =>
-              <Grid item key={round.id}>
-                <RoundConfig
-                  round={round}
-                  wcif={wcif}
-                  otherEventsRoundIds={this.otherEventsRoundIds}
-                  expectedCompetitorsByRound={expectedCompetitorsByRound}
-                  onWcifChange={onWcifChange}
-                />
-              </Grid>
-            )}
-          </Grid>
-        </ExpansionPanelDetails>
+        {expanded && (
+          <ExpansionPanelDetails>
+            <Grid container direction="row" spacing={16}>
+              {wcifEvent.rounds.map(round =>
+                <Grid item key={round.id}>
+                  <RoundConfig
+                    round={round}
+                    wcif={wcif}
+                    otherEventsRoundIds={this.otherEventsRoundIds}
+                    expectedCompetitorsByRound={expectedCompetitorsByRound}
+                    onWcifChange={onWcifChange}
+                  />
+                </Grid>
+              )}
+            </Grid>
+          </ExpansionPanelDetails>
+        )}
       </ExpansionPanel>
     );
   }
