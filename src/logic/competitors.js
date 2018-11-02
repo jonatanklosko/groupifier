@@ -9,6 +9,9 @@ export const best = (person, eventId, type) => {
   return personalBest ? personalBest.best : Infinity;
 };
 
+export const bestAverageAndSingle = (competitor, eventId) =>
+  [best(competitor, eventId, 'average'), best(competitor, eventId, 'single')];
+
 const competitorsExpectedToAdvance = (sortedCompetitors, advancementCondition, eventId) => {
   switch (advancementCondition.type) {
     case 'ranking':
@@ -74,3 +77,6 @@ export const age = person => {
   const diffMs = Date.now() - new Date(person.birthdate).getTime();
   return Math.floor(diffMs / (1000 * 60 * 60 * 24 * 365.2425));
 }
+
+export const assignmentsOfType = (person, type) =>
+  (person.assignments || []).filter(({ assignmentCode }) => assignmentCode === type);

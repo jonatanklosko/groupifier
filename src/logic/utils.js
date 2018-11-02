@@ -115,10 +115,10 @@ export const findLast = (arr, predicate) =>
   , undefined);
 
 export const intersection = (xs, ys) =>
-  xs.filter(x => ys.includes(x))
+  xs.filter(x => ys.includes(x));
 
-export const uniq = xs =>
-  [...new Set(xs)];
+export const difference = (xs, ys) =>
+  xs.filter(x => !ys.includes(x));
 
 const sortCompare = (x, y) =>
   x < y ? -1 : (x > y ? 1 : 0);

@@ -1,9 +1,9 @@
-import { zip, flatMap, scaleToOne, findLast, intersection, updateIn, sortBy, sortByArray, addMilliseconds, uniq } from './utils';
+import { zip, flatMap, scaleToOne, findLast, intersection, updateIn, sortBy, sortByArray, addMilliseconds, difference } from './utils';
 import { getExtensionData } from './wcif-extensions';
 import { activityDuration, activityCodeToName, updateActivity, activitiesOverlap,
          parseActivityCode, maxActivityId, activityById, roundActivities,
          roundGroupActivities, hasDistributedAttempts } from './activities';
-import { competitorsForRound, best, age } from './competitors';
+import { competitorsForRound, bestAverageAndSingle, age, assignmentsOfType } from './competitors';
 
 export const createGroupActivities = wcif => {
   const rounds = flatMap(wcif.events, wcifEvent => wcifEvent.rounds);
@@ -115,22 +115,21 @@ const assignScrambling = (wcif, roundsToAssign) => {
     return roundActivities(wcif, round.id).reduce((wcif, activity) => {
       const { scramblers } = getExtensionData('Activity', activity);
       const staffScramblers = wcif.persons.filter(person => person.roles.includes('staff-scrambler')) ;
-      const competitors = competitorsForRound(wcif, round.id);
-      const potentialScramblers = uniq([...staffScramblers, ...competitors]);
+      const competitors = difference(competitorsForRound(wcif, round.id), staffScramblers);
       return activity.childActivities.reduce((wcif, groupActivity) => {
-        const availableScramblers = potentialScramblers.filter(competitor =>
-          availableDuring(wcif, groupActivity, competitor)
-        );
-        const sortedAvailableScramblers = sortByArray(availableScramblers, competitor => [
-          competitor.roles.includes('staff-scrambler') ? -1 : 1,
+        const available = people => people.filter(person => availableDuring(wcif, groupActivity, person));
+        const sortedAvailableStaff = sortByArray(available(staffScramblers), competitor => [
+          Math.floor(assignmentsOfType(competitor, 'staff-scrambler').length / 3),
+          ...bestAverageAndSingle(competitor, parseActivityCode(round.id).eventId)
+        ]);
+        const sortedAvailableCompetitors = sortByArray(available(competitors), competitor => [
           age(competitor) >= 10 ? -1 : 1,
           intersection(['dataentry', 'delegate', 'organizer'], competitor.roles).length,
-          competitor.assignments.filter(({ assignmentCode }) => assignmentCode === 'staff-scrambler').length < 6 ? -1 : 1,
-          best(competitor, parseActivityCode(round.id).eventId, 'average'),
-          best(competitor, parseActivityCode(round.id).eventId, 'single')
-          /* TODO: expand on this */
+          assignmentsOfType(competitor, 'staff-scrambler').length < 6 ? -1 : 1,
+          ...bestAverageAndSingle(competitor, parseActivityCode(round.id).eventId)
         ]);
-        const updatedCompetitors = assignActivity(groupActivity, 'staff-scrambler', sortedAvailableScramblers.slice(0, scramblers));
+        const potentialScramblers = [...sortedAvailableStaff, ...sortedAvailableCompetitors];
+        const updatedCompetitors = assignActivity(groupActivity, 'staff-scrambler', potentialScramblers.slice(0, scramblers));
         return updatePeople(wcif, updatedCompetitors);
       }, wcif);
     }, wcif);
