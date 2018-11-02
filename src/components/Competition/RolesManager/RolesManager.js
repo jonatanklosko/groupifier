@@ -110,13 +110,13 @@ export default class RolesManager extends Component {
           </Paper>
         </Grid>
         <Grid item>
-          <Button variant="raised" component={Link} to={`/competitions/${localWcif.id}`}>
+          <Button variant="contained" component={Link} to={`/competitions/${localWcif.id}`}>
             Cancel
           </Button>
         </Grid>
         <Grid item>
           <Button
-            variant="raised"
+            variant="contained"
             color="primary"
             onClick={() => onWcifUpdate(localWcif)}
             component={Link}

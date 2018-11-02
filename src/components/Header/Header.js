@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 const Header = ({ isSignedIn, onSignIn, onSignOut }) => (
   <AppBar position="static" color="primary">
     <Toolbar>
-      <Typography variant="title" color="inherit" style={{ flexGrow: 1 }}>
+      <Typography variant="h6" color="inherit" style={{ flexGrow: 1 }}>
         <Link to={isSignedIn ? '/competitions' : '/'}>
           <Icon style={{ fontSize: '1.5em', verticalAlign: 'middle', marginRight: 10 }}>people</Icon>
           Groupifier

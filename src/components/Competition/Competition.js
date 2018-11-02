@@ -34,7 +34,7 @@ export default class Competition extends Component {
 
     return loading ? <LinearProgress /> : (
       <div>
-        <Typography variant="display1" style={{ marginBottom: 16 }}>
+        <Typography variant="h5" style={{ marginBottom: 16 }}>
           {wcif.name}
         </Typography>
         <Switch>

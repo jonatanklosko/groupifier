@@ -2,7 +2,7 @@ import React from 'react';
 import Typography from '@material-ui/core/Typography';
 
 const RoomName = ({ room }) => (
-  <Typography variant="body2">
+  <Typography variant="subtitle2">
     <span style={{
         display: 'inline-block',
         width: 10, height: 10, marginRight: 5,

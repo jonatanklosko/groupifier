@@ -51,7 +51,7 @@ export default class EventsConfig extends Component {
       )
     ) : (
       <Paper style={{ padding: 16 }}>
-        <Typography variant="headline">Generate configuration</Typography>
+        <Typography variant="h5">Generate configuration</Typography>
         <Grid container direction="column">
           {[['scramblers', 'assignScramblers'], ['runners', 'assignRunners'], ['judges', 'assignJudges']].map(([role, property]) =>
             <Grid item key={role}>

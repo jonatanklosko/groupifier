@@ -26,7 +26,7 @@ export default class RoundConfig extends PureComponent {
 
     return (
       <div>
-        <Typography variant="subheading">{roundIdToShortName(round.id)}</Typography>
+        <Typography variant="subtitle1">{roundIdToShortName(round.id)}</Typography>
         <Grid container spacing={16}>
         {activitiesWithRooms.map(([activity, room]) =>
           <Grid item xs key={activity.id}>

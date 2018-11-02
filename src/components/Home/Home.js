@@ -20,17 +20,17 @@ const features = [
 const Home = () => (
   <Grid container spacing={24} direction="column">
     <Grid item>
-      <Typography variant="display1">What is Groupifier?</Typography>
+      <Typography variant="h4">What is Groupifier?</Typography>
     </Grid>
     <Grid item>
-      <Typography variant="subheading">
+      <Typography variant="subtitle1">
         It is a tool meant for WCA competition organizers.
         Its main objective is to simplify the process of splitting competitors into groups
         and provide the best result with minimal configuration.
       </Typography>
     </Grid>
     <Grid item>
-      <Typography variant="display1">What does it do?</Typography>
+      <Typography variant="h4">What does it do?</Typography>
     </Grid>
     <Grid item>
       <List>

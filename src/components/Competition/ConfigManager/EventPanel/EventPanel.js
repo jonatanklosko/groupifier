@@ -21,7 +21,7 @@ export default class EventPanel extends PureComponent {
     return (
       <ExpansionPanel onChange={this.handlePanelChange} expanded={expanded}>
         <ExpansionPanelSummary expandIcon={<Icon>expand_more</Icon>}>
-          <Typography variant="subheading">
+          <Typography variant="subtitle1">
             {eventNameById(wcifEvent.id)}
           </Typography>
         </ExpansionPanelSummary>
