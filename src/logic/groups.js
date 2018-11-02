@@ -1,4 +1,4 @@
-import { zip, flatMap, scaleToOne, findLast, intersection, updateIn, sortBy, sortByArray, addMilliseconds, difference } from './utils';
+import { zip, flatMap, scaleToOne, findLast, intersection, updateIn, sortBy, sortByArray, addMilliseconds, difference, partition } from './utils';
 import { getExtensionData } from './wcif-extensions';
 import { activityDuration, activityCodeToName, updateActivity, activitiesOverlap,
          parseActivityCode, maxActivityId, activityById, roundActivities,
@@ -143,8 +143,7 @@ const assignJudging = (wcif, roundsToAssign) => {
     return roundActivities(wcif, round.id).reduce((wcif, activity) => {
       const { stations, assignJudges } = getExtensionData('Activity', activity);
       if (!assignJudges) return wcif;
-      const staffJudges = wcif.persons.filter(person => person.roles.includes('staff-judge')) ;
-      const people = difference(wcif.persons, staffJudges);
+      const [staffJudges, people] = partition(wcif.persons, person => person.roles.includes('staff-judge'));
       return activity.childActivities.reduce((wcif, groupActivity) => {
         const available = people => people.filter(person => availableDuring(wcif, groupActivity, person));
         const sortedAvailableStaff = sortByArray(available(staffJudges), competitor => [
@@ -169,8 +168,7 @@ const assignRunning = (wcif, roundsToAssign) => {
     return roundActivities(wcif, round.id).reduce((wcif, activity) => {
       const { runners } = getExtensionData('Activity', activity);
       if (runners === 0) return wcif;
-      const staffRunners = wcif.persons.filter(person => person.roles.includes('staff-runner')) ;
-      const people = difference(wcif.persons, staffRunners);
+      const [staffRunners, people] = partition(wcif.persons, person => person.roles.includes('staff-runner'));
       return activity.childActivities.reduce((wcif, groupActivity) => {
         const available = people => people.filter(person => availableDuring(wcif, groupActivity, person));
         const sortedAvailableStaff = sortByArray(available(staffRunners), competitor => [
@@ -181,8 +179,8 @@ const assignRunning = (wcif, roundsToAssign) => {
           intersection(['dataentry', 'delegate', 'organizer'], competitor.roles).length,
           staffAssignments(competitor).length < 6 ? -1 : 1
         ]);
-        const potentialJudges = [...sortedAvailableStaff, ...sortedAvailablePeople];
-        const updatedPeople = assignActivity(groupActivity, 'staff-runner', potentialJudges.slice(0, runners));
+        const potentialRunners = [...sortedAvailableStaff, ...sortedAvailablePeople];
+        const updatedPeople = assignActivity(groupActivity, 'staff-runner', potentialRunners.slice(0, runners));
         return updatePeople(wcif, updatedPeople);
       }, wcif);
     }, wcif);
