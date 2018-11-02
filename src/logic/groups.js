@@ -124,7 +124,7 @@ const assignScrambling = (wcif, roundsToAssign) => {
           Math.floor(staffAssignments(competitor).length / 3),
           ...bestAverageAndSingle(competitor, eventId)
         ]);
-        const sortedAvailableCompetitors = sortByArray(available(competitors), competitor => [
+        const sortedAvailableCompetitors = sortedAvailableStaff.length >= scramblers ? [] : sortByArray(available(competitors), competitor => [
           age(competitor) >= 10 ? -1 : 1,
           intersection(['dataentry', 'delegate', 'organizer'], competitor.roles).length,
           staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2 ? 1 : -1,
@@ -152,7 +152,7 @@ const assignRunning = (wcif, roundsToAssign) => {
         const sortedAvailableStaff = sortByArray(available(staffRunners), competitor => [
           Math.floor(staffAssignments(competitor).length / 3)
         ]);
-        const sortedAvailablePeople = sortByArray(available(people), competitor => [
+        const sortedAvailablePeople = sortedAvailableStaff.length >= runners ? [] : sortByArray(available(people), competitor => [
           age(competitor) >= 10 ? -1 : 1,
           intersection(['dataentry', 'delegate', 'organizer'], competitor.roles).length,
           staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2 ? 1 : -1,
@@ -179,7 +179,7 @@ const assignJudging = (wcif, roundsToAssign) => {
         const sortedAvailableStaff = sortByArray(available(staffJudges), competitor => [
           Math.floor(staffAssignments(competitor).length / 3)
         ]);
-        const sortedAvailablePeople = sortByArray(available(people), competitor => [
+        const sortedAvailablePeople = sortedAvailableStaff.length >= stations ? [] : sortByArray(available(people), competitor => [
           age(competitor) >= 10 ? -1 : 1,
           intersection(['dataentry', 'delegate', 'organizer'], competitor.roles).length,
           staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2 ? 1 : -1,
