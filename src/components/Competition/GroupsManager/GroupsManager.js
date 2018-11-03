@@ -7,7 +7,7 @@ import SnackbarContent from '@material-ui/core/SnackbarContent';
 import { createGroupActivities, assignTasks } from '../../../logic/groups';
 import { roundsMissingAssignments } from '../../../logic/activities';
 
-export default class GroupsCreator extends Component {
+export default class GroupsManager extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -15,16 +15,12 @@ export default class GroupsCreator extends Component {
     };
   }
 
-  handleWcifChange = wcif => {
-    this.setState({ localWcif: wcif });
-  };
-
-  createGroups = () => {
-    const wcifWithGroups = createGroupActivities(this.state.localWcif);
+  assignTasks = () => {
+    const { localWcif } = this.state;
+    const wcifWithGroups = createGroupActivities(localWcif);
     const start = performance.now();
     const wcifWithAssignments = assignTasks(wcifWithGroups);
-    console.log(wcifWithAssignments);
-    console.log('Took', performance.now() - start);
+    console.log(wcifWithAssignments, 'Took', performance.now() - start);
     this.setState({ localWcif: wcifWithAssignments });
   };
 
@@ -37,7 +33,7 @@ export default class GroupsCreator extends Component {
         <Grid item xs={12}>
           {roundsMissingAssignments(localWcif).length > 0 && (
             <SnackbarContent message="There are rounds with no tasks assigned" action={
-              <Button onClick={this.createGroups} color="secondary" size="small">
+              <Button onClick={this.assignTasks} color="secondary" size="small">
                 Assign tasks
               </Button>
             }/>

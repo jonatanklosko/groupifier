@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 
 import CompetitionMenu from './CompetitionMenu/CompetitionMenu';
 import ConfigManager from './ConfigManager/ConfigManager';
-import GroupsCreator from './GroupsCreator/GroupsCreator';
+import GroupsManager from './GroupsManager/GroupsManager';
 import RolesManager from './RolesManager/RolesManager';
 
 import { getCompetitionWcif } from '../../logic/wca-api';
@@ -46,7 +46,7 @@ export default class Competition extends Component {
             () => <ConfigManager wcif={wcif} onWcifUpdate={this.handleWcifUpdate} />
           } />
           <Route path={`${match.url}/groupify`} render={
-            () => <GroupsCreator wcif={wcif} onWcifUpdate={this.handleWcifUpdate} />
+            () => <GroupsManager wcif={wcif} onWcifUpdate={this.handleWcifUpdate} />
           } />
         </Switch>
       </div>
