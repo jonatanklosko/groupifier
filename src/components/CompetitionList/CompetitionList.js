@@ -10,6 +10,7 @@ import Paper from '@material-ui/core/Paper';
 import Icon from '@material-ui/core/Icon';
 
 import { getUpcomingManageableCompetitions } from '../../logic/wca-api';
+import { sortBy } from '../../logic/utils';
 
 export default class CompetitionList extends Component {
   constructor(props) {
@@ -22,6 +23,7 @@ export default class CompetitionList extends Component {
 
   componentDidMount() {
     getUpcomingManageableCompetitions()
+      .then(competitions => sortBy(competitions, competition => competition['start_date']))
       .then(competitions => this.setState({ competitions, loading: false }));
   }
 
