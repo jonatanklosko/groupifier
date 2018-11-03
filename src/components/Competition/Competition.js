@@ -45,7 +45,7 @@ export default class Competition extends Component {
           <Route path={`${match.url}/config`} render={
             () => <ConfigManager wcif={wcif} onWcifUpdate={this.handleWcifUpdate} />
           } />
-          <Route path={`${match.url}/groupify`} render={
+          <Route path={`${match.url}/groups`} render={
             () => <GroupsManager wcif={wcif} onWcifUpdate={this.handleWcifUpdate} />
           } />
         </Switch>
