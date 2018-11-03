@@ -226,7 +226,9 @@ const assignJudging = (wcif, roundsToAssign) => {
     if (hasDistributedAttempts(round.id)) return wcif;
     const eventId = parseActivityCode(round.id).eventId;
     return roundActivities(wcif, round.id).reduce((wcif, activity) => {
-      const { stations, assignJudges } = getExtensionData('Activity', activity);
+      const { assignJudges } = getExtensionData('Activity', activity);
+      const room = wcif.schedule.venues[0].rooms.find(room => room.activities.includes(activity));
+      const { stations } = getExtensionData('Room', room);
       if (!assignJudges) return wcif;
       const [staffJudges, people] = partition(wcif.persons, person => person.roles.includes('staff-judge'));
       return activity.childActivities.reduce((wcif, groupActivity) => {
