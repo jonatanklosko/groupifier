@@ -6,7 +6,7 @@ import RoundActivityConfig from '../RoundActivityConfig/RoundActivityConfig';
 import RoomName from '../../../common/RoomName/RoomName';
 import { flatMap } from '../../../../logic/utils';
 import { roundIdToShortName } from '../../../../logic/formatters';
-import { isActivityConfigurable, updateActivity } from '../../../../logic/activities';
+import { isActivityConfigurable, updateActivity, groupActivitiesAssigned } from '../../../../logic/activities';
 
 export default class RoundConfig extends PureComponent {
   handleActivityChange = activity => {
@@ -23,6 +23,7 @@ export default class RoundConfig extends PureComponent {
         .filter(isActivityConfigurable)
         .map(activity => [activity, room])
     );
+    const disabled = groupActivitiesAssigned(wcif, round.id);
 
     return (
       <div>
@@ -36,6 +37,7 @@ export default class RoundConfig extends PureComponent {
               room={room}
               onChange={this.handleActivityChange}
               expectedCompetitors={expectedCompetitorsByRound[round.id]}
+              disabled={disabled}
             />
           </Grid>
         )}

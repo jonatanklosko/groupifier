@@ -26,7 +26,7 @@ export default class RoundActivityConfig extends PureComponent {
   };
 
   render() {
-    const { activity, room, expectedCompetitors } = this.props;
+    const { activity, room, expectedCompetitors, disabled } = this.props;
     const { groups, scramblers, runners, assignJudges, capacity } = getExtensionData('Activity', activity);
 
     const stations = getExtensionData('Room', room).stations;
@@ -53,6 +53,7 @@ export default class RoundActivityConfig extends PureComponent {
             helperText={groupsHelperText}
             onChange={this.handleInputChange}
             margin="dense"
+            disabled={disabled}
           />
         </Grid>
         <Grid item>
@@ -63,6 +64,7 @@ export default class RoundActivityConfig extends PureComponent {
             helperText={scramblersHelperText}
             onChange={this.handleInputChange}
             margin="dense"
+            disabled={disabled}
           />
         </Grid>
         <Grid item>
@@ -73,6 +75,7 @@ export default class RoundActivityConfig extends PureComponent {
             helperText={runnersHelperText}
             onChange={this.handleInputChange}
             margin="dense"
+            disabled={disabled}
           />
         </Grid>
         <Grid item>
@@ -82,6 +85,7 @@ export default class RoundActivityConfig extends PureComponent {
                 checked={assignJudges}
                 name="assignJudges"
                 onChange={this.handleCheckboxChange}
+                disabled={disabled}
               />
             }
             label="Assign judges"
