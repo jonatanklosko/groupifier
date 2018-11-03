@@ -1,4 +1,4 @@
-import { updateIn, flatMap, zip, scaleToOne, firstResult } from './utils';
+import { updateIn, flatMap, zip, scaleToOne, firstResult, isPresentDeep } from './utils';
 import { getExtensionData, setExtensionData } from './wcif-extensions';
 import { suggestedGroupCount, suggestedScramblerCount, suggestedRunnerCount } from './formulas';
 import { eventNameById } from './events';
@@ -79,6 +79,20 @@ export const anyActivityConfigured = wcif =>
   wcif.schedule.venues[0].rooms.some(room =>
     room.activities.some(activity => getExtensionData('Activity', activity))
   );
+
+export const activitiesConfigComplete = wcif =>
+  wcif.schedule.venues[0].rooms.every(room =>
+    room.activities
+      .filter(isActivityConfigurable)
+      .map(activity => getExtensionData('Activity', activity))
+      .every(isPresentDeep)
+  );
+
+export const roomsConfigComplete = wcif =>
+  wcif.schedule.venues[0].rooms
+    .map(room => getExtensionData('Room', room))
+    .every(isPresentDeep);
+
 
 export const activitiesOverlap = (first, second) =>
   first.startTime < second.endTime && second.startTime < first.endTime;

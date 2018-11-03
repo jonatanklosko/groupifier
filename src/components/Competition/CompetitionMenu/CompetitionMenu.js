@@ -7,17 +7,19 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Paper from '@material-ui/core/Paper';
 
+import { roomsConfigComplete, activitiesConfigComplete } from '../../../logic/activities';
+
 const menuItems = [
-  { path: '/roles', text: "Edit roles", icon: 'perm_contact_calendar' },
-  { path: '/config', text: "Configure", icon: 'settings' },
-  { path: '/groups', text: "Manage groups", icon: 'people' }
+  { path: '/roles', text: "Edit roles", icon: 'perm_contact_calendar', enabled: wcif => true },
+  { path: '/config', text: "Configure", icon: 'settings', enabled: wcif => true },
+  { path: '/groups', text: "Manage groups", icon: 'people', enabled: wcif => roomsConfigComplete(wcif) && activitiesConfigComplete(wcif) }
 ];
 
-const CompetitionMenu = ({ baseUrl }) => (
+const CompetitionMenu = ({ wcif, baseUrl }) => (
   <Paper>
     <List>
       {menuItems.map(menuItem =>
-        <ListItem key={menuItem.path} button component={Link} to={`${baseUrl}${menuItem.path}`}>
+        <ListItem key={menuItem.path} button component={Link} to={`${baseUrl}${menuItem.path}`} disabled={!menuItem.enabled(wcif)}>
           <ListItemIcon><Icon>{menuItem.icon}</Icon></ListItemIcon>
           <ListItemText primary={menuItem.text} />
         </ListItem>

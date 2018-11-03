@@ -38,7 +38,7 @@ export default class Competition extends Component {
           {wcif.name}
         </Typography>
         <Switch>
-          <Route exact path={match.url} render={() => <CompetitionMenu baseUrl={match.url} />} />
+          <Route exact path={match.url} render={() => <CompetitionMenu wcif={wcif} baseUrl={match.url} />} />
           <Route path={`${match.url}/roles`} render={
             () => <RolesManager wcif={wcif} onWcifUpdate={this.handleWcifUpdate} />
           } />

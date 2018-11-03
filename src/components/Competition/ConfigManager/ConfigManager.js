@@ -10,10 +10,8 @@ import Typography from '@material-ui/core/Typography';
 
 import RoomsConfig from './RoomsConfig/RoomsConfig';
 import EventsConfig from './EventsConfig/EventsConfig';
-import { getExtensionData } from '../../../logic/wcif-extensions';
 import { getExpectedCompetitorsByRound } from '../../../logic/competitors';
-import { isPresentDeep } from '../../../logic/utils';
-import { isActivityConfigurable } from '../../../logic/activities';
+import { roomsConfigComplete, activitiesConfigComplete } from '../../../logic/activities';
 
 export default class ConfigManager extends Component {
   constructor(props) {
@@ -34,19 +32,8 @@ export default class ConfigManager extends Component {
   };
 
   wcifConfigComplete() {
-    return this.state.localWcif.schedule.venues[0].rooms.every(room => {
-      const config = getExtensionData('Room', room);
-      const activitiesConfig = room.activities
-        .filter(isActivityConfigurable)
-        .map(activity => getExtensionData('Activity', activity));
-      return isPresentDeep(config) && activitiesConfig.every(isPresentDeep);
-    });
-  }
-
-  roomsConfigComplete() {
-    return this.state.localWcif.schedule.venues[0].rooms
-      .map(room => getExtensionData('Room', room))
-      .every(isPresentDeep);
+    const { localWcif } = this.state;
+    return roomsConfigComplete(localWcif) && activitiesConfigComplete(localWcif);
   }
 
   render() {
@@ -59,7 +46,7 @@ export default class ConfigManager extends Component {
           <AppBar position="static" color="default">
             <Tabs value={tabValue} onChange={this.handleTabChange} centered>
               <Tab label="Rooms" />
-              <Tab label="Events" disabled={!this.roomsConfigComplete()} />
+              <Tab label="Events" disabled={!roomsConfigComplete(localWcif)} />
               <Tab label="General" />
             </Tabs>
           </AppBar>
