@@ -89,3 +89,6 @@ export const staffAssignmentsForEvent = (wcif, person, eventId) =>
   staffAssignments(person).filter(({ activityId }) =>
     parseActivityCode(activityById(wcif, activityId).activityCode).eventId === eventId
   );
+
+export const acceptedPeople = wcif =>
+  wcif.persons.filter(person => !person.registration || person.registration.status === 'accepted');

@@ -3,7 +3,7 @@ import { getExtensionData } from './wcif-extensions';
 import { activityDuration, activityCodeToName, updateActivity, activitiesOverlap,
          parseActivityCode, maxActivityId, activityById, roundActivities,
          roundGroupActivities, roundsMissingAssignments, hasDistributedAttempts } from './activities';
-import { competitorsForRound, bestAverageAndSingle, age, staffAssignments, staffAssignmentsForEvent } from './competitors';
+import { competitorsForRound, bestAverageAndSingle, age, staffAssignments, staffAssignmentsForEvent, acceptedPeople } from './competitors';
 
 export const createGroupActivities = wcif => {
   const rounds = flatMap(wcif.events, wcifEvent => wcifEvent.rounds);
@@ -172,7 +172,7 @@ const assignScrambling = (wcif, roundsToAssign) => {
       const { scramblers } = getExtensionData('Activity', activity);
       if (scramblers === 0) return wcif;
       return activity.childActivities.reduce((wcif, groupActivity) => {
-        const staffScramblers = wcif.persons.filter(person => person.roles.includes('staff-scrambler')) ;
+        const staffScramblers = acceptedPeople(wcif).filter(person => person.roles.includes('staff-scrambler')) ;
         const competitors = difference(competitorsForRound(wcif, round.id), staffScramblers);
         const available = people => people.filter(person => availableDuring(wcif, groupActivity, person));
         const sortedAvailableStaff = sortByArray(available(staffScramblers), competitor => [
@@ -202,7 +202,7 @@ const assignRunning = (wcif, roundsToAssign) => {
       const { runners } = getExtensionData('Activity', activity);
       if (runners === 0) return wcif;
       return activity.childActivities.reduce((wcif, groupActivity) => {
-        const [staffRunners, people] = partition(wcif.persons, person => person.roles.includes('staff-runner'));
+        const [staffRunners, people] = partition(acceptedPeople(wcif), person => person.roles.includes('staff-runner'));
         const available = people => people.filter(person => availableDuring(wcif, groupActivity, person));
         const sortedAvailableStaff = sortByArray(available(staffRunners), competitor => [
           Math.floor(staffAssignments(competitor).length / 3)
@@ -231,7 +231,7 @@ const assignJudging = (wcif, roundsToAssign) => {
       const { stations } = getExtensionData('Room', room);
       if (!assignJudges) return wcif;
       return activity.childActivities.reduce((wcif, groupActivity) => {
-        const [staffJudges, people] = partition(wcif.persons, person => person.roles.includes('staff-judge'));
+        const [staffJudges, people] = partition(acceptedPeople(wcif), person => person.roles.includes('staff-judge'));
         const available = people => people.filter(person => availableDuring(wcif, groupActivity, person));
         const sortedAvailableStaff = sortByArray(available(staffJudges), competitor => [
           Math.floor(staffAssignments(competitor).length / 3)
@@ -269,7 +269,7 @@ const availableDuring = (wcif, activity, competitor) =>
 const overlapsEveryoneWithSameRole = (wcif, groups, activity, competitor) =>
   intersection(['dataentry', 'delegate', 'organizer'], competitor.roles)
     .some(role => {
-      const others = wcif.persons.filter(person => person.roles.includes(role));
+      const others = acceptedPeople(wcif).filter(person => person.roles.includes(role));
       return others.length > 0 && others.every(other =>
         !availableDuring(wcif, activity, other)
         || groups.some(({ activity: groupActivity, competitors }) =>
