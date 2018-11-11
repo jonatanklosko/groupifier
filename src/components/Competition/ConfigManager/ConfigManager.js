@@ -9,7 +9,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Typography from '@material-ui/core/Typography';
 
 import RoomsConfig from './RoomsConfig/RoomsConfig';
-import EventsConfig from './EventsConfig/EventsConfig';
+import RoundsConfig from './RoundsConfig/RoundsConfig';
 import { getExpectedCompetitorsByRound } from '../../../logic/competitors';
 import { roomsConfigComplete, activitiesConfigComplete } from '../../../logic/activities';
 
@@ -46,7 +46,7 @@ export default class ConfigManager extends Component {
           <AppBar position="static" color="default">
             <Tabs value={tabValue} onChange={this.handleTabChange} centered>
               <Tab label="Rooms" />
-              <Tab label="Events" disabled={!roomsConfigComplete(localWcif)} />
+              <Tab label="Rounds" disabled={!roomsConfigComplete(localWcif)} />
               <Tab label="General" />
             </Tabs>
           </AppBar>
@@ -56,7 +56,7 @@ export default class ConfigManager extends Component {
             <RoomsConfig wcif={localWcif} onWcifChange={this.handleWcifChange} />
           )}
           {tabValue === 1 && (
-            <EventsConfig wcif={localWcif} onWcifChange={this.handleWcifChange} expectedCompetitorsByRound={this.expectedCompetitorsByRound} />
+            <RoundsConfig wcif={localWcif} onWcifChange={this.handleWcifChange} expectedCompetitorsByRound={this.expectedCompetitorsByRound} />
           )}
           {tabValue === 2 && (
             <Paper>

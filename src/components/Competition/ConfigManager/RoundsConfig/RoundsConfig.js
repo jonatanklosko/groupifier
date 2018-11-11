@@ -10,7 +10,7 @@ import RoundsNavigation from '../../../common/RoundsNavigation/RoundsNavigation'
 import RoundConfig from '../RoundConfig/RoundConfig';
 import { populateActivitiesConfig, anyActivityConfigured } from '../../../../logic/activities';
 
-export default class EventsConfig extends Component {
+export default class RoundsConfig extends Component {
   constructor(props) {
     super(props);
     this.state = {
