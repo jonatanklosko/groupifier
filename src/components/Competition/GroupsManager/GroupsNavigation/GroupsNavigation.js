@@ -10,9 +10,6 @@ import GroupDialog from '../GroupDialog/GroupDialog';
 import { parseActivityCode, hasDistributedAttempts } from '../../../../logic/activities';
 import { flatMap } from '../../../../logic/utils';
 
-const strftime = isoString =>
-  new Date(isoString).toLocaleTimeString('en-US', { timeZone: 'UTC', hour: 'numeric', minute: 'numeric' });
-
 export default class RoundWithGroups extends Component {
   state = {
     openedGroupActivity: null
@@ -54,6 +51,9 @@ export default class RoundWithGroups extends Component {
         activity => activity.childActivities
       )]
     );
+    const timeZone = wcif.schedule.venues[0].timezone;
+    const strftime = isoString =>
+      new Date(isoString).toLocaleTimeString('en-US', { timeZone, hour: 'numeric', minute: 'numeric' });
 
     return (
       <Grid container>
