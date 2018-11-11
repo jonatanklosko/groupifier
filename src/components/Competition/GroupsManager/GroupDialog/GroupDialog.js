@@ -40,9 +40,9 @@ export default class GroupDialog extends Component {
         <DialogContent>
           <Grid container spacing={16}>
             {rolesWithPeople.map(([role, people]) => (
-              <Grid item xs key={role.id}>
+              <Grid item xs={12} sm={6} md key={role.id}>
                 <Typography variant="subtitle2">{role.label}</Typography>
-                <List dense={true} style={{ overflowY: 'auto', height: 300 }}>
+                <List dense={true} style={{ overflowY: 'auto', maxHeight: 300 }}>
                   {sortBy(people, person => person.name).map(person => (
                     <ListItem key={person.wcaUserId}>
                       <ListItemText primary={person.name} />
