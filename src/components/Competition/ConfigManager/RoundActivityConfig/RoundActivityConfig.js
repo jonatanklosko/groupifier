@@ -85,7 +85,7 @@ export default class RoundActivityConfig extends PureComponent {
                 checked={assignJudges}
                 name="assignJudges"
                 onChange={this.handleCheckboxChange}
-                disabled={disabled}
+                disabled={disabled || stations === 0}
               />
             }
             label="Assign judges"
