@@ -13,11 +13,23 @@ export default class RoundWithGroups extends Component {
     onChange(expanded ? roundId : null);
   };
 
+  scrollToElement = node => {
+    /* Node is the panel content, so the panel is its parent. */
+    window.scrollTo({
+      top: node.parentNode.getBoundingClientRect().top - 8,
+      behavior: 'smooth'
+    });
+  };
+
   render() {
     const { expanded, roundId, render } = this.props;
 
     return (
-      <ExpansionPanel onChange={this.handlePanelChange} expanded={expanded}>
+      <ExpansionPanel
+        onChange={this.handlePanelChange}
+        expanded={expanded}
+        CollapseProps={{ onEntered: this.scrollToElement }}
+      >
         <ExpansionPanelSummary expandIcon={<Icon>expand_more</Icon>}>
           <Typography variant="subtitle1">
             {activityCodeToName(roundId)}
