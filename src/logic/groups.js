@@ -171,9 +171,9 @@ const assignScrambling = (wcif, roundsToAssign) => {
     return roundActivities(wcif, round.id).reduce((wcif, activity) => {
       const { scramblers } = getExtensionData('Activity', activity);
       if (scramblers === 0) return wcif;
-      const staffScramblers = wcif.persons.filter(person => person.roles.includes('staff-scrambler')) ;
-      const competitors = difference(competitorsForRound(wcif, round.id), staffScramblers);
       return activity.childActivities.reduce((wcif, groupActivity) => {
+        const staffScramblers = wcif.persons.filter(person => person.roles.includes('staff-scrambler')) ;
+        const competitors = difference(competitorsForRound(wcif, round.id), staffScramblers);
         const available = people => people.filter(person => availableDuring(wcif, groupActivity, person));
         const sortedAvailableStaff = sortByArray(available(staffScramblers), competitor => [
           Math.floor(staffAssignments(competitor).length / 3),
@@ -201,8 +201,8 @@ const assignRunning = (wcif, roundsToAssign) => {
     return roundActivities(wcif, round.id).reduce((wcif, activity) => {
       const { runners } = getExtensionData('Activity', activity);
       if (runners === 0) return wcif;
-      const [staffRunners, people] = partition(wcif.persons, person => person.roles.includes('staff-runner'));
       return activity.childActivities.reduce((wcif, groupActivity) => {
+        const [staffRunners, people] = partition(wcif.persons, person => person.roles.includes('staff-runner'));
         const available = people => people.filter(person => availableDuring(wcif, groupActivity, person));
         const sortedAvailableStaff = sortByArray(available(staffRunners), competitor => [
           Math.floor(staffAssignments(competitor).length / 3)
@@ -230,8 +230,8 @@ const assignJudging = (wcif, roundsToAssign) => {
       const room = wcif.schedule.venues[0].rooms.find(room => room.activities.includes(activity));
       const { stations } = getExtensionData('Room', room);
       if (!assignJudges) return wcif;
-      const [staffJudges, people] = partition(wcif.persons, person => person.roles.includes('staff-judge'));
       return activity.childActivities.reduce((wcif, groupActivity) => {
+        const [staffJudges, people] = partition(wcif.persons, person => person.roles.includes('staff-judge'));
         const available = people => people.filter(person => availableDuring(wcif, groupActivity, person));
         const sortedAvailableStaff = sortByArray(available(staffJudges), competitor => [
           Math.floor(staffAssignments(competitor).length / 3)
