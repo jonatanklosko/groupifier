@@ -13,6 +13,9 @@ import TableRow from '@material-ui/core/TableRow';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
 
+import { acceptedPeople } from '../../../logic/competitors';
+import { difference } from '../../../logic/utils';
+
 const roles = [
   { id: 'staff-scrambler', name: 'Scrambler' },
   { id: 'staff-judge', name: 'Judge' },
@@ -40,16 +43,14 @@ export default class RolesManager extends Component {
 
   handleRoleChange(roleId, personWcaUserId, event) {
     const { localWcif } = this.state;
-
-    const includeElement = (element, include, array) =>
-      include ? [...array, element] : array.filter(x => x !== element);
+    const { checked } = event.target;
 
     this.setState({
       localWcif: {
         ...localWcif,
         persons: localWcif.persons.map(person =>
           person.wcaUserId === personWcaUserId
-            ? { ...person, roles: includeElement(roleId, event.target.checked, person.roles) }
+            ? { ...person, roles: checked ? [...person.roles, roleId] : difference(person.roles, [roleId]) }
             : person
         )
       }
@@ -62,7 +63,7 @@ export default class RolesManager extends Component {
     const rowsPerPage = 5;
     const rowsPerPageOptions = [5];
 
-    const people = localWcif.persons
+    const people = acceptedPeople(localWcif)
       .filter(person => person.name.match(new RegExp(searchString, 'i')));
 
     return (
