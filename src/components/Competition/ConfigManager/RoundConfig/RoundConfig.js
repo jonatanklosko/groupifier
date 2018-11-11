@@ -1,11 +1,9 @@
 import React, { PureComponent } from 'react';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 
 import RoundActivityConfig from '../RoundActivityConfig/RoundActivityConfig';
 import RoomName from '../../../common/RoomName/RoomName';
 import { flatMap } from '../../../../logic/utils';
-import { roundIdToShortName } from '../../../../logic/formatters';
 import { isActivityConfigurable, updateActivity, groupActivitiesAssigned } from '../../../../logic/activities';
 
 export default class RoundConfig extends PureComponent {
@@ -15,20 +13,18 @@ export default class RoundConfig extends PureComponent {
   };
 
   render() {
-    const { round, wcif, expectedCompetitorsByRound } = this.props;
+    const { roundId, wcif, expectedCompetitorsByRound } = this.props;
 
     const activitiesWithRooms = flatMap(wcif.schedule.venues[0].rooms, room =>
       room.activities
-        .filter(activity => activity.activityCode.startsWith(round.id))
+        .filter(activity => activity.activityCode.startsWith(roundId))
         .filter(isActivityConfigurable)
         .map(activity => [activity, room])
     );
-    const disabled = groupActivitiesAssigned(wcif, round.id);
+    const disabled = groupActivitiesAssigned(wcif, roundId);
 
     return (
-      <div>
-        <Typography variant="subtitle1">{roundIdToShortName(round.id)}</Typography>
-        <Grid container spacing={16}>
+      <Grid container spacing={16}>
         {activitiesWithRooms.map(([activity, room]) =>
           <Grid item xs key={activity.id}>
             <RoomName room={room} />
@@ -36,13 +32,12 @@ export default class RoundConfig extends PureComponent {
               activity={activity}
               room={room}
               onChange={this.handleActivityChange}
-              expectedCompetitors={expectedCompetitorsByRound[round.id]}
+              expectedCompetitors={expectedCompetitorsByRound[roundId]}
               disabled={disabled}
             />
           </Grid>
         )}
       </Grid>
-      </div>
     );
   }
 }

@@ -4,8 +4,7 @@ import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 
-import EventSelect from '../../common/EventSelect/EventSelect';
-import RoundWithGroups from './RoundWithGroups/RoundWithGroups';
+import GroupsNavigation from './GroupsNavigation/GroupsNavigation';
 
 import { createGroupActivities, assignTasks } from '../../../logic/groups';
 import { roundsMissingAssignments } from '../../../logic/activities';
@@ -14,8 +13,7 @@ export default class GroupsManager extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      localWcif: props.wcif,
-      selectedEventId: props.wcif.events[0].id
+      localWcif: props.wcif
     };
   }
 
@@ -28,12 +26,8 @@ export default class GroupsManager extends Component {
     this.setState({ localWcif: wcifWithAssignments });
   };
 
-  handleEventChange = eventId => {
-    this.setState({ selectedEventId: eventId });
-  };
-
   render() {
-    const { localWcif, selectedEventId } = this.state;
+    const { localWcif } = this.state;
     const { onWcifUpdate } = this.props;
 
     return (
@@ -48,12 +42,7 @@ export default class GroupsManager extends Component {
           )}
         </Grid>
         <Grid item xs={12}>
-          <EventSelect selected={selectedEventId} events={localWcif.events} onChange={this.handleEventChange} />
-        </Grid>
-        <Grid item xs={12}>
-          {localWcif.events.find(event => event.id === selectedEventId).rounds.map(round => (
-            <RoundWithGroups key={round.id} wcif={localWcif} roundId={round.id} />
-          ))}
+          <GroupsNavigation wcif={localWcif} />
         </Grid>
         <Grid item>
           <Button variant="contained" component={Link} to={`/competitions/${localWcif.id}`}>

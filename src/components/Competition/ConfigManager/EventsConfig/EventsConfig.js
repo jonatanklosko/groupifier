@@ -6,7 +6,8 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
-import EventPanel from '../EventPanel/EventPanel';
+import RoundsNavigation from '../../../common/RoundsNavigation/RoundsNavigation';
+import RoundConfig from '../RoundConfig/RoundConfig';
 import { populateActivitiesConfig, anyActivityConfigured } from '../../../../logic/activities';
 
 export default class EventsConfig extends Component {
@@ -15,8 +16,7 @@ export default class EventsConfig extends Component {
     this.state = {
       assignScramblers: true,
       assignRunners: true,
-      assignJudges: true,
-      expandedPanel: null
+      assignJudges: true
     };
   }
 
@@ -30,25 +30,11 @@ export default class EventsConfig extends Component {
     onWcifChange(populateActivitiesConfig(wcif, expectedCompetitorsByRound, this.state));
   };
 
-  handlePanelChange = (panel, expanded) => {
-    this.setState({ expandedPanel: expanded ? panel : null });
-  };
-
   render() {
-    const { wcif, expectedCompetitorsByRound, onWcifChange } = this.props;
+    const { wcif } = this.props;
 
     return anyActivityConfigured(wcif) ? (
-      wcif.events.map(wcifEvent =>
-        <EventPanel
-          key={wcifEvent.id}
-          wcif={wcif}
-          wcifEvent={wcifEvent}
-          expectedCompetitorsByRound={expectedCompetitorsByRound}
-          onWcifChange={onWcifChange}
-          expanded={this.state.expandedPanel === wcifEvent.id}
-          onPanelChange={this.handlePanelChange}
-        />
-      )
+      <RoundsNavigation events={wcif.events} render={this.renderRound} />
     ) : (
       <Paper style={{ padding: 16 }}>
         <Typography variant="h5">Generate configuration</Typography>
@@ -74,4 +60,17 @@ export default class EventsConfig extends Component {
       </Paper>
     );
   }
+
+  renderRound = roundId => {
+    const { wcif, expectedCompetitorsByRound, onWcifChange } = this.props;
+
+    return (
+      <RoundConfig
+        roundId={roundId}
+        expectedCompetitorsByRound={expectedCompetitorsByRound}
+        wcif={wcif}
+        onWcifChange={onWcifChange}
+      />
+    );
+  };
 }
