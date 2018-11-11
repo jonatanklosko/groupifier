@@ -39,17 +39,22 @@ export default class RoundsConfig extends Component {
       <Paper style={{ padding: 16 }}>
         <Typography variant="h5">Generate configuration</Typography>
         <Grid container direction="column">
-          {[['scramblers', 'assignScramblers'], ['runners', 'assignRunners'], ['judges', 'assignJudges']].map(([role, property]) =>
-            <Grid item key={role}>
+          <Grid item style={{ margin: '0.5em 0' }}>
+            <Typography variant="body1">
+              Which of the following roles would you like to assign?
+            </Typography>
+          </Grid>
+          {['Scramblers', 'Runners', 'Judges'].map(roleLabel =>
+            <Grid item key={roleLabel}>
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={this.state[property]}
-                    name={property}
+                    checked={this.state[`assign${roleLabel}`]}
+                    name={`assign${roleLabel}`}
                     onChange={this.handleCheckboxChange}
                   />
                 }
-                label={`Should ${role} be assigned?`}
+                label={roleLabel}
               />
             </Grid>
           )}

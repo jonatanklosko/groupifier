@@ -48,19 +48,17 @@ export default class RoundWithGroups extends Component {
   renderRound = roundId => {
     const { wcif } = this.props;
     const roomsWithGroups = wcif.schedule.venues[0].rooms.map(room =>
-      [room,
-      flatMap(room.activities
-        // .filter(activity => activity.activityCode.startsWith(round.id))
-        .filter(activity => activity.activityCode === roundId),
-        activity => activity.childActivities)
-      ]
+      [room, flatMap(
+        room.activities.filter(activity => activity.activityCode === roundId),
+        activity => activity.childActivities
+      )]
     );
 
     return (
       <Grid container>
         {roomsWithGroups.map(([room, groupActivities]) => (
           groupActivities.length > 0 && (
-            <Grid item xs key={room.id}>
+            <Grid item xs={12} sm key={room.id}>
               <RoomName room={room} />
               <List>
                 {groupActivities.map(groupActivity => (

@@ -25,7 +25,7 @@ export default class RoomsConfig extends Component {
       <Paper style={{ padding: 16 }}>
         <Grid container spacing={16}>
           {wcif.schedule.venues[0].rooms.map(room =>
-            <Grid item xs key={room.id}>
+            <Grid item lg key={room.id}>
               <RoomConfig room={room} onChange={this.handleRoomChange} disabled={disabled} />
             </Grid>
           )}
