@@ -7,7 +7,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import RoundsNavigation from '../../../common/RoundsNavigation/RoundsNavigation';
 import RoomName from '../../../common/RoomName/RoomName';
 import GroupDialog from '../GroupDialog/GroupDialog';
-import { parseActivityCode } from '../../../../logic/activities';
+import { parseActivityCode, hasDistributedAttempts } from '../../../../logic/activities';
 import { flatMap } from '../../../../logic/utils';
 
 const strftime = isoString =>
@@ -29,10 +29,11 @@ export default class RoundWithGroups extends Component {
   render() {
     const { openedGroupActivity } = this.state;
     const { wcif } = this.props;
+    const events = wcif.events.filter(event => !hasDistributedAttempts(event.id));
 
     return (
       <React.Fragment>
-        <RoundsNavigation events={wcif.events} render={this.renderRound} />
+        <RoundsNavigation events={events} render={this.renderRound} />
         {openedGroupActivity && (
           <GroupDialog
             open={true}

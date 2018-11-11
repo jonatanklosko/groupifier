@@ -4,7 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import RoundActivityConfig from '../RoundActivityConfig/RoundActivityConfig';
 import RoomName from '../../../common/RoomName/RoomName';
 import { flatMap } from '../../../../logic/utils';
-import { isActivityConfigurable, updateActivity, groupActivitiesAssigned } from '../../../../logic/activities';
+import { updateActivity, groupActivitiesAssigned } from '../../../../logic/activities';
 
 export default class RoundConfig extends PureComponent {
   handleActivityChange = activity => {
@@ -17,8 +17,7 @@ export default class RoundConfig extends PureComponent {
 
     const activitiesWithRooms = flatMap(wcif.schedule.venues[0].rooms, room =>
       room.activities
-        .filter(activity => activity.activityCode.startsWith(roundId))
-        .filter(isActivityConfigurable)
+        .filter(activity => activity.activityCode === roundId)
         .map(activity => [activity, room])
     );
     const disabled = groupActivitiesAssigned(wcif, roundId);

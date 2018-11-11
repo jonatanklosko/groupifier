@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography';
 
 import RoundsNavigation from '../../../common/RoundsNavigation/RoundsNavigation';
 import RoundConfig from '../RoundConfig/RoundConfig';
-import { populateActivitiesConfig, anyActivityConfigured } from '../../../../logic/activities';
+import { populateActivitiesConfig, anyActivityConfigured, hasDistributedAttempts } from '../../../../logic/activities';
 
 export default class RoundsConfig extends Component {
   constructor(props) {
@@ -32,9 +32,10 @@ export default class RoundsConfig extends Component {
 
   render() {
     const { wcif } = this.props;
+    const events = wcif.events.filter(event => !hasDistributedAttempts(event.id));
 
     return anyActivityConfigured(wcif) ? (
-      <RoundsNavigation events={wcif.events} render={this.renderRound} />
+      <RoundsNavigation events={events} render={this.renderRound} />
     ) : (
       <Paper style={{ padding: 16 }}>
         <Typography variant="h5">Generate configuration</Typography>

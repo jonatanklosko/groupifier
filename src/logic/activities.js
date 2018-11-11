@@ -23,13 +23,9 @@ export const activityCodeToName = activityCode => {
   ].filter(x => x).join(', ');
 };
 
-/* We store configuration in round activities.
-   In case of FM and MBLD use the first attempt activity instead
-   (as there's no top level round activity for these). */
-export const isActivityConfigurable = activity => {
+export const shouldHaveGroups = activity => {
   const { eventId, roundNumber, groupNumber, attemptNumber } = parseActivityCode(activity.activityCode);
-  return eventId && roundNumber && !groupNumber
-    && (['333fm', '333mbf'].includes(eventId) ? attemptNumber === 1 : !attemptNumber);
+  return !!(eventId && roundNumber && !groupNumber && !attemptNumber);
 };
 
 export const activityDuration = activity =>
@@ -42,7 +38,7 @@ const activityStations = (wcif, activity) => {
 
 export const populateActivitiesConfig = (wcif, expectedCompetitorsByRound, { assignScramblers, assignRunners, assignJudges }) => {
   const activities = flatMap(wcif.schedule.venues[0].rooms, room =>
-    room.activities.filter(isActivityConfigurable)
+    room.activities.filter(shouldHaveGroups)
   );
   const activitiesWithConfig = flatMap(wcif.events, wcifEvent => {
     return flatMap(wcifEvent.rounds, round => {
@@ -59,7 +55,7 @@ export const populateActivitiesConfig = (wcif, expectedCompetitorsByRound, { ass
           groups: suggestedGroupCount(Math.round(capacity * competitors.length), stations),
           scramblers: assignScramblers ? suggestedScramblerCount(stations) : 0,
           runners: assignRunners ? suggestedRunnerCount(stations) : 0,
-          assignJudges
+          assignJudges: stations > 0 && assignJudges
         })
       });
     });
@@ -83,7 +79,7 @@ export const anyActivityConfigured = wcif =>
 export const activitiesConfigComplete = wcif =>
   wcif.schedule.venues[0].rooms.every(room =>
     room.activities
-      .filter(isActivityConfigurable)
+      .filter(shouldHaveGroups)
       .map(activity => getExtensionData('Activity', activity))
       .every(isPresentDeep)
   );
@@ -119,8 +115,8 @@ export const activityById = (wcif, activityId) =>
     activityByIdRecursive(room.activities, activityId)
   );
 
-export const hasDistributedAttempts = roundId =>
-  ['333fm', '333mbf'].includes(parseActivityCode(roundId).eventId);
+export const hasDistributedAttempts = activityCode =>
+  ['333fm', '333mbf'].includes(parseActivityCode(activityCode).eventId);
 
 export const roundActivities = (wcif, roundId) =>
   flatMap(wcif.schedule.venues[0].rooms, room =>
