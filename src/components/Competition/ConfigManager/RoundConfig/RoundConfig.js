@@ -4,7 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import RoundActivityConfig from '../RoundActivityConfig/RoundActivityConfig';
 import RoomName from '../../../common/RoomName/RoomName';
 import { flatMap } from '../../../../logic/utils';
-import { updateActivity, groupActivitiesAssigned } from '../../../../logic/activities';
+import { updateActivity } from '../../../../logic/activities';
 
 export default class RoundConfig extends PureComponent {
   handleActivityChange = activity => {
@@ -20,7 +20,6 @@ export default class RoundConfig extends PureComponent {
         .filter(activity => activity.activityCode === roundId)
         .map(activity => [activity, room])
     );
-    const disabled = groupActivitiesAssigned(wcif, roundId);
 
     return (
       <Grid container spacing={16}>
@@ -28,11 +27,11 @@ export default class RoundConfig extends PureComponent {
           <Grid item xs key={activity.id}>
             <RoomName room={room} />
             <RoundActivityConfig
+              wcif={wcif}
               activity={activity}
               room={room}
               onChange={this.handleActivityChange}
               expectedCompetitors={expectedCompetitorsByRound[roundId]}
-              disabled={disabled}
             />
           </Grid>
         )}

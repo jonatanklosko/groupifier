@@ -7,6 +7,7 @@ import PositiveIntegerInput from '../../../common/PositiveIntegerInput/PositiveI
 import ZeroablePositiveIntegerInput from '../../../common/ZeroablePositiveIntegerInput/ZeroablePositiveIntegerInput';
 import { setIn, pluralize } from '../../../../logic/utils';
 import { getExtensionData, setExtensionData } from '../../../../logic/wcif-extensions';
+import { activityAssigned } from '../../../../logic/activities';
 
 export default class RoundActivityConfig extends PureComponent {
   handlePropertyChange = (property, value) => {
@@ -25,8 +26,12 @@ export default class RoundActivityConfig extends PureComponent {
     this.handlePropertyChange(name, checked);
   };
 
+  shouldComponentUpdate(nextProps) {
+    return this.props.activity !== nextProps.activity;
+  }
+
   render() {
-    const { activity, room, expectedCompetitors, disabled } = this.props;
+    const { activity, room, expectedCompetitors, wcif } = this.props;
     const { groups, scramblers, runners, assignJudges, capacity } = getExtensionData('Activity', activity);
 
     const stations = getExtensionData('Room', room).stations;
@@ -43,6 +48,9 @@ export default class RoundActivityConfig extends PureComponent {
       ? pluralize(Math.round(stations / runners), 'station') + ' per runner'
       : ' ';
 
+    const groupsCreated = activity.childActivities.length > 0;
+    const groupsAssigned = activity.childActivities.some(({ id }) => activityAssigned(wcif, id));
+
     return (
       <Grid container direction="column">
         <Grid item>
@@ -53,7 +61,7 @@ export default class RoundActivityConfig extends PureComponent {
             helperText={groupsHelperText}
             onChange={this.handleInputChange}
             margin="dense"
-            disabled={disabled}
+            disabled={groupsCreated || groupsAssigned}
           />
         </Grid>
         <Grid item>
@@ -64,7 +72,7 @@ export default class RoundActivityConfig extends PureComponent {
             helperText={scramblersHelperText}
             onChange={this.handleInputChange}
             margin="dense"
-            disabled={disabled}
+            disabled={groupsAssigned}
           />
         </Grid>
         <Grid item>
@@ -75,7 +83,7 @@ export default class RoundActivityConfig extends PureComponent {
             helperText={runnersHelperText}
             onChange={this.handleInputChange}
             margin="dense"
-            disabled={disabled}
+            disabled={groupsAssigned}
           />
         </Grid>
         <Grid item>
@@ -85,7 +93,7 @@ export default class RoundActivityConfig extends PureComponent {
                 checked={assignJudges}
                 name="assignJudges"
                 onChange={this.handleCheckboxChange}
-                disabled={disabled || stations === 0}
+                disabled={stations === 0 || groupsAssigned}
               />
             }
             label="Assign judges"

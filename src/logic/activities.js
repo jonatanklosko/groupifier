@@ -128,11 +128,14 @@ export const roundGroupActivities = (wcif, roundId) =>
     hasDistributedAttempts(roundId) ? [activity] : activity.childActivities
   );
 
+export const activityAssigned = (wcif, activityId) =>
+  wcif.persons.some(person =>
+    (person.assignments || []).some(assignment => assignment.activityId === activityId)
+  )
+
 export const groupActivitiesAssigned = (wcif, roundId) =>
   roundGroupActivities(wcif, roundId).some(activity =>
-    wcif.persons.some(person =>
-      (person.assignments || []).some(assignment => assignment.activityId === activity.id)
-    )
+    activityAssigned(wcif, activity.id)
   );
 
 export const roundsMissingAssignments = wcif =>
