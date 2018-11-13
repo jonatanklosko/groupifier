@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@material-ui/core": "^3.4.0",
+    "pdfmake": "^0.1.39",
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
     "react-router-dom": "^4.3.1",

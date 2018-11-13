@@ -138,5 +138,10 @@ export const sortByArray = (arr, fn) => {
   );
 }
 
+export const chunk = (arr, size) =>
+  arr.length <= size
+    ? [arr]
+    : [arr.slice(0, size), ...chunk(arr.slice(size), size)];
+
 export const addMilliseconds = (isoString, milliseconds) =>
   new Date(new Date(isoString).getTime() + milliseconds).toISOString();

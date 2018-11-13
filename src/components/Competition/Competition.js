@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import CompetitionMenu from './CompetitionMenu/CompetitionMenu';
 import ConfigManager from './ConfigManager/ConfigManager';
 import GroupsManager from './GroupsManager/GroupsManager';
+import PrintingManager from './PrintingManager/PrintingManager';
 import RolesManager from './RolesManager/RolesManager';
 
 import { getCompetitionWcif } from '../../logic/wca-api';
@@ -47,6 +48,9 @@ export default class Competition extends Component {
           } />
           <Route path={`${match.url}/groups`} render={
             () => <GroupsManager wcif={wcif} onWcifUpdate={this.handleWcifUpdate} />
+          } />
+          <Route path={`${match.url}/printing`} render={
+            () => <PrintingManager wcif={wcif} />
           } />
         </Switch>
       </div>

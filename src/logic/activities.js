@@ -131,14 +131,28 @@ export const roundGroupActivities = (wcif, roundId) =>
 export const activityAssigned = (wcif, activityId) =>
   wcif.persons.some(person =>
     (person.assignments || []).some(assignment => assignment.activityId === activityId)
-  )
+  );
 
 export const groupActivitiesAssigned = (wcif, roundId) =>
   roundGroupActivities(wcif, roundId).some(activity =>
     activityAssigned(wcif, activity.id)
   );
 
-export const roundsMissingAssignments = wcif =>
+const roundsWithoutResults = wcif =>
   wcif.events
     .map(wcifEvent => wcifEvent.rounds.find(round => (round.results || []).length === 0))
-    .filter(round => round && !groupActivitiesAssigned(wcif, round.id));
+    .filter(round => round);
+
+export const roundsMissingAssignments = wcif =>
+  roundsWithoutResults(wcif)
+    .filter(round => !groupActivitiesAssigned(wcif, round.id));
+
+export const roundsMissingScorecards = wcif =>
+  roundsWithoutResults(wcif)
+    .filter(round => groupActivitiesAssigned(wcif, round.id))
+    .filter(round => parseActivityCode(round.id).eventId !== '333fm');
+
+export const anyCompetitorAssignment = wcif =>
+  wcif.persons.some(person =>
+    (person.assignments || []).some(assignment => assignment.assignmentCode === 'competitor')
+  );
