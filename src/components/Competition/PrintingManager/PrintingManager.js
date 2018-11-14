@@ -10,6 +10,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
+import CubingIcon from '../../common/CubingIcon/CubingIcon';
 import { downloadScorecards } from '../../../logic/scorecards';
 import { roundsMissingScorecards, parseActivityCode, activityCodeToName } from '../../../logic/activities';
 import { difference } from '../../../logic/utils';
@@ -51,7 +52,7 @@ export default class PrintingManager extends Component {
               {rounds.map(round => (
                 <ListItem key={round.id} button onClick={this.handleRoundClick(round)}>
                   <ListItemIcon>
-                    <span style={{ fontSize: 24 }} className={`cubing-icon event-${parseActivityCode(round.id).eventId}`} />
+                    <CubingIcon eventId={parseActivityCode(round.id).eventId} />
                   </ListItemIcon>
                   <ListItemText primary={activityCodeToName(round.id)} />
                   <Checkbox

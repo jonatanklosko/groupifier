@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 
+import CubingIcon from '../CubingIcon/CubingIcon';
 import { eventNameById } from '../../../logic/events';
 
 export default class EventSelect extends Component {
@@ -13,10 +14,7 @@ export default class EventSelect extends Component {
         {events.map(event => (
           <Tooltip key={event.id} title={eventNameById(event.id)} placement="top">
             <IconButton onClick={() => this.props.onChange(event.id)}>
-              <span
-                className={`cubing-icon event-${event.id}`}
-                style={{ opacity: event.id === selected ? 1 : 0.3 }}
-              />
+              <CubingIcon eventId={event.id} style={{ opacity: event.id === selected ? 1 : 0.3 }} />
             </IconButton>
           </Tooltip>
         ))}
