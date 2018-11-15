@@ -121,9 +121,7 @@ export const difference = (xs, ys) =>
   xs.filter(x => !ys.includes(x));
 
 export const partition = (xs, fn) =>
-  xs.reduce(([truthy, falsy], x) =>
-    fn(x) ? [truthy.concat(x), falsy] : [truthy, falsy.concat(x)]
-  , [[], []]);
+  [xs.filter(fn), xs.filter(x => !fn(x))];
 
 const sortCompare = (x, y) =>
   x < y ? -1 : (x > y ? 1 : 0);
