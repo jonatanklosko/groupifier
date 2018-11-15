@@ -1,4 +1,4 @@
-import { updateIn, flatMap, zip, scaleToOne, firstResult, isPresentDeep } from './utils';
+import { updateIn, flatMap, zip, scaleToOne, isPresentDeep } from './utils';
 import { getExtensionData, setExtensionData } from './wcif-extensions';
 import { suggestedGroupCount, suggestedScramblerCount, suggestedRunnerCount } from './formulas';
 import { eventNameById } from './events';
@@ -105,15 +105,21 @@ const allActivities = wcif => {
 export const maxActivityId = wcif =>
   Math.max(...allActivities(wcif).map(activity => activity.id));
 
-const activityByIdRecursive = (activities, activityId) =>
-  firstResult(activities, activity =>
-    activity.id === activityId ? activity : activityByIdRecursive(activity.childActivities, activityId)
-  );
+/* Assigning tasks invokes activityById enormous number of times.
+   But during that process activities (schedule) don't change.
+   Caching is gives an invaluable speed boos in this case. */
+const activitiesByIdCachedBySchedule = new Map();
 
-export const activityById = (wcif, activityId) =>
-  firstResult(wcif.schedule.venues[0].rooms, room =>
-    activityByIdRecursive(room.activities, activityId)
-  );
+export const activityById = (wcif, activityId) => {
+  if (activitiesByIdCachedBySchedule.has(wcif.schedule)) {
+    return activitiesByIdCachedBySchedule.get(wcif.schedule).get(activityId);
+  } else {
+    const activities = allActivities(wcif);
+    const activitiesById = new Map(activities.map(activity => [activity.id, activity]));
+    activitiesByIdCachedBySchedule.set(wcif.schedule, activitiesById);
+    return activitiesById.get(activityId);
+  }
+}
 
 export const hasDistributedAttempts = activityCode =>
   ['333fm', '333mbf'].includes(parseActivityCode(activityCode).eventId);
