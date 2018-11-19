@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
@@ -9,7 +9,7 @@ import { setIn, pluralize } from '../../../../logic/utils';
 import { getExtensionData, setExtensionData } from '../../../../logic/wcif-extensions';
 import { activityAssigned } from '../../../../logic/activities';
 
-export default class RoundActivityConfig extends PureComponent {
+export default class RoundActivityConfig extends Component {
   handlePropertyChange = (property, value) => {
     const { activity, onChange } = this.props;
     onChange(
