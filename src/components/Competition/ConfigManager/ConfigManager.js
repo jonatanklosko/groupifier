@@ -31,14 +31,16 @@ export default class ConfigManager extends Component {
     this.setState({ tabValue: value });
   };
 
-  wcifConfigComplete() {
+  handleDoneClick = () => {
     const { localWcif } = this.state;
-    return roomsConfigComplete(localWcif) && activitiesConfigComplete(localWcif);
-  }
+    const { onWcifUpdate } = this.props;
+    onWcifUpdate(localWcif);
+  };
 
   render() {
     const { tabValue, localWcif } = this.state;
-    const { onWcifUpdate } = this.props;
+
+    const wcifConfigComplete = roomsConfigComplete(localWcif) && activitiesConfigComplete(localWcif);
 
     return (
       <Grid container spacing={8} justify="flex-end">
@@ -73,10 +75,10 @@ export default class ConfigManager extends Component {
           <Button
             variant="contained"
             color="primary"
-            onClick={() => onWcifUpdate(localWcif)}
+            onClick={this.handleDoneClick}
             component={Link}
             to={`/competitions/${localWcif.id}`}
-            disabled={!this.wcifConfigComplete()}
+            disabled={!wcifConfigComplete}
           >
             Done
           </Button>
