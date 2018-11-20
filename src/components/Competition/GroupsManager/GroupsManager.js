@@ -7,7 +7,7 @@ import SnackbarContent from '@material-ui/core/SnackbarContent';
 import GroupsNavigation from './GroupsNavigation/GroupsNavigation';
 
 import { createGroupActivities, updateScrambleSetCount, assignTasks } from '../../../logic/groups';
-import { roundGroupActivities, roundsMissingAssignments } from '../../../logic/activities';
+import { allGroupsCreated, roundsMissingAssignments } from '../../../logic/activities';
 
 export default class GroupsManager extends Component {
   constructor(props) {
@@ -36,11 +36,7 @@ export default class GroupsManager extends Component {
     const { localWcif } = this.state;
     const { onWcifUpdate } = this.props;
 
-    const groupsCreated = localWcif.events.every(event =>
-      event.rounds.every(round =>
-        roundGroupActivities(localWcif, round.id).length > 0
-      )
-    );
+    const groupsCreated = allGroupsCreated(localWcif);
 
     return (
       <Grid container spacing={8} justify="flex-end">

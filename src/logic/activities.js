@@ -162,3 +162,10 @@ export const anyCompetitorAssignment = wcif =>
   wcif.persons.some(person =>
     (person.assignments || []).some(assignment => assignment.assignmentCode === 'competitor')
   );
+
+export const allGroupsCreated = wcif =>
+  wcif.events.every(event =>
+    event.rounds.every(round =>
+      roundGroupActivities(wcif, round.id).length > 0
+    )
+  );
