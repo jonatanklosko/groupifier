@@ -1,4 +1,4 @@
-import { zip, flatMap, scaleToOne, findLast, intersection, updateIn, sortBy, sortByArray, addMilliseconds, difference, partition } from './utils';
+import { zip, flatMap, scaleToOne, findLast, intersection, updateIn, sortBy, sortByArray, addMilliseconds, difference, partition, uniq } from './utils';
 import { getExtensionData } from './wcif-extensions';
 import { activityDuration, activityCodeToName, updateActivity, activitiesOverlap,
          parseActivityCode, maxActivityId, activityById, roundActivities,
@@ -45,7 +45,6 @@ export const createGroupActivities = wcif => {
 };
 
 export const assignTasks = wcif => {
-  /* TODO: Create groups if there are none. */
   const roundsToAssign = roundsMissingAssignments(wcif);
   return [assignGroups, assignScrambling, assignRunning, assignJudging]
     .reduce((wcif, assignmentFn) => assignmentFn(wcif, roundsToAssign), wcif);
@@ -277,3 +276,20 @@ const overlapsEveryoneWithSameRole = (wcif, groups, activity, competitor) =>
         )
       );
     });
+
+export const updateScrambleSetCount = wcif => ({
+  ...wcif,
+  events: wcif.events.map(event => ({
+    ...event,
+    rounds: event.rounds.map(round => ({
+      ...round,
+      scrambleSetCount: scrambleSetCountForRound(wcif, round.id)
+    }))
+  }))
+});
+
+/* Assume one scramble set for each unique timeframe, i.e. (startTime, endTime) pair. */
+const scrambleSetCountForRound = (wcif, roundId) =>
+  hasDistributedAttempts(roundId) ? 1 : uniq(
+    roundGroupActivities(wcif, roundId).map(({ startTime, endTime }) => startTime + endTime)
+  ).length;

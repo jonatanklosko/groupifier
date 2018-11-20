@@ -6,8 +6,8 @@ import SnackbarContent from '@material-ui/core/SnackbarContent';
 
 import GroupsNavigation from './GroupsNavigation/GroupsNavigation';
 
-import { createGroupActivities, assignTasks } from '../../../logic/groups';
-import { roundsMissingAssignments } from '../../../logic/activities';
+import { createGroupActivities, updateScrambleSetCount, assignTasks } from '../../../logic/groups';
+import { roundGroupActivities, roundsMissingAssignments } from '../../../logic/activities';
 
 export default class GroupsManager extends Component {
   constructor(props) {
@@ -17,11 +17,17 @@ export default class GroupsManager extends Component {
     };
   }
 
+  createGroupActivities = () => {
+    const { localWcif } = this.state;
+    this.setState({
+      localWcif: updateScrambleSetCount(createGroupActivities(localWcif))
+    });
+  };
+
   assignTasks = () => {
     const { localWcif } = this.state;
-    const wcifWithGroups = createGroupActivities(localWcif);
     const start = performance.now();
-    const wcifWithAssignments = assignTasks(wcifWithGroups);
+    const wcifWithAssignments = assignTasks(localWcif);
     console.log(wcifWithAssignments, 'Took', performance.now() - start);
     this.setState({ localWcif: wcifWithAssignments });
   };
@@ -30,15 +36,36 @@ export default class GroupsManager extends Component {
     const { localWcif } = this.state;
     const { onWcifUpdate } = this.props;
 
+    const groupsCreated = localWcif.events.every(event =>
+      event.rounds.every(round =>
+        roundGroupActivities(localWcif, round.id).length > 0
+      )
+    );
+
     return (
       <Grid container spacing={8} justify="flex-end">
         <Grid item xs={12}>
-          {roundsMissingAssignments(localWcif).length > 0 && (
-            <SnackbarContent style={{ maxWidth: 'none' }} message="There are rounds with no tasks assigned" action={
-              <Button onClick={this.assignTasks} color="secondary" size="small">
-                Assign tasks
-              </Button>
-            }/>
+          {!groupsCreated && (
+            <SnackbarContent
+              style={{ maxWidth: 'none' }}
+              message="To assign tasks you need to create groups first. This will also determine scramble set count for each round."
+              action={
+                <Button onClick={this.createGroupActivities} color="secondary" size="small">
+                  Create groups
+                </Button>
+              }
+            />
+          )}
+          {(groupsCreated && roundsMissingAssignments(localWcif).length > 0) && (
+            <SnackbarContent
+              style={{ maxWidth: 'none' }}
+              message="There are rounds with no tasks assigned."
+              action={
+                <Button onClick={this.assignTasks} color="secondary" size="small">
+                  Assign tasks
+                </Button>
+              }
+            />
           )}
         </Grid>
         <Grid item xs={12}>

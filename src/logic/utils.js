@@ -141,5 +141,8 @@ export const chunk = (arr, size) =>
     ? [arr]
     : [arr.slice(0, size), ...chunk(arr.slice(size), size)];
 
+export const uniq = arr =>
+  [...new Set(arr)];
+
 export const addMilliseconds = (isoString, milliseconds) =>
   new Date(new Date(isoString).getTime() + milliseconds).toISOString();
