@@ -45,17 +45,25 @@ export const getExpectedCompetitorsByRound = wcif =>
     return expectedCompetitorsByRound;
   }, {});
 
+const satisfiesAdvancementCondition = (result, advancementCondition, resultCount) => {
+  const { type, level } = advancementCondition;
+  if (type === 'ranking') return result.ranking <= level;
+  if (type === 'percent') return result.ranking <= Math.floor(resultCount * level * 0.01);
+  if (type === 'attemptResult') return result.attempts.some(attempt => attempt.result < level);
+  throw new Error(`Unrecognised AdvancementCondition type: '${type}'`);
+};
+
 const advancingResults = (results, advancementCondition) => {
-  switch (advancementCondition.type) {
-    case 'ranking':
-      return results.filter(result => result.ranking <= advancementCondition.level);
-    case 'percent':
-      return results.filter(result => result.ranking <= Math.floor(results.length * advancementCondition.level * 0.01));
-    case 'attemptResult':
-      return results.filter(result => result.attempts.some(attempt => attempt.result < advancementCondition.level));
-    default:
-      throw new Error(`Unrecognised AdvancementCondition type: '${advancementCondition.type}'`);
-  }
+  const sortedResults = sortBy(
+    results.filter(result => result.attempts.length > 0),
+    result => result.ranking
+  );
+  const maxAdvanceable = Math.floor(sortedResults.length * 0.75); /* See: https://www.worldcubeassociation.org/regulations/#9p1 */
+  const firstNonAdvancingRank = sortedResults[maxAdvanceable].rank;
+  /* Note: this ensures that people who tied either advance altogether or not. */
+  return sortedResults
+    .filter(result => result.rank < firstNonAdvancingRank)
+    .filter(result => satisfiesAdvancementCondition(result, advancementCondition, sortedResults.length));
 };
 
 export const competitorsForRound = (wcif, roundId) => {
