@@ -27,18 +27,18 @@ const competitorsExpectedToAdvance = (sortedCompetitors, advancementCondition, e
 };
 
 export const getExpectedCompetitorsByRound = wcif =>
-  wcif.events.reduce((expectedCompetitorsByRound, wcifEvent) => {
-    const [firstRound, ...nextRounds] = wcifEvent.rounds;
+  wcif.events.reduce((expectedCompetitorsByRound, event) => {
+    const [firstRound, ...nextRounds] = event.rounds;
     const registeredCompetitors = wcif.persons.filter(person =>
-      person.registration && person.registration.eventIds.includes(wcifEvent.id)
+      person.registration && person.registration.eventIds.includes(event.id)
     );
     expectedCompetitorsByRound[firstRound.id] = sortByArray(registeredCompetitors,
-      competitor => bestAverageAndSingle(competitor, wcifEvent.id)
+      competitor => bestAverageAndSingle(competitor, event.id)
     );
     nextRounds.reduce(([round, competitors], nextRound) => {
       const advancementCondition = round.advancementCondition;
       if (!advancementCondition) throw new Error(`Mising advancement condition for ${activityCodeToName(round.id)}.`);
-      const nextRoundCompetitors = competitorsExpectedToAdvance(competitors, advancementCondition, wcifEvent.id);
+      const nextRoundCompetitors = competitorsExpectedToAdvance(competitors, advancementCondition, event.id);
       expectedCompetitorsByRound[nextRound.id] = nextRoundCompetitors;
       return [nextRound, nextRoundCompetitors];
     }, [firstRound, expectedCompetitorsByRound[firstRound.id]]);
@@ -77,7 +77,7 @@ export const competitorsForRound = (wcif, roundId) => {
     );
   } else {
     const previousRound = wcif.events
-      .find(wcifEvent => wcifEvent.id === eventId).rounds
+      .find(event => event.id === eventId).rounds
       .find(round => parseActivityCode(round.id).roundNumber === roundNumber - 1);
     const { results, advancementCondition } = previousRound;
     return sortBy(advancingResults(results, advancementCondition), result => -result.ranking)

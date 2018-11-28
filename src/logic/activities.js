@@ -40,8 +40,8 @@ export const populateActivitiesConfig = (wcif, expectedCompetitorsByRound, { ass
   const activities = flatMap(wcif.schedule.venues[0].rooms, room =>
     room.activities.filter(shouldHaveGroups)
   );
-  const activitiesWithConfig = flatMap(wcif.events, wcifEvent => {
-    return flatMap(wcifEvent.rounds, round => {
+  const activitiesWithConfig = flatMap(wcif.events, event => {
+    return flatMap(event.rounds, round => {
       const competitors = expectedCompetitorsByRound[round.id];
       const roundActivities = activities
         .filter(activity => activity.activityCode.startsWith(round.id));
@@ -146,7 +146,7 @@ export const groupActivitiesAssigned = (wcif, roundId) =>
 
 const roundsWithoutResults = wcif =>
   wcif.events
-    .map(wcifEvent => wcifEvent.rounds.find(round => (round.results || []).length === 0))
+    .map(event => event.rounds.find(round => (round.results || []).length === 0))
     .filter(round => round);
 
 export const roundsMissingAssignments = wcif =>

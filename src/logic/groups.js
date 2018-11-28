@@ -6,7 +6,7 @@ import { activityDuration, activityCodeToName, updateActivity, activitiesOverlap
 import { competitorsForRound, bestAverageAndSingle, age, staffAssignments, staffAssignmentsForEvent, acceptedPeople } from './competitors';
 
 export const createGroupActivities = wcif => {
-  const rounds = flatMap(wcif.events, wcifEvent => wcifEvent.rounds);
+  const rounds = flatMap(wcif.events, event => event.rounds);
   return rounds.reduce((wcif, round) => {
     /* For FMC and MBLD the activities are already scheduled, and there is always a single group. */
     if (hasDistributedAttempts(round.id)) return wcif;
