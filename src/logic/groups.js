@@ -2,7 +2,7 @@ import { zip, flatMap, scaleToOne, findLast, intersection, updateIn, sortBy, sor
 import { getExtensionData } from './wcif-extensions';
 import { activityDuration, activityCodeToName, updateActivity, activitiesOverlap,
          parseActivityCode, maxActivityId, activityById, roundActivities,
-         roundGroupActivities, roundsMissingAssignments, hasDistributedAttempts } from './activities';
+         roundGroupActivities, roundsMissingAssignments, hasDistributedAttempts, rooms } from './activities';
 import { competitorsForRound, bestAverageAndSingle, age, staffAssignments, staffAssignmentsForEvent, acceptedPeople } from './competitors';
 
 export const createGroupActivities = wcif => {
@@ -226,7 +226,7 @@ const assignJudging = (wcif, roundsToAssign) => {
     const eventId = parseActivityCode(round.id).eventId;
     return roundActivities(wcif, round.id).reduce((wcif, activity) => {
       const { assignJudges } = getExtensionData('Activity', activity);
-      const room = wcif.schedule.venues[0].rooms.find(room => room.activities.includes(activity));
+      const room = rooms(wcif).find(room => room.activities.includes(activity));
       const { stations } = getExtensionData('Room', room);
       if (!assignJudges) return wcif;
       return activity.childActivities.reduce((wcif, groupActivity) => {

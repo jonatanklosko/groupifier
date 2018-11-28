@@ -4,7 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import RoundActivityConfig from '../RoundActivityConfig/RoundActivityConfig';
 import RoomName from '../../../common/RoomName/RoomName';
 import { flatMap } from '../../../../logic/utils';
-import { updateActivity } from '../../../../logic/activities';
+import { updateActivity, rooms } from '../../../../logic/activities';
 
 export default class RoundConfig extends PureComponent {
   handleActivityChange = activity => {
@@ -15,7 +15,7 @@ export default class RoundConfig extends PureComponent {
   render() {
     const { roundId, wcif, expectedCompetitorsByRound } = this.props;
 
-    const activitiesWithRooms = flatMap(wcif.schedule.venues[0].rooms, room =>
+    const activitiesWithRooms = flatMap(rooms(wcif), room =>
       room.activities
         .filter(activity => activity.activityCode === roundId)
         .map(activity => [activity, room])

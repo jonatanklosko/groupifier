@@ -32,12 +32,12 @@ export const activityDuration = activity =>
   new Date(activity.endTime) - new Date(activity.startTime)
 
 const activityStations = (wcif, activity) => {
-  const room = wcif.schedule.venues[0].rooms.find(room => room.activities.includes(activity));
+  const room = rooms(wcif).find(room => room.activities.includes(activity));
   return getExtensionData('Room', room).stations;
 };
 
 export const populateActivitiesConfig = (wcif, expectedCompetitorsByRound, { assignScramblers, assignRunners, assignJudges }) => {
-  const activities = flatMap(wcif.schedule.venues[0].rooms, room =>
+  const activities = flatMap(rooms(wcif), room =>
     room.activities.filter(shouldHaveGroups)
   );
   const activitiesWithConfig = flatMap(wcif.events, event => {
@@ -72,12 +72,12 @@ export const updateActivity = (wcif, updatedActivity) =>
   );
 
 export const anyActivityConfigured = wcif =>
-  wcif.schedule.venues[0].rooms.some(room =>
+  rooms(wcif).some(room =>
     room.activities.some(activity => getExtensionData('Activity', activity))
   );
 
 export const activitiesConfigComplete = wcif =>
-  wcif.schedule.venues[0].rooms.every(room =>
+  rooms(wcif).every(room =>
     room.activities
       .filter(shouldHaveGroups)
       .map(activity => getExtensionData('Activity', activity))
@@ -85,7 +85,7 @@ export const activitiesConfigComplete = wcif =>
   );
 
 export const roomsConfigComplete = wcif =>
-  wcif.schedule.venues[0].rooms
+  rooms(wcif)
     .map(room => getExtensionData('Room', room))
     .every(isPresentDeep);
 
@@ -98,7 +98,7 @@ const allActivities = wcif => {
     childActivities.length > 0
       ? [...childActivities, ...flatMap(childActivities, allChildActivities)]
       : childActivities;
-  const activities = flatMap(wcif.schedule.venues[0].rooms, room => room.activities);
+  const activities = flatMap(rooms(wcif), room => room.activities);
   return [...activities, ...flatMap(activities, allChildActivities)];
 };
 
@@ -125,7 +125,7 @@ export const hasDistributedAttempts = activityCode =>
   ['333fm', '333mbf'].includes(parseActivityCode(activityCode).eventId);
 
 export const roundActivities = (wcif, roundId) =>
-  flatMap(wcif.schedule.venues[0].rooms, room =>
+  flatMap(rooms(wcif), room =>
     room.activities.filter(({ activityCode }) => activityCode.startsWith(roundId))
   );
 
@@ -169,3 +169,6 @@ export const allGroupsCreated = wcif =>
       roundGroupActivities(wcif, round.id).length > 0
     )
   );
+
+export const rooms = wcif =>
+  wcif.schedule.venues[0].rooms;

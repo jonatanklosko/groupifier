@@ -7,7 +7,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import RoundsNavigation from '../../../common/RoundsNavigation/RoundsNavigation';
 import RoomName from '../../../common/RoomName/RoomName';
 import GroupDialog from '../GroupDialog/GroupDialog';
-import { parseActivityCode, hasDistributedAttempts } from '../../../../logic/activities';
+import { parseActivityCode, hasDistributedAttempts, rooms } from '../../../../logic/activities';
 import { flatMap } from '../../../../logic/utils';
 
 export default class RoundWithGroups extends Component {
@@ -45,7 +45,7 @@ export default class RoundWithGroups extends Component {
 
   renderRound = roundId => {
     const { wcif } = this.props;
-    const roomsWithGroups = wcif.schedule.venues[0].rooms.map(room =>
+    const roomsWithGroups = rooms(wcif).map(room =>
       [room, flatMap(
         room.activities.filter(activity => activity.activityCode === roundId),
         activity => activity.childActivities
