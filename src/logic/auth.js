@@ -8,8 +8,20 @@ export const initializeAuth = () => {
   const hashParams = new URLSearchParams(hash);
   if (hashParams.has('access_token')) {
     sessionStorage.setItem('Groupifier.accessToken', hashParams.get('access_token'));
-    window.location.hash = '';
   }
+  if (hashParams.has('expires_in')) {
+    /* Expire the token 15 minutes before it actually does,
+       this way it doesn't expire right after the user enters the page. */
+    const expiresInSeconds = hashParams.get('expires_in') - 15 * 60;
+    const expirationTime = new Date(new Date().getTime() + expiresInSeconds * 1000);
+    sessionStorage.setItem('Groupifier.expirationTime', expirationTime.toISOString());
+  }
+  /* If the token expired, sign the user out. */
+  const expirationTime = sessionStorage.getItem('Groupifier.expirationTime');
+  if (expirationTime && new Date() >= new Date(expirationTime)) {
+    signOut();
+  }
+  window.location.hash = '';
 };
 
 export const wcaAccessToken = () =>
