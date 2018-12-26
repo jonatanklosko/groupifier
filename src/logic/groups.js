@@ -173,14 +173,23 @@ const assignScrambling = (wcif, roundsToAssign) => {
         const competitors = difference(competitorsForRound(wcif, round.id), staffScramblers);
         const available = people => people.filter(person => availableDuring(wcif, groupActivity, person));
         const sortedAvailableStaff = sortByArray(available(staffScramblers), competitor => [
+          /* Avoid difference in the number of tasks bigger than 3.
+             (General note: this is better than sorting by the number of tasks,
+             as it allows one person to be assigned a couple times in a row). */
           Math.floor(staffAssignments(competitor).length / 3),
+          /* Prefer competitors better in the given event. */
           ...bestAverageAndSingle(competitor, eventId)
         ]);
         const sortedAvailableCompetitors = sortedAvailableStaff.length >= scramblers ? [] : sortByArray(available(competitors), competitor => [
+          /* Strongly prefer people at least 10 years old. */
           age(competitor) >= 10 ? -1 : 1,
+          /* Avoid assigning tasks to people already busy due to their role. */
           intersection(['dataentry', 'delegate', 'organizer'], competitor.roles).length,
+          /* Avoid more than two assignments for the given event. */
           staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2 ? 1 : -1,
+          /* Avoid difference in the number of tasks bigger than 6. */
           Math.floor(staffAssignments(competitor).length / 6),
+          /* Prefer competitors better in the given event. */
           ...bestAverageAndSingle(competitor, eventId)
         ]);
         const potentialScramblers = [...sortedAvailableStaff, ...sortedAvailableCompetitors];
@@ -230,13 +239,17 @@ const assignJudging = (wcif, roundsToAssign) => {
         const [staffJudges, people] = partition(acceptedPeople(wcif), person => person.roles.includes('staff-judge'));
         const available = people => people.filter(person => availableDuring(wcif, groupActivity, person));
         const sortedAvailableStaff = sortByArray(available(staffJudges), competitor => [
-          Math.floor(staffAssignments(competitor).length / 3)
+          /* Equally distribute tasks (judging is assigned last, so we want to eliminate inequality introduced by other assignments). */
+          staffAssignments(competitor).length
         ]);
         const sortedAvailablePeople = sortedAvailableStaff.length >= stations ? [] : sortByArray(available(people), competitor => [
           age(competitor) >= 10 ? -1 : 1,
           intersection(['dataentry', 'delegate', 'organizer'], competitor.roles).length,
           staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2 ? 1 : -1,
-          staffAssignments(competitor).length
+          /* Equally distribute tasks (judging is assigned last, so we want to eliminate inequality introduced by other assignments). */
+          staffAssignments(competitor).length,
+          /* Prefer people that solve fewer events, to avoid overloading people solving more. */
+          competitor.registration ? competitor.registration.eventIds.length : 0,
         ]);
         const potentialJudges = [...sortedAvailableStaff, ...sortedAvailablePeople];
         const updatedPeople = assignActivity(groupActivity, 'staff-judge', potentialJudges.slice(0, stations));
