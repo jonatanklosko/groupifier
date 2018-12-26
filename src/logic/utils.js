@@ -90,8 +90,8 @@ export const pluralize = (count, singular, plural) =>
  */
 export const scaleToOne = arr => {
   if (arr.length === 0) return [];
-  const sum = arr.reduce((x, y) => x + y, 0);
-  return arr.map(x => sum !== 0 ? x / sum : 1 / arr.length);
+  const arrSum = sum(arr);
+  return arr.map(x => arrSum !== 0 ? x / arrSum : 1 / arr.length);
 };
 
 /**
@@ -143,6 +143,9 @@ export const chunk = (arr, size) =>
 
 export const uniq = arr =>
   [...new Set(arr)];
+
+export const sum = arr =>
+  arr.reduce((x, y) => x + y, 0);
 
 export const addMilliseconds = (isoString, milliseconds) =>
   new Date(new Date(isoString).getTime() + milliseconds).toISOString();

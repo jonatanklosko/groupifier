@@ -29,7 +29,7 @@ export const shouldHaveGroups = activity => {
 };
 
 export const activityDuration = activity =>
-  new Date(activity.endTime) - new Date(activity.startTime)
+  new Date(activity.endTime) - new Date(activity.startTime);
 
 const activityStations = (wcif, activity) => {
   const room = rooms(wcif).find(room => room.activities.includes(activity));
@@ -89,9 +89,15 @@ export const roomsConfigComplete = wcif =>
     .map(room => getExtensionData('Room', room))
     .every(isPresentDeep);
 
-
 export const activitiesOverlap = (first, second) =>
   first.startTime < second.endTime && second.startTime < first.endTime;
+
+export const activitiesIntersection = (first, second) => {
+  if (!activitiesOverlap(first, second)) return 0;
+  const [, middleStart, middleEnd] = [first.startTime, first.endTime, second.startTime, second.endTime].sort();
+  /* Time distance between the two middle points in time. */
+  return new Date(middleEnd) - new Date(middleStart);
+};
 
 const allActivities = wcif => {
   const allChildActivities = ({ childActivities }) =>

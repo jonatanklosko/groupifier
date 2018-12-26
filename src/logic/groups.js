@@ -1,9 +1,10 @@
-import { zip, flatMap, scaleToOne, findLast, intersection, updateIn, sortBy, sortByArray, addMilliseconds, difference, partition, uniq } from './utils';
+import { addMilliseconds, difference, findLast, flatMap, intersection, partition,
+         scaleToOne, sortBy, sortByArray, sum, uniq, updateIn, zip } from './utils';
 import { getExtensionData } from './wcif-extensions';
-import { activityDuration, activityCodeToName, updateActivity, activitiesOverlap,
-         parseActivityCode, maxActivityId, activityById, roundActivities,
-         roundGroupActivities, roundsMissingAssignments, hasDistributedAttempts, rooms } from './activities';
-import { competitorsForRound, bestAverageAndSingle, age, staffAssignments, staffAssignmentsForEvent, acceptedPeople } from './competitors';
+import { activitiesIntersection, activitiesOverlap, activityById, activityCodeToName,
+         activityDuration, hasDistributedAttempts, maxActivityId, parseActivityCode,
+         rooms, roundActivities, roundGroupActivities, roundsMissingAssignments, updateActivity } from './activities';
+import { acceptedPeople, age, bestAverageAndSingle, competitorsForRound, staffAssignments, staffAssignmentsForEvent } from './competitors';
 
 export const createGroupActivities = wcif => {
   const rounds = flatMap(wcif.events, event => event.rounds);
@@ -80,21 +81,18 @@ const assignGroups = (wcif, roundsToAssign) => {
     }));
     const sortedInitialGroups = sortBy(initialGroups, ({ activity }) => parseActivityCode(activity.activityCode).groupNumber);
     const groups = competitors.reduce((groups, competitor) => {
-      const possibleGroups = groups.filter(group => availableDuring(wcif, group.activity, competitor));
-      const preferredGroups = possibleGroups.filter(group => !overlapsEveryoneWithSameRole(wcif, groups, group.activity, competitor));
-      const potentialGroups = preferredGroups.length > 0 ? preferredGroups : possibleGroups;
-      const notFullGroups = groups.filter(({ size, competitors }) => competitors.length < size);
-      if (potentialGroups.length > 0) {
-        const notFullGroup = potentialGroups.find(group => notFullGroups.includes(group));
-        if (notFullGroup) {
-          return addCompetitorToGroupEnd(groups, notFullGroup.id, competitor);
-        } else {
-          const group = potentialGroups[potentialGroups.length - 1];
-          const updatedGroups = addCompetitorToGroupEnd(groups, group.id, competitor);
-          return moveSomeoneRight(wcif, updatedGroups, group.id) || moveSomeoneLeft(wcif, updatedGroups, group.id) || updatedGroups;
-        }
+      const availabilityRates = groups.map(group => availabilityRate(wcif, group.activity, competitor));
+      const maxAvailabilityRate = Math.max(...availabilityRates);
+      const mostAvailableGroups = groups.filter((group, index) => availabilityRates[index] === maxAvailabilityRate);
+      const preferredGroups = mostAvailableGroups.filter(group => !overlapsEveryoneWithSameRole(wcif, groups, group.activity, competitor));
+      const potentialGroups = preferredGroups.length > 0 ? preferredGroups : mostAvailableGroups;
+      const notFullGroup = potentialGroups.find(({ size, competitors }) => competitors.length < size);
+      if (notFullGroup) {
+        return addCompetitorToGroupEnd(groups, notFullGroup.id, competitor);
       } else {
-        return addCompetitorToGroupEnd(groups, notFullGroups[0].id, competitor);
+        const group = potentialGroups[potentialGroups.length - 1];
+        const updatedGroups = addCompetitorToGroupEnd(groups, group.id, competitor);
+        return moveSomeoneRight(wcif, updatedGroups, group.id) || moveSomeoneLeft(wcif, updatedGroups, group.id) || updatedGroups;
       }
     }, sortedInitialGroups);
     const updatedCompetitors = flatMap(groups, ({ activity, competitors }) =>
@@ -115,7 +113,7 @@ const moveSomeoneRight = (wcif, groups, groupId) => {
   return groups.slice(groups.indexOf(group) + 1).reduce((updatedGroups, furtherGroup) => {
     if (updatedGroups) return updatedGroups;
     const competitorToMove = findLast(group.competitors, competitor =>
-      availableDuring(wcif, furtherGroup.activity, competitor)
+      availabilityRate(wcif, group.activity, competitor) === availabilityRate(wcif, furtherGroup.activity, competitor)
       && !overlapsEveryoneWithSameRole(wcif, groups, furtherGroup.activity, competitor)
     );
     if (!competitorToMove) return null; // Try the next group.
@@ -134,7 +132,7 @@ const moveSomeoneLeft = (wcif, groups, groupId) => {
   return groups.slice(0, groups.indexOf(group)).reduceRight((updatedGroups, previousGroup) => {
     if (updatedGroups) return updatedGroups;
     const competitorToMove = group.competitors.find(competitor =>
-      availableDuring(wcif, previousGroup.activity, competitor)
+      availabilityRate(wcif, group.activity, competitor) === availabilityRate(wcif, previousGroup.activity, competitor)
       && !overlapsEveryoneWithSameRole(wcif, groups, previousGroup.activity, competitor)
     );
     if (!competitorToMove) return null; // Try the previous group.
@@ -264,6 +262,14 @@ const availableDuring = (wcif, activity, competitor) =>
   !(competitor.assignments || []).some(({ activityId }) =>
     activitiesOverlap(activityById(wcif, activityId), activity)
   );
+
+const availabilityRate = (wcif, activity, competitor) => {
+  const intersections = (competitor.assignments || []).map(({ activityId }) =>
+    activitiesIntersection(activityById(wcif, activityId), activity)
+  );
+  const timeWhenBusy = sum(intersections);
+  return -(timeWhenBusy / activityDuration(activity));
+};
 
 const overlapsEveryoneWithSameRole = (wcif, groups, activity, competitor) =>
   intersection(['dataentry', 'delegate', 'organizer'], competitor.roles)
