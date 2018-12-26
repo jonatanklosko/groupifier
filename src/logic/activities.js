@@ -31,7 +31,7 @@ export const shouldHaveGroups = activity => {
 export const activityDuration = activity =>
   new Date(activity.endTime) - new Date(activity.startTime);
 
-const activityStations = (wcif, activity) => {
+export const activityStations = (wcif, activity) => {
   const room = rooms(wcif).find(room => room.activities.includes(activity));
   return getExtensionData('Room', room).stations;
 };

@@ -2,8 +2,8 @@ import { addMilliseconds, difference, findLast, flatMap, intersection, partition
          scaleToOne, sortBy, sortByArray, sum, uniq, updateIn, zip } from './utils';
 import { getExtensionData } from './wcif-extensions';
 import { activitiesIntersection, activitiesOverlap, activityById, activityCodeToName,
-         activityDuration, hasDistributedAttempts, maxActivityId, parseActivityCode,
-         rooms, roundActivities, roundGroupActivities, roundsMissingAssignments, updateActivity } from './activities';
+         activityDuration, activityStations, hasDistributedAttempts, maxActivityId, parseActivityCode,
+         roundActivities, roundGroupActivities, roundsMissingAssignments, updateActivity } from './activities';
 import { acceptedPeople, age, bestAverageAndSingle, competitorsForRound, staffAssignments, staffAssignmentsForEvent } from './competitors';
 
 export const createGroupActivities = wcif => {
@@ -169,7 +169,7 @@ const assignScrambling = (wcif, roundsToAssign) => {
       const { scramblers } = getExtensionData('Activity', activity);
       if (scramblers === 0) return wcif;
       return activity.childActivities.reduce((wcif, groupActivity) => {
-        const staffScramblers = acceptedPeople(wcif).filter(person => person.roles.includes('staff-scrambler')) ;
+        const staffScramblers = acceptedPeople(wcif).filter(person => person.roles.includes('staff-scrambler'));
         const competitors = difference(competitorsForRound(wcif, round.id), staffScramblers);
         const available = people => people.filter(person => availableDuring(wcif, groupActivity, person));
         const sortedAvailableStaff = sortByArray(available(staffScramblers), competitor => [
@@ -224,8 +224,7 @@ const assignJudging = (wcif, roundsToAssign) => {
     const eventId = parseActivityCode(round.id).eventId;
     return roundActivities(wcif, round.id).reduce((wcif, activity) => {
       const { assignJudges } = getExtensionData('Activity', activity);
-      const room = rooms(wcif).find(room => room.activities.includes(activity));
-      const { stations } = getExtensionData('Room', room);
+      const stations = activityStations(wcif, activity);
       if (!assignJudges) return wcif;
       return activity.childActivities.reduce((wcif, groupActivity) => {
         const [staffJudges, people] = partition(acceptedPeople(wcif), person => person.roles.includes('staff-judge'));
