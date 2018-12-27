@@ -21,7 +21,10 @@ export const initializeAuth = () => {
   if (expirationTime && new Date() >= new Date(expirationTime)) {
     signOut();
   }
-  window.location.hash = '';
+  /* Clear the hash only if there is a token, otherwise it may be a router path. */
+  if (hashParams.has('access_token')) {
+    window.location.hash = '';
+  }
 };
 
 export const wcaAccessToken = () =>
