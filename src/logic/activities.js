@@ -176,5 +176,14 @@ export const allGroupsCreated = wcif =>
     )
   );
 
+export const anyGroupAssignedOrCreated = wcif =>
+  wcif.events.some(event =>
+    event.rounds.some(round =>
+      hasDistributedAttempts(event.id)
+        ? anyCompetitorAssignment(wcif, round.id)
+        : roundGroupActivities(wcif, round.id).length > 0
+    )
+  );
+
 export const rooms = wcif =>
   wcif.schedule.venues[0].rooms;

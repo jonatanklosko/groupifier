@@ -22,3 +22,10 @@ export const getExtensionData = (extensionName, wcifEntity) => {
     .find(extension => extension.id === groupifierExtensionId(extensionName));
   return extension ? extension.data : null;
 };
+
+export const removeExtensionData = (extensionName, wcifEntity) => ({
+  ...wcifEntity,
+  extensions: extensions(wcifEntity).filter(extension =>
+    extension.id !== groupifierExtensionId(extensionName)
+  )
+});

@@ -57,6 +57,19 @@ export default class RolesManager extends Component {
     });
   }
 
+  clearRoles = () => {
+    const { localWcif } = this.state;
+    const roleIds = roles.map(role => role.id);
+    this.setState({
+      localWcif: {
+        ...localWcif,
+        persons: localWcif.persons.map(person =>
+          ({ ...person, roles: difference(person.roles, roleIds)})
+        )
+      }
+    });
+  };
+
   render() {
     const { page, searchString, localWcif } = this.state;
     const { onWcifUpdate } = this.props;
@@ -113,6 +126,11 @@ export default class RolesManager extends Component {
         <Grid item>
           <Button variant="contained" component={Link} to={`/competitions/${localWcif.id}`}>
             Cancel
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button variant="contained" onClick={this.clearRoles}>
+            Clear
           </Button>
         </Grid>
         <Grid item>

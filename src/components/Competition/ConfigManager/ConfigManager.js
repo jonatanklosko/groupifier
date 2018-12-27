@@ -11,7 +11,9 @@ import Typography from '@material-ui/core/Typography';
 import RoomsConfig from './RoomsConfig/RoomsConfig';
 import RoundsConfig from './RoundsConfig/RoundsConfig';
 import { getExpectedCompetitorsByRound } from '../../../logic/competitors';
-import { roomsConfigComplete, activitiesConfigComplete } from '../../../logic/activities';
+import { roomsConfigComplete, activitiesConfigComplete, anyGroupAssignedOrCreated } from '../../../logic/activities';
+import { removeExtensionData } from '../../../logic/wcif-extensions';
+import { updateIn } from '../../../logic/utils';
 
 export default class ConfigManager extends Component {
   constructor(props) {
@@ -35,6 +37,23 @@ export default class ConfigManager extends Component {
     const { localWcif } = this.state;
     const { onWcifUpdate } = this.props;
     onWcifUpdate(localWcif);
+  };
+
+  clearConfig = () => {
+    const { localWcif } = this.state;
+    this.setState({
+      tabValue: 0,
+      localWcif: updateIn(localWcif, ['schedule', 'venues', '0', 'rooms'], rooms =>
+        rooms.map(room =>
+          removeExtensionData('Room', {
+            ...room,
+            activities: room.activities.map(activity =>
+              removeExtensionData('Activity', activity)
+            )
+          })
+        )
+      )
+    });
   };
 
   render() {
@@ -69,6 +88,11 @@ export default class ConfigManager extends Component {
         <Grid item>
           <Button variant="contained" component={Link} to={`/competitions/${localWcif.id}`}>
             Cancel
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button variant="contained" onClick={this.clearConfig} disabled={anyGroupAssignedOrCreated(localWcif)}>
+            Clear
           </Button>
         </Grid>
         <Grid item>

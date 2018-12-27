@@ -8,6 +8,7 @@ import GroupsNavigation from './GroupsNavigation/GroupsNavigation';
 
 import { createGroupActivities, updateScrambleSetCount, assignTasks } from '../../../logic/groups';
 import { allGroupsCreated, roundsMissingAssignments } from '../../../logic/activities';
+import { updateIn } from '../../../logic/utils';
 
 export default class GroupsManager extends Component {
   constructor(props) {
@@ -30,6 +31,27 @@ export default class GroupsManager extends Component {
     const wcifWithAssignments = assignTasks(localWcif);
     console.log(wcifWithAssignments, 'Took', performance.now() - start);
     this.setState({ localWcif: wcifWithAssignments });
+  };
+
+  clearGroups = () => {
+    const { localWcif } = this.state;
+    this.setState({
+      localWcif: {
+        ...localWcif,
+        persons: localWcif.persons.map(person => ({
+          ...person,
+          assignments: (person.assignments || []).filter(({ assignmentCode }) =>
+            !assignmentCode.startsWith('staff-') && assignmentCode !== 'competitor'
+          )
+        })),
+        schedule: updateIn(localWcif.schedule, ['venues', '0', 'rooms'], rooms =>
+          rooms.map(room => ({
+            ...room,
+            activities: room.activities.map(activity => ({ ...activity, childActivities: [] }))
+          }))
+        )
+      }
+    });
   };
 
   render() {
@@ -70,6 +92,11 @@ export default class GroupsManager extends Component {
         <Grid item>
           <Button variant="contained" component={Link} to={`/competitions/${localWcif.id}`}>
             Cancel
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button variant="contained" onClick={this.clearGroups}>
+            Clear
           </Button>
         </Grid>
         <Grid item>
