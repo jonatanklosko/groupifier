@@ -1,5 +1,5 @@
 import { addMilliseconds, difference, findLast, flatMap, intersection, partition,
-         scaleToOne, sortBy, sortByArray, sum, uniq, updateIn, mapIn, zip } from './utils';
+         scaleToOne, setIn, sortBy, sortByArray, sum, uniq, updateIn, mapIn, zip } from './utils';
 import { getExtensionData } from './wcif-extensions';
 import { activitiesIntersection, activitiesOverlap, activityById, activityCodeToName,
          activityDuration, activityStations, hasDistributedAttempts, maxActivityId, parseActivityCode,
@@ -311,16 +311,12 @@ const overlapsEveryoneWithSameRole = (wcif, groups, activity, competitor) =>
       );
     });
 
-export const updateScrambleSetCount = wcif => ({
-  ...wcif,
-  events: wcif.events.map(event => ({
-    ...event,
-    rounds: event.rounds.map(round => ({
-      ...round,
-      scrambleSetCount: scrambleSetCountForRound(wcif, round.id)
-    }))
-  }))
-});
+export const updateScrambleSetCount = wcif =>
+  mapIn(wcif, ['events'], event =>
+    mapIn(event, ['rounds'], round =>
+      setIn(round, ['scrambleSetCount'], scrambleSetCountForRound(wcif, round.id))
+    )
+  );
 
 /* Assume one scramble set for each unique timeframe, i.e. (startTime, endTime) pair. */
 const scrambleSetCountForRound = (wcif, roundId) =>
