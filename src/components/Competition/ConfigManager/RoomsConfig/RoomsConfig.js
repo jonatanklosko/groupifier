@@ -10,8 +10,10 @@ export default class RoomsConfig extends Component {
   handleRoomChange = updatedRoom => {
     const { wcif, onWcifChange } = this.props;
     onWcifChange(
-      mapIn(wcif, ['schedule', 'venues', '0', 'rooms'], room =>
-        room.id === updatedRoom.id ? updatedRoom : room
+      mapIn(wcif, ['schedule', 'venues'], venue =>
+        mapIn(venue, ['rooms'], room =>
+          room.id === updatedRoom.id ? updatedRoom : room
+        )
       )
     );
   };

@@ -43,10 +43,12 @@ export default class ConfigManager extends Component {
     const { localWcif } = this.state;
     this.setState({
       tabValue: 0,
-      localWcif: mapIn(localWcif, ['schedule', 'venues', '0', 'rooms'], room =>
-        removeExtensionData(
-          'Room',
-          mapIn(room, ['activities'], activity => removeExtensionData('Activity', activity))
+      localWcif: mapIn(localWcif, ['schedule', 'venues'], venue =>
+        mapIn(venue, ['rooms'], room =>
+          removeExtensionData(
+            'Room',
+            mapIn(room, ['activities'], activity => removeExtensionData('Activity', activity))
+          )
         )
       )
     });

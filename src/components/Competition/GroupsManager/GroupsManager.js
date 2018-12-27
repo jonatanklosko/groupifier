@@ -42,8 +42,10 @@ export default class GroupsManager extends Component {
         )
       )
     );
-    const schedule = mapIn(localWcif.schedule, ['venues', '0', 'rooms'], room =>
-      mapIn(room, ['activities'], activity => setIn(activity, ['childActivities'], []))
+    const schedule = mapIn(localWcif.schedule, ['venues'], venue =>
+      mapIn(venue, ['rooms'], room =>
+        mapIn(room, ['activities'], activity => setIn(activity, ['childActivities'], []))
+      )
     );
     this.setState({ localWcif: { ...localWcif, persons, schedule } });
   };

@@ -64,9 +64,11 @@ export const populateActivitiesConfig = (wcif, expectedCompetitorsByRound, { ass
 };
 
 export const updateActivity = (wcif, updatedActivity) =>
-  mapIn(wcif, ['schedule', 'venues', '0', 'rooms'], room =>
-    mapIn(room, ['activities'], activity =>
-      activity.id === updatedActivity.id ? updatedActivity : activity
+  mapIn(wcif, ['schedule', 'venues'], venue =>
+    mapIn(venue, ['rooms'], room =>
+      mapIn(room, ['activities'], activity =>
+        activity.id === updatedActivity.id ? updatedActivity : activity
+      )
     )
   );
 
@@ -190,4 +192,4 @@ export const anyResults = wcif =>
   );
 
 export const rooms = wcif =>
-  wcif.schedule.venues[0].rooms;
+  flatMap(wcif.schedule.venues, venue => venue.rooms);

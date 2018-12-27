@@ -7,8 +7,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import RoundsNavigation from '../../../common/RoundsNavigation/RoundsNavigation';
 import RoomName from '../../../common/RoomName/RoomName';
 import GroupDialog from '../GroupDialog/GroupDialog';
-import { parseActivityCode, hasDistributedAttempts, rooms } from '../../../../logic/activities';
-import { flatMap } from '../../../../logic/utils';
+import { parseActivityCode, hasDistributedAttempts } from '../../../../logic/activities';
+import { flatMap, shortTime } from '../../../../logic/utils';
 
 export default class RoundWithGroups extends Component {
   state = {
@@ -45,19 +45,18 @@ export default class RoundWithGroups extends Component {
 
   renderRound = roundId => {
     const { wcif } = this.props;
-    const roomsWithGroups = rooms(wcif).map(room =>
-      [room, flatMap(
-        room.activities.filter(activity => activity.activityCode === roundId),
-        activity => activity.childActivities
-      )]
+    const roomsWithTimezoneAndGroups = flatMap(wcif.schedule.venues, venue =>
+      venue.rooms.map(room =>
+        [room, venue.timezone, flatMap(
+          room.activities.filter(activity => activity.activityCode === roundId),
+          activity => activity.childActivities
+        )]
+      )
     );
-    const timeZone = wcif.schedule.venues[0].timezone;
-    const strftime = isoString =>
-      new Date(isoString).toLocaleTimeString('en-US', { timeZone, hour: 'numeric', minute: 'numeric' });
 
     return (
       <Grid container>
-        {roomsWithGroups.map(([room, groupActivities]) => (
+        {roomsWithTimezoneAndGroups.map(([room, timezone, groupActivities]) => (
           groupActivities.length > 0 && (
             <Grid item xs={12} sm key={room.id}>
               <RoomName room={room} />
@@ -66,7 +65,7 @@ export default class RoundWithGroups extends Component {
                   <ListItem key={groupActivity.id} button onClick={() => this.handleGroupClick(groupActivity)}>
                     <ListItemText
                       primary={`Group ${parseActivityCode(groupActivity.activityCode).groupNumber}`}
-                      secondary={`${strftime(groupActivity.startTime)} - ${strftime(groupActivity.endTime)}`}
+                      secondary={`${shortTime(groupActivity.startTime, timezone)} - ${shortTime(groupActivity.endTime, timezone)}`}
                     />
                   </ListItem>
                 ))}

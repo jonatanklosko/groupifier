@@ -159,3 +159,6 @@ export const sum = arr =>
 
 export const addMilliseconds = (isoString, milliseconds) =>
   new Date(new Date(isoString).getTime() + milliseconds).toISOString();
+
+export const shortTime = (isoString, timeZone = 'UTC') =>
+  new Date(isoString).toLocaleTimeString('en-US', { timeZone, hour: 'numeric', minute: 'numeric' });
