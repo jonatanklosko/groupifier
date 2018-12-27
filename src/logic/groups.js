@@ -189,6 +189,8 @@ const assignScrambling = (wcif, roundsToAssign) => {
           staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2 ? 1 : -1,
           /* Avoid difference in the number of tasks bigger than 6. */
           Math.floor(staffAssignments(competitor).length / 6),
+          /* Prefer competitors who doesn't solve soon after the group ends. */
+          competesIn15Minutes(wcif, competitor, groupActivity.endTime) ? 1 : -1,
           /* Prefer competitors better in the given event. */
           ...bestAverageAndSingle(competitor, eventId)
         ]);
@@ -211,13 +213,15 @@ const assignRunning = (wcif, roundsToAssign) => {
         const [staffRunners, people] = partition(acceptedPeople(wcif), person => person.roles.includes('staff-runner'));
         const available = people => people.filter(person => availableDuring(wcif, groupActivity, person));
         const sortedAvailableStaff = sortByArray(available(staffRunners), competitor => [
-          Math.floor(staffAssignments(competitor).length / 3)
+          Math.floor(staffAssignments(competitor).length / 3),
+          competesIn15Minutes(wcif, competitor, groupActivity.endTime) ? 1 : -1
         ]);
         const sortedAvailablePeople = sortedAvailableStaff.length >= runners ? [] : sortByArray(available(people), competitor => [
           age(competitor) >= 10 ? -1 : 1,
           intersection(['dataentry', 'delegate', 'organizer'], competitor.roles).length,
           staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2 ? 1 : -1,
-          Math.floor(staffAssignments(competitor).length / 6)
+          Math.floor(staffAssignments(competitor).length / 6),
+          competesIn15Minutes(wcif, competitor, groupActivity.endTime) ? 1 : -1
         ]);
         const potentialRunners = [...sortedAvailableStaff, ...sortedAvailablePeople];
         const updatedPeople = assignActivity(groupActivity, 'staff-runner', potentialRunners.slice(0, runners));
@@ -240,7 +244,8 @@ const assignJudging = (wcif, roundsToAssign) => {
         const available = people => people.filter(person => availableDuring(wcif, groupActivity, person));
         const sortedAvailableStaff = sortByArray(available(staffJudges), competitor => [
           /* Equally distribute tasks (judging is assigned last, so we want to eliminate inequality introduced by other assignments). */
-          staffAssignments(competitor).length
+          staffAssignments(competitor).length,
+          competesIn15Minutes(wcif, competitor, groupActivity.endTime) ? 1 : -1
         ]);
         const sortedAvailablePeople = sortedAvailableStaff.length >= stations ? [] : sortByArray(available(people), competitor => [
           age(competitor) >= 10 ? -1 : 1,
@@ -248,6 +253,7 @@ const assignJudging = (wcif, roundsToAssign) => {
           staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2 ? 1 : -1,
           /* Equally distribute tasks (judging is assigned last, so we want to eliminate inequality introduced by other assignments). */
           staffAssignments(competitor).length,
+          competesIn15Minutes(wcif, competitor, groupActivity.endTime) ? 1 : -1,
           /* Prefer people that solve fewer events, to avoid overloading people solving more. */
           competitor.registration ? competitor.registration.eventIds.length : 0,
         ]);
@@ -257,6 +263,16 @@ const assignJudging = (wcif, roundsToAssign) => {
       }, wcif);
     }, wcif);
   }, wcif);
+};
+
+const competesIn15Minutes = (wcif, competitor, isoString) => {
+  const competingStartTimes = (competitor.assignments || [])
+    .filter(({ assignmentCode }) => assignmentCode === 'competitor')
+    .map(({ activityId }) => activityById(wcif, activityId).startTime)
+    .filter(startTime => startTime >= isoString);
+  if (competingStartTimes.length === 0) return false;
+  const competingStart = competingStartTimes.reduce((x, y) => x < y ? x : y);
+  return (new Date(competingStart) - new Date(isoString)) <= 15 * 60 * 1000;
 };
 
 const assignActivity = (activity, assignmentCode, competitors) =>
