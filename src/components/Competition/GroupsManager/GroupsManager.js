@@ -7,7 +7,7 @@ import SnackbarContent from '@material-ui/core/SnackbarContent';
 import GroupsNavigation from './GroupsNavigation/GroupsNavigation';
 
 import { createGroupActivities, updateScrambleSetCount, assignTasks } from '../../../logic/groups';
-import { allGroupsCreated, roundsMissingAssignments } from '../../../logic/activities';
+import { allGroupsCreated, roundsMissingAssignments, anyResults } from '../../../logic/activities';
 import { updateIn, mapIn, setIn } from '../../../logic/utils';
 
 export default class GroupsManager extends Component {
@@ -89,7 +89,7 @@ export default class GroupsManager extends Component {
           </Button>
         </Grid>
         <Grid item>
-          <Button variant="contained" onClick={this.clearGroups}>
+          <Button variant="contained" onClick={this.clearGroups} disabled={anyResults(localWcif)}>
             Clear
           </Button>
         </Grid>

@@ -184,5 +184,10 @@ export const anyGroupAssignedOrCreated = wcif =>
     )
   );
 
+export const anyResults = wcif =>
+  wcif.events.some(event =>
+    event.rounds.some(round => round.results.length > 0)
+  );
+
 export const rooms = wcif =>
   wcif.schedule.venues[0].rooms;
