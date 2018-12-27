@@ -33,7 +33,7 @@ export default class ConfigManager extends Component {
     this.setState({ tabValue: value });
   };
 
-  handleDoneClick = () => {
+  handleSaveClick = () => {
     const { localWcif } = this.state;
     const { onWcifUpdate } = this.props;
     onWcifUpdate(localWcif);
@@ -95,12 +95,12 @@ export default class ConfigManager extends Component {
           <Button
             variant="contained"
             color="primary"
-            onClick={this.handleDoneClick}
+            onClick={this.handleSaveClick}
             component={Link}
             to={`/competitions/${localWcif.id}`}
             disabled={!wcifConfigComplete}
           >
-            Done
+            Save
           </Button>
         </Grid>
       </Grid>

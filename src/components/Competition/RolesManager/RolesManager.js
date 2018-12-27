@@ -141,7 +141,7 @@ export default class RolesManager extends Component {
             component={Link}
             to={`/competitions/${localWcif.id}`}
           >
-            Done
+            Save
           </Button>
         </Grid>
       </Grid>

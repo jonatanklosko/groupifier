@@ -79,7 +79,7 @@ export default class PrintingManager extends Component {
             component={Link}
             to={`/competitions/${wcif.id}`}
           >
-            Done
+            Save
           </Button>
         </Grid>
       </Grid>
