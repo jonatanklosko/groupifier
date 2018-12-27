@@ -13,7 +13,7 @@ import RoundsConfig from './RoundsConfig/RoundsConfig';
 import { getExpectedCompetitorsByRound } from '../../../logic/competitors';
 import { roomsConfigComplete, activitiesConfigComplete, anyGroupAssignedOrCreated } from '../../../logic/activities';
 import { removeExtensionData } from '../../../logic/wcif-extensions';
-import { updateIn } from '../../../logic/utils';
+import { mapIn } from '../../../logic/utils';
 
 export default class ConfigManager extends Component {
   constructor(props) {
@@ -43,14 +43,10 @@ export default class ConfigManager extends Component {
     const { localWcif } = this.state;
     this.setState({
       tabValue: 0,
-      localWcif: updateIn(localWcif, ['schedule', 'venues', '0', 'rooms'], rooms =>
-        rooms.map(room =>
-          removeExtensionData('Room', {
-            ...room,
-            activities: room.activities.map(activity =>
-              removeExtensionData('Activity', activity)
-            )
-          })
+      localWcif: mapIn(localWcif, ['schedule', 'venues', '0', 'rooms'], room =>
+        removeExtensionData(
+          'Room',
+          mapIn(room, ['activities'], activity => removeExtensionData('Activity', activity))
         )
       )
     });

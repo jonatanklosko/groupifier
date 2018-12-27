@@ -1,5 +1,5 @@
 import { addMilliseconds, difference, findLast, flatMap, intersection, partition,
-         scaleToOne, sortBy, sortByArray, sum, uniq, updateIn, zip } from './utils';
+         scaleToOne, sortBy, sortByArray, sum, uniq, updateIn, mapIn, zip } from './utils';
 import { getExtensionData } from './wcif-extensions';
 import { activitiesIntersection, activitiesOverlap, activityById, activityCodeToName,
          activityDuration, activityStations, hasDistributedAttempts, maxActivityId, parseActivityCode,
@@ -282,9 +282,9 @@ const assignActivity = (activity, assignmentCode, competitors) =>
   }));
 
 const updatePeople = (wcif, updatedPeople) =>
-  updateIn(wcif, ['persons'], persons => persons.map(person =>
+  mapIn(wcif, ['persons'], person =>
     updatedPeople.find(updatedPerson => updatedPerson.wcaUserId === person.wcaUserId) || person
-  ));
+  );
 
 const availableDuring = (wcif, activity, competitor) =>
   !(competitor.assignments || []).some(({ activityId }) =>

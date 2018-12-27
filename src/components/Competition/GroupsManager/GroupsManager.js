@@ -8,7 +8,7 @@ import GroupsNavigation from './GroupsNavigation/GroupsNavigation';
 
 import { createGroupActivities, updateScrambleSetCount, assignTasks } from '../../../logic/groups';
 import { allGroupsCreated, roundsMissingAssignments } from '../../../logic/activities';
-import { updateIn } from '../../../logic/utils';
+import { updateIn, mapIn, setIn } from '../../../logic/utils';
 
 export default class GroupsManager extends Component {
   constructor(props) {
@@ -35,23 +35,17 @@ export default class GroupsManager extends Component {
 
   clearGroups = () => {
     const { localWcif } = this.state;
-    this.setState({
-      localWcif: {
-        ...localWcif,
-        persons: localWcif.persons.map(person => ({
-          ...person,
-          assignments: (person.assignments || []).filter(({ assignmentCode }) =>
-            !assignmentCode.startsWith('staff-') && assignmentCode !== 'competitor'
-          )
-        })),
-        schedule: updateIn(localWcif.schedule, ['venues', '0', 'rooms'], rooms =>
-          rooms.map(room => ({
-            ...room,
-            activities: room.activities.map(activity => ({ ...activity, childActivities: [] }))
-          }))
+    const persons = localWcif.persons.map(person =>
+      updateIn(person, ['assignments'], assignments =>
+        (assignments || []).filter(({ assignmentCode }) =>
+          !assignmentCode.startsWith('staff-') && assignmentCode !== 'competitor'
         )
-      }
-    });
+      )
+    );
+    const schedule = mapIn(localWcif.schedule, ['venues', '0', 'rooms'], room =>
+      mapIn(room, ['activities'], activity => setIn(activity, ['childActivities'], []))
+    );
+    this.setState({ localWcif: { ...localWcif, persons, schedule } });
   };
 
   render() {

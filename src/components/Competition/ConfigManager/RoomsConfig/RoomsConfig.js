@@ -3,15 +3,15 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 
 import RoomConfig from '../RoomConfig/RoomConfig';
-import { updateIn } from '../../../../logic/utils';
+import { mapIn } from '../../../../logic/utils';
 import { anyActivityConfigured, rooms } from '../../../../logic/activities';
 
 export default class RoomsConfig extends Component {
   handleRoomChange = updatedRoom => {
     const { wcif, onWcifChange } = this.props;
     onWcifChange(
-      updateIn(wcif, ['schedule', 'venues', '0', 'rooms'], rooms =>
-        rooms.map(room => room.id === updatedRoom.id ? updatedRoom : room)
+      mapIn(wcif, ['schedule', 'venues', '0', 'rooms'], room =>
+        room.id === updatedRoom.id ? updatedRoom : room
       )
     );
   };

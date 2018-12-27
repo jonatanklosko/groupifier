@@ -1,4 +1,4 @@
-import { updateIn, flatMap, zip, scaleToOne, isPresentDeep } from './utils';
+import { mapIn, flatMap, zip, scaleToOne, isPresentDeep } from './utils';
 import { getExtensionData, setExtensionData } from './wcif-extensions';
 import { suggestedGroupCount, suggestedScramblerCount, suggestedRunnerCount } from './formulas';
 import { eventNameById } from './events';
@@ -64,11 +64,10 @@ export const populateActivitiesConfig = (wcif, expectedCompetitorsByRound, { ass
 };
 
 export const updateActivity = (wcif, updatedActivity) =>
-  updateIn(wcif, ['schedule', 'venues', '0', 'rooms'], rooms =>
-    rooms.map(room => ({
-      ...room,
-      activities: room.activities.map(activity => activity.id === updatedActivity.id ? updatedActivity : activity)
-    }))
+  mapIn(wcif, ['schedule', 'venues', '0', 'rooms'], room =>
+    mapIn(room, ['activities'], activity =>
+      activity.id === updatedActivity.id ? updatedActivity : activity
+    )
   );
 
 export const anyActivityConfigured = wcif =>

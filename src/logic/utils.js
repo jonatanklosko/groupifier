@@ -33,6 +33,16 @@ export const setIn = (object, properyChain, value) =>
 export const mergeIn = (object, properyChain, newValue) =>
   updateIn(object, properyChain, currentValue => ({ ...currentValue, ...newValue }));
 
+/**
+ * Returns a copy of the object with the array at the specified path mapped with the given function.
+ *
+ * @param {Object} object
+ * @param {Array} propertyChain
+ * @param {Object} mapper
+ * @returns {Object}
+ */
+export const mapIn = (object, properyChain, mapper) =>
+  updateIn(object, properyChain, array => array && array.map(mapper));
 
 /**
  * Returns object's value at the specified path or the default value if it doesn't exist.
