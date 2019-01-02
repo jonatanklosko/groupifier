@@ -39,18 +39,20 @@ export default class Competition extends Component {
           {wcif.name}
         </Typography>
         <Switch>
-          <Route exact path={match.url} render={() => <CompetitionMenu wcif={wcif} baseUrl={match.url} />} />
+          <Route exact path={match.url} render={
+            props => <CompetitionMenu {...props} wcif={wcif} baseUrl={match.url} />
+          } />
           <Route path={`${match.url}/roles`} render={
-            () => <RolesManager wcif={wcif} onWcifUpdate={this.handleWcifUpdate} />
+            props => <RolesManager {...props} wcif={wcif} onWcifUpdate={this.handleWcifUpdate} />
           } />
           <Route path={`${match.url}/config`} render={
-            () => <ConfigManager wcif={wcif} onWcifUpdate={this.handleWcifUpdate} />
+            props => <ConfigManager {...props} wcif={wcif} onWcifUpdate={this.handleWcifUpdate} />
           } />
           <Route path={`${match.url}/groups`} render={
-            () => <GroupsManager wcif={wcif} onWcifUpdate={this.handleWcifUpdate} />
+            props => <GroupsManager {...props} wcif={wcif} onWcifUpdate={this.handleWcifUpdate} />
           } />
           <Route path={`${match.url}/printing`} render={
-            () => <PrintingManager wcif={wcif} />
+            props => <PrintingManager {...props} wcif={wcif} />
           } />
         </Switch>
       </div>
