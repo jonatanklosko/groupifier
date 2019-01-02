@@ -28,7 +28,7 @@ export default class SaveWcifButton extends Component {
 
   render() {
     const { saving, failed } = this.state;
-    const { wcif, updatedWcif, onWcifUpdate, history, disabled } = this.props;
+    const { disabled } = this.props;
     return (
       <Fragment>
         <Snackbar
