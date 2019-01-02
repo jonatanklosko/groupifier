@@ -1,23 +1,23 @@
 /**
  * Checks the URL hash for presence of OAuth access token
- * and saves it in the session storage if it's found.
+ * and saves it in the local storage if it's found.
  * Should be called on application initialization (before any kind of router takes over the location).
  */
 export const initializeAuth = () => {
   const hash = window.location.hash.replace(/^\W*/, '');
   const hashParams = new URLSearchParams(hash);
   if (hashParams.has('access_token')) {
-    sessionStorage.setItem('Groupifier.accessToken', hashParams.get('access_token'));
+    localStorage.setItem('Groupifier.accessToken', hashParams.get('access_token'));
   }
   if (hashParams.has('expires_in')) {
     /* Expire the token 15 minutes before it actually does,
        this way it doesn't expire right after the user enters the page. */
     const expiresInSeconds = hashParams.get('expires_in') - 15 * 60;
     const expirationTime = new Date(new Date().getTime() + expiresInSeconds * 1000);
-    sessionStorage.setItem('Groupifier.expirationTime', expirationTime.toISOString());
+    localStorage.setItem('Groupifier.expirationTime', expirationTime.toISOString());
   }
   /* If the token expired, sign the user out. */
-  const expirationTime = sessionStorage.getItem('Groupifier.expirationTime');
+  const expirationTime = localStorage.getItem('Groupifier.expirationTime');
   if (expirationTime && new Date() >= new Date(expirationTime)) {
     signOut();
   }
@@ -28,7 +28,7 @@ export const initializeAuth = () => {
 };
 
 export const wcaAccessToken = () =>
-  sessionStorage.getItem('Groupifier.accessToken');
+  localStorage.getItem('Groupifier.accessToken');
 
 export const signIn = () => {
   const redirectUri = window.location.href.split('/#')[0];
@@ -42,6 +42,6 @@ export const signIn = () => {
 };
 
 export const signOut = () =>
-  sessionStorage.removeItem('Groupifier.accessToken');
+  localStorage.removeItem('Groupifier.accessToken');
 
 export const isSignedIn = () => !!wcaAccessToken();
