@@ -12,13 +12,10 @@ import RolesManager from './RolesManager/RolesManager';
 import { getCompetitionWcif } from '../../logic/wca-api';
 
 export default class Competition extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      wcif: null,
-      loading: true
-    }
-  }
+  state = {
+    wcif: null,
+    loading: true
+  };
 
   componentDidMount() {
     getCompetitionWcif(this.props.match.params.competitionId)

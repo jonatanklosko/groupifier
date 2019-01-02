@@ -5,6 +5,7 @@ import Grid from '@material-ui/core/Grid';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 
 import GroupsNavigation from './GroupsNavigation/GroupsNavigation';
+import SaveWcifButton from '../../common/SaveWcifButton/SaveWcifButton';
 
 import { createGroupActivities, updateScrambleSetCount, assignTasks } from '../../../logic/groups';
 import { allGroupsCreated, roundsMissingAssignments, anyResults } from '../../../logic/activities';
@@ -52,7 +53,7 @@ export default class GroupsManager extends Component {
 
   render() {
     const { localWcif } = this.state;
-    const { onWcifUpdate } = this.props;
+    const { wcif, onWcifUpdate, history } = this.props;
 
     const groupsCreated = allGroupsCreated(localWcif);
 
@@ -96,15 +97,7 @@ export default class GroupsManager extends Component {
           </Button>
         </Grid>
         <Grid item>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => onWcifUpdate(localWcif)}
-            component={Link}
-            to={`/competitions/${localWcif.id}`}
-          >
-            Save
-          </Button>
+          <SaveWcifButton wcif={wcif} updatedWcif={localWcif} onWcifUpdate={onWcifUpdate} history={history} />
         </Grid>
       </Grid>
     );

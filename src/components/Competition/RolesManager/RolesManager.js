@@ -13,6 +13,7 @@ import TableRow from '@material-ui/core/TableRow';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
 
+import SaveWcifButton from '../../common/SaveWcifButton/SaveWcifButton';
 import { acceptedPeople } from '../../../logic/competitors';
 import { difference } from '../../../logic/utils';
 
@@ -72,7 +73,7 @@ export default class RolesManager extends Component {
 
   render() {
     const { page, searchString, localWcif } = this.state;
-    const { onWcifUpdate } = this.props;
+    const { wcif, onWcifUpdate, history } = this.props;
     const rowsPerPage = 5;
     const rowsPerPageOptions = [5];
 
@@ -134,15 +135,7 @@ export default class RolesManager extends Component {
           </Button>
         </Grid>
         <Grid item>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => onWcifUpdate(localWcif)}
-            component={Link}
-            to={`/competitions/${localWcif.id}`}
-          >
-            Save
-          </Button>
+          <SaveWcifButton wcif={wcif} updatedWcif={localWcif} onWcifUpdate={onWcifUpdate} history={history} />
         </Grid>
       </Grid>
     );

@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography';
 
 import RoomsConfig from './RoomsConfig/RoomsConfig';
 import RoundsConfig from './RoundsConfig/RoundsConfig';
+import SaveWcifButton from '../../common/SaveWcifButton/SaveWcifButton';
 import { getExpectedCompetitorsByRound } from '../../../logic/competitors';
 import { roomsConfigComplete, activitiesConfigComplete, anyGroupAssignedOrCreated } from '../../../logic/activities';
 import { removeExtensionData } from '../../../logic/wcif-extensions';
@@ -33,12 +34,6 @@ export default class ConfigManager extends Component {
     this.setState({ tabValue: value });
   };
 
-  handleSaveClick = () => {
-    const { localWcif } = this.state;
-    const { onWcifUpdate } = this.props;
-    onWcifUpdate(localWcif);
-  };
-
   clearConfig = () => {
     const { localWcif } = this.state;
     this.setState({
@@ -56,6 +51,7 @@ export default class ConfigManager extends Component {
 
   render() {
     const { tabValue, localWcif } = this.state;
+    const { wcif, onWcifUpdate, history } = this.props;
 
     const wcifConfigComplete = roomsConfigComplete(localWcif) && activitiesConfigComplete(localWcif);
 
@@ -94,16 +90,7 @@ export default class ConfigManager extends Component {
           </Button>
         </Grid>
         <Grid item>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={this.handleSaveClick}
-            component={Link}
-            to={`/competitions/${localWcif.id}`}
-            disabled={!wcifConfigComplete}
-          >
-            Save
-          </Button>
+          <SaveWcifButton wcif={wcif} updatedWcif={localWcif} onWcifUpdate={onWcifUpdate} history={history} disabled={!wcifConfigComplete} />
         </Grid>
       </Grid>
     );
