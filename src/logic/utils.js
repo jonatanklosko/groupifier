@@ -157,6 +157,9 @@ export const uniq = arr =>
 export const sum = arr =>
   arr.reduce((x, y) => x + y, 0);
 
+export const inRange = (x, a, b) =>
+  a <= x && x <= b;
+
 export const addMilliseconds = (isoString, milliseconds) =>
   new Date(new Date(isoString).getTime() + milliseconds).toISOString();
 

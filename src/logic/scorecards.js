@@ -4,9 +4,8 @@ import { eventNameById } from './events';
 import { cutoffToString, timeLimitToString } from './formatters';
 import { competitorsForRound } from './competitors';
 
-import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from "pdfmake/build/vfs_fonts";
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
+import pdfMake from './pdfmake';
+import { pdfName } from './pdf-utils';
 
 /* See: https://github.com/bpampuch/pdfmake/blob/3da11bd8148b190808b06f7bc27883102bf82917/src/standardPageSizes.js#L10 */
 const pageWidth = 595.28;
@@ -118,7 +117,7 @@ const scorecard = ({
         widths: ['auto', '*'],
         body: [
           columnLabels(['ID', 'Name']),
-          [{ text: competitor.registrantId, alignment: 'center' }, { text: competitor.name, maxHeight: 20 /* See: https://github.com/bpampuch/pdfmake/issues/264#issuecomment-108347567 */ }]
+          [{ text: competitor.registrantId, alignment: 'center' }, { text: pdfName(competitor.name), maxHeight: 20 /* See: https://github.com/bpampuch/pdfmake/issues/264#issuecomment-108347567 */ }]
         ]
       }
     },
