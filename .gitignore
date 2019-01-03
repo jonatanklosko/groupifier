@@ -7,6 +7,9 @@
 # Production
 /build
 
+# Fonts bundle
+/public/vfs-fonts.bundle.json
+
 # Environment configuration
 .env.local
 .env.development.local
