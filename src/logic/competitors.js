@@ -99,4 +99,4 @@ export const staffAssignmentsForEvent = (wcif, person, eventId) =>
   );
 
 export const acceptedPeople = wcif =>
-  wcif.persons.filter(person => !person.registration || person.registration.status === 'accepted');
+  wcif.persons.filter(person => person.registration && person.registration.status === 'accepted');

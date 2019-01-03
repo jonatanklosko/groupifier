@@ -1,3 +1,5 @@
+import { sortBy } from './utils';
+
 const events = [
   { id: '333',    name: '3x3x3 Cube',         shortName: '3x3'   },
   { id: '222',    name: '2x2x2 Cube',         shortName: '2x2'   },
@@ -27,3 +29,6 @@ export const shortEventNameById = eventId =>
 
 const propertyById = (property, eventId) =>
   events.find(event => event.id === eventId)[property];
+
+export const sortWcifEvents = wcifEvents =>
+  sortBy(wcifEvents, wcifEvent => events.findIndex(event => event.id === wcifEvent.id));
