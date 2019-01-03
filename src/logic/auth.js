@@ -1,3 +1,5 @@
+import { WCA_ORIGIN, WCA_OAUTH_CLIENT_ID } from './wca-env';
+
 /**
  * Checks the URL hash for presence of OAuth access token
  * and saves it in the local storage if it's found.
@@ -33,12 +35,12 @@ export const wcaAccessToken = () =>
 export const signIn = () => {
   const redirectUri = window.location.href.split('/#')[0];
   const params = new URLSearchParams({
-    client_id: process.env.REACT_APP_WCA_OAUTH_CLIENT_ID,
+    client_id: WCA_OAUTH_CLIENT_ID,
     response_type: 'token',
     redirect_uri: redirectUri,
     scope: 'manage_competitions'
   });
-  window.location = `${process.env.REACT_APP_WCA_ORIGIN}/oauth/authorize?${params}`
+  window.location = `${WCA_ORIGIN}/oauth/authorize?${params}`
 };
 
 export const signOut = () =>

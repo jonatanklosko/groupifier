@@ -1,4 +1,5 @@
 import { wcaAccessToken } from './auth';
+import { WCA_ORIGIN } from './wca-env';
 
 export const getUpcomingManageableCompetitions = () => {
   const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
@@ -23,7 +24,7 @@ const patchWcifAttribute = (wcif, attribute) =>
   wcaApiFetch(`/competitions/${wcif.id}/wcif/${attribute}`, { method: 'PATCH', body: JSON.stringify(wcif[attribute]) });
 
 const wcaApiFetch = (path, fetchOptions = {}) => {
-  const baseApiUrl = `${process.env.REACT_APP_WCA_ORIGIN}/api/v0`;
+  const baseApiUrl = `${WCA_ORIGIN}/api/v0`;
 
   return fetch(`${baseApiUrl}${path}`, Object.assign({}, fetchOptions, {
     headers: new Headers({
