@@ -1,13 +1,13 @@
 ## Grouping
 
-#### Goals
+### Goals
 1. Make sure everyone does one thing at a time (across all possible activities - rooms/stages).
 2. Sort competitors by their official results.
 3. If there are multiple organizers/delegates/dataentries,
 try to make one person of the given role available all the time
 (i.e. don't assign two people of the same role to overlapping activities).
 
-#### Algorithm
+### Algorithm
 Given rounds to assign, sort them by the number of groups, so that rounds with
 few possible timeframes are assigned first. For each round:
 1. Create temporary group objects of the form `{ id, activity, size, competitors }`,
