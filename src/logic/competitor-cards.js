@@ -1,5 +1,5 @@
 import { chunk, sortBy, zip } from './utils';
-import { sortWcifEvents, eventNameById } from './events';
+import { eventNameById } from './events';
 import { activityById, hasDistributedAttempts, parseActivityCode } from './activities';
 import { acceptedPeople } from './competitors';
 import pdfMake from './pdfmake';
@@ -58,7 +58,7 @@ const competitorCard = (wcif, person) => {
           widths: ['auto', ...headers.map(() => '*')],
           body: [
             ['Event', ...headers.map(header => ({ text: header, alignment: 'center'}))],
-            ...sortWcifEvents(wcif.events).map(event => [
+            ...wcif.events.map(event => [
               eventNameById(event.id),
               ...assignmentCodes.map(assignmentCode => groupsText(event.id, assignmentCode))
             ])
