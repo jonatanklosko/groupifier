@@ -36,26 +36,23 @@ export const activityStations = (wcif, activity) => {
   return getExtensionData('Room', room).stations;
 };
 
-export const populateActivitiesConfig = (wcif, expectedCompetitorsByRound, { assignScramblers, assignRunners, assignJudges }) => {
-  const activities = flatMap(rooms(wcif), room =>
-    room.activities.filter(shouldHaveGroups)
-  );
+export const populateActivitiesConfig = (wcif, expectedCompetitorsByRound, defaults) => {
   const activitiesWithConfig = flatMap(wcif.events, event => {
     return flatMap(event.rounds, round => {
       const { roundNumber } = parseActivityCode(round.id);
       const expectedRoundCompetitors = expectedCompetitorsByRound[round.id].length;
-      const roundActivities = activities
-        .filter(activity => activity.activityCode.startsWith(round.id));
-      const capacities = scaleToOne(roundActivities.map(activity =>
+      const activities = roundActivities(wcif, round.id).filter(shouldHaveGroups);
+      const capacities = scaleToOne(activities.map(activity =>
         activityStations(wcif, activity) * activityDuration(activity)
       ));
-      return zip(roundActivities, capacities).map(([activity, capacity]) => {
+      return zip(activities, capacities).map(([activity, capacity]) => {
         const stations = activityStations(wcif, activity);
         const competitors = Math.round(capacity * expectedRoundCompetitors);
         const groups = suggestedGroupCount(competitors, stations, roundNumber);
-        const scramblers = assignScramblers ? suggestedScramblerCount(competitors / groups, stations) : 0;
-        const runners = assignRunners ? suggestedRunnerCount(competitors / groups, stations) : 0;
-        const assignJudges = stations > 0 && assignJudges;
+        const scramblers = defaults.assignScramblers ? suggestedScramblerCount(competitors / groups, stations) : 0;
+        const runners = defaults.assignRunners ? suggestedRunnerCount(competitors / groups, stations) : 0;
+        const assignJudges = stations > 0 && defaults.assignJudges;
+        console.log(assignJudges);
         return setExtensionData('Activity', activity, {
           capacity, groups, scramblers, runners, assignJudges
         });
