@@ -1,5 +1,5 @@
 import { flatMap, sortBy, chunk } from './utils';
-import { parseActivityCode, roundGroupActivities, peopleAssignedToActivity } from './activities';
+import { parseActivityCode, roundGroupActivities } from './activities';
 import { eventNameById } from './events';
 import { cutoffToString, timeLimitToString } from './formatters';
 import { competitorsForRound, hasAssignment } from './competitors';
