@@ -28,10 +28,7 @@ export default class GroupsManager extends Component {
 
   assignTasks = () => {
     const { localWcif } = this.state;
-    const start = performance.now();
-    const wcifWithAssignments = assignTasks(localWcif);
-    console.log(wcifWithAssignments, 'Took', performance.now() - start);
-    this.setState({ localWcif: wcifWithAssignments });
+    this.setState({ localWcif: assignTasks(localWcif) });
   };
 
   clearGroups = () => {

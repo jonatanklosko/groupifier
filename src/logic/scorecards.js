@@ -14,12 +14,8 @@ const scorecardMargin = 20;
 const maxAttemptCountByFormat = { '1': 1, '2': 2, '3': 3, 'm': 3, 'a': 5 };
 
 export const downloadScorecards = (wcif, rounds) => {
-  const start = performance.now();
   const pdfDefinition = scorecardsPdfDefinition(wcif, rounds);
-  console.log('Definition took', performance.now() - start);
-  const start2 = performance.now();
   pdfMake.createPdf(pdfDefinition).download(`${wcif.id}-scorecards.pdf`);
-  console.log('PDF creation took', performance.now() - start2);
 };
 
 const scorecardsPdfDefinition = (wcif, rounds) => ({

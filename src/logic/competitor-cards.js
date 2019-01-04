@@ -6,12 +6,8 @@ import pdfMake from './pdfmake';
 import { pdfName } from './pdf-utils';
 
 export const downloadCompetitorCards = wcif => {
-  const start = performance.now();
   const pdfDefinition = competitorCardsPdfDefinition(wcif);
-  console.log('Definition took', performance.now() - start);
-  const start2 = performance.now();
   pdfMake.createPdf(pdfDefinition).download(`${wcif.id}-competitor-cards.pdf`);
-  console.log('PDF creation took', performance.now() - start2);
 };
 
 const competitorCardsPdfDefinition = wcif => ({

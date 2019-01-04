@@ -52,7 +52,6 @@ export const populateActivitiesConfig = (wcif, expectedCompetitorsByRound, defau
         const scramblers = defaults.assignScramblers ? suggestedScramblerCount(competitors / groups, stations) : 0;
         const runners = defaults.assignRunners ? suggestedRunnerCount(competitors / groups, stations) : 0;
         const assignJudges = stations > 0 && defaults.assignJudges;
-        console.log(assignJudges);
         return setExtensionData('Activity', activity, {
           capacity, groups, scramblers, runners, assignJudges
         });
