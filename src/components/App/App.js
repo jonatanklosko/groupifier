@@ -29,28 +29,30 @@ export default class App extends Component {
   };
 
   render() {
+    const { isSignedIn } = this.state;
     return (
       <Router>
-        <div>
+        <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
           <CssBaseline />
           <Header
-            isSignedIn={this.state.isSignedIn}
+            isSignedIn={isSignedIn}
             onSignIn={this.handleSignIn}
             onSignOut={this.handleSignOut}
           />
-          <Grid container justify="center">
+          <Grid container justify="center" style={{ flexGrow: 1 }}>
             <Grid item xs={12} md={8} style={{ padding: 16 }}>
-              {this.state.isSignedIn
-                ? <Switch>
-                    <Route path="/competitions/:competitionId" component={Competition} />
-                    <Route path="/competitions" component={CompetitionList} />
-                    <Redirect to="/competitions" />
-                  </Switch>
-                : <Switch>
-                    <Route exact path="/" component={Home} />
-                    <Redirect to="/" />
-                  </Switch>
-              }
+              {isSignedIn ? (
+                <Switch>
+                  <Route path="/competitions/:competitionId" component={Competition} />
+                  <Route path="/competitions" component={CompetitionList} />
+                  <Redirect to="/competitions" />
+                </Switch>
+              ) : (
+                <Switch>
+                  <Route exact path="/" component={Home} />
+                  <Redirect to="/" />
+                </Switch>
+              )}
             </Grid>
           </Grid>
           <Route exact path="/" component={Footer} />

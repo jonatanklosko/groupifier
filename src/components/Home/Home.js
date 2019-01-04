@@ -8,13 +8,11 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
 
 const features = [
-  'Automatically calculates a suitable group size.',
-  'Assigns tasks to people (scrambling, judging). Allows to select scramblers manually from a list.',
-  'Sorts competitors by their official results, so that each subsequent group represents a better level. When told otherwise, minimizes the amount of people with the same name in each group.',
-  'Handles events being held simultaneous by creating separate groups for people taking part in both main and side event.',
-  'Generates PDFs containing scorecards, personal cards with task assignment and a summary for each round.',
-  'Fetches cutoffs and time limits from the WCA website and puts them on scorecards.',
-  'Optionally sets the number of scramble groups for each round based on advancement conditions and saves that to the WCA website, so there is no need for entering them manually.'
+  'Allows for marking competitors as different kinds of staff and handles them in a special manner.',
+  'Supports multiple rooms/stages running simultaneously.',
+  'Suggests number of groups and necessary roles, while leaving the final decision to the user.',
+  'Once configured, creates groups and does its best to optimally assign people to these groups.',
+  'Generates documents like scorecards and competitor cards with task assignments.'
 ];
 
 const Home = () => (
@@ -24,9 +22,8 @@ const Home = () => (
     </Grid>
     <Grid item>
       <Typography variant="subtitle1">
-        It is a tool meant for WCA competition organizers.
-        Its main objective is to simplify the process of splitting competitors into groups
-        and provide the best result with minimal configuration.
+        Task and group management tool for WCA competition organizers.
+        It's designed to be highly customizable and work well with complex schedules.
       </Typography>
     </Grid>
     <Grid item>
