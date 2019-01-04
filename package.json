@@ -1,7 +1,7 @@
 {
-  "name": "groupifier",
+  "name": "groupifier-next",
   "version": "2.0.0",
-  "description": "A tool meant for WCA competition organizers helping to prepare competitor groups and generate scorecards.",
+  "description": "Task and group management tool for WCA competition organizers.",
   "keywords": [
     "speedcubing",
     "WCA",
@@ -13,7 +13,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jonatanklosko/groupifier.git"
+    "url": "https://github.com/jonatanklosko/groupifier-next.git"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -30,7 +30,7 @@
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "^2.1.2"
+    "react-scripts": "^2.1.3"
   },
   "devDependencies": {
     "enzyme": "^3.7.0",
