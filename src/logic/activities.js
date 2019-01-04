@@ -42,7 +42,7 @@ export const populateActivitiesConfig = (wcif, expectedCompetitorsByRound, { ass
   );
   const activitiesWithConfig = flatMap(wcif.events, event => {
     return flatMap(event.rounds, round => {
-      const competitors = expectedCompetitorsByRound[round.id];
+      const expectedRoundCompetitors = expectedCompetitorsByRound[round.id].length;
       const roundActivities = activities
         .filter(activity => activity.activityCode.startsWith(round.id));
       const capacities = scaleToOne(roundActivities.map(activity =>
@@ -50,13 +50,14 @@ export const populateActivitiesConfig = (wcif, expectedCompetitorsByRound, { ass
       ));
       return zip(roundActivities, capacities).map(([activity, capacity]) => {
         const stations = activityStations(wcif, activity);
+        const competitors = Math.round(capacity * expectedRoundCompetitors);
+        const groups = suggestedGroupCount(competitors, stations);
+        const scramblers = assignScramblers ? suggestedScramblerCount(competitors / groups, stations) : 0;
+        const runners = assignRunners ? suggestedRunnerCount(competitors / groups, stations) : 0;
+        const assignJudges = stations > 0 && assignJudges;
         return setExtensionData('Activity', activity, {
-          capacity,
-          groups: suggestedGroupCount(Math.round(capacity * competitors.length), stations),
-          scramblers: assignScramblers ? suggestedScramblerCount(stations) : 0,
-          runners: assignRunners ? suggestedRunnerCount(stations) : 0,
-          assignJudges: stations > 0 && assignJudges
-        })
+          capacity, groups, scramblers, runners, assignJudges
+        });
       });
     });
   });
