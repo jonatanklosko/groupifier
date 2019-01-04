@@ -100,3 +100,8 @@ export const staffAssignmentsForEvent = (wcif, person, eventId) =>
 
 export const acceptedPeople = wcif =>
   wcif.persons.filter(person => person.registration && person.registration.status === 'accepted');
+
+export const hasAssignment = (person, activityId, assignmentCode) =>
+  (person.assignments || []).some(assignment =>
+    assignment.activityId === activityId && assignment.assignmentCode === assignmentCode
+  );

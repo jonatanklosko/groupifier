@@ -1,8 +1,8 @@
 import { flatMap, sortBy, chunk } from './utils';
-import { parseActivityCode, roundGroupActivities } from './activities';
+import { parseActivityCode, roundGroupActivities, peopleAssignedToActivity } from './activities';
 import { eventNameById } from './events';
 import { cutoffToString, timeLimitToString } from './formatters';
-import { competitorsForRound } from './competitors';
+import { competitorsForRound, hasAssignment } from './competitors';
 import pdfMake from './pdfmake';
 import { pdfName } from './pdf-utils';
 
@@ -65,9 +65,7 @@ const scorecards = (wcif, rounds) => {
     let scorecardNumber = sortedCompetitors.length;
     return flatMap(sortedGroupActivities, groupActivity => {
       const competitors = sortedCompetitors.filter(competitor =>
-        (competitor.assignments || []).find(assignment =>
-          assignment.activityId === groupActivity.id && assignment.assignmentCode === 'competitor'
-        )
+        hasAssignment(competitor, groupActivity.id, 'competitor')
       );
       const groupScorecards = competitors.map(competitor =>
         scorecard({

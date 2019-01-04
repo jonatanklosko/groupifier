@@ -11,6 +11,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
 
 import { activityCodeToName } from '../../../../logic/activities';
+import { hasAssignment } from '../../../../logic/competitors';
 import { sortBy } from '../../../../logic/utils';
 
 export default class GroupDialog extends Component {
@@ -27,9 +28,7 @@ export default class GroupDialog extends Component {
     const rolesWithPeople = roles.map(role => [
       role,
       wcif.persons.filter(person =>
-        (person.assignments || []).find(({ activityId, assignmentCode }) =>
-          activityId === groupActivity.id && assignmentCode === role.id
-        )
+        hasAssignment(person, groupActivity.id, role.id)
       )
     ])
     .filter(([role, people]) => people.length > 0);
