@@ -1,9 +1,10 @@
 # Groupifier
 
-Check out [the website](https://jonatanklosko.github.io/groupifier) to see the purpose of this tool.
-This repository is an entirely new version of the tool and it's still a work in progress.
+Task and group management tool for WCA competition organizers.
+It's designed to be highly customizable and work well with complex schedules.
+Check out [the website](https://jonatanklosko.github.io/groupifier-next) to find out more.
 
-### Development
+## Development
 
 ```bash
 git clone https://github.com/jonatanklosko/groupifier-next.git && cd groupifier-next
@@ -11,6 +12,9 @@ npm install
 npm start
 ```
 
-### Testing
+## Testing
 
 Run `npm test`.
+
+## Docs
+Some stuff is documented under the [`docs`](docs) directory.
