@@ -42,6 +42,7 @@ export const populateActivitiesConfig = (wcif, expectedCompetitorsByRound, { ass
   );
   const activitiesWithConfig = flatMap(wcif.events, event => {
     return flatMap(event.rounds, round => {
+      const { roundNumber } = parseActivityCode(round.id);
       const expectedRoundCompetitors = expectedCompetitorsByRound[round.id].length;
       const roundActivities = activities
         .filter(activity => activity.activityCode.startsWith(round.id));
@@ -51,7 +52,7 @@ export const populateActivitiesConfig = (wcif, expectedCompetitorsByRound, { ass
       return zip(roundActivities, capacities).map(([activity, capacity]) => {
         const stations = activityStations(wcif, activity);
         const competitors = Math.round(capacity * expectedRoundCompetitors);
-        const groups = suggestedGroupCount(competitors, stations);
+        const groups = suggestedGroupCount(competitors, stations, roundNumber);
         const scramblers = assignScramblers ? suggestedScramblerCount(competitors / groups, stations) : 0;
         const runners = assignRunners ? suggestedRunnerCount(competitors / groups, stations) : 0;
         const assignJudges = stations > 0 && assignJudges;
