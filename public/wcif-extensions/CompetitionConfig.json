@@ -7,7 +7,11 @@
     "localNamesFirst": {
       "description": "A flag indicating whether to swap competitor latin names with local ones in generated PDF documents.",
       "type": "boolean",
+    },
+    "scorecardsBackgroundUrl": {
+      "description": "URL of an image to be placed in the background of scorecards.",
+      "type": "string",
     }
   },
-  "required": ["localNamesFirst"]
+  "required": ["localNamesFirst", "scorecardsBackgroundUrl"]
 }

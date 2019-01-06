@@ -23,7 +23,8 @@ const defaultExtensionData = {
     stations: null
   },
   CompetitionConfig: {
-    localNamesFirst: false
+    localNamesFirst: false,
+    scorecardsBackgroundUrl: null
   }
 };
 

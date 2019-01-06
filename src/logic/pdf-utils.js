@@ -27,3 +27,21 @@ export const pdfName = (name, swapLatinWithLocalNames = false) => {
   const [first, second] = swapLatinWithLocalNames ? pdfNames.reverse() : pdfNames;
   return [first, ' (', second, ')'];
 };
+
+export const getImageDataUrl = url => {
+  if (!url) return Promise.resolve(null);
+  const params = new URLSearchParams({
+    url,
+    filt: 'greyscale',
+    bri: 30,
+    bg: 'white',
+    w: 200,
+    h: 200,
+    t: 'letterbox',
+    output: 'jpg',
+    encoding: 'base64'
+  });
+  return fetch(`https://images.weserv.nl/?${params}`)
+    .then(response => response.text())
+    .catch(() => null);
+};

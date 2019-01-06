@@ -5,7 +5,7 @@ import { cutoffToString, timeLimitToString } from './formatters';
 import { competitorsForRound, hasAssignment } from './competitors';
 import { getExtensionData } from './wcif-extensions';
 import pdfMake from './pdfmake';
-import { pdfName } from './pdf-utils';
+import { pdfName, getImageDataUrl } from './pdf-utils';
 
 /* See: https://github.com/bpampuch/pdfmake/blob/3da11bd8148b190808b06f7bc27883102bf82917/src/standardPageSizes.js#L10 */
 const pageWidth = 595.28;
@@ -15,12 +15,21 @@ const scorecardMargin = 20;
 const maxAttemptCountByFormat = { '1': 1, '2': 2, '3': 3, 'm': 3, 'a': 5 };
 
 export const downloadScorecards = (wcif, rounds) => {
-  const pdfDefinition = scorecardsPdfDefinition(wcif, rounds);
-  pdfMake.createPdf(pdfDefinition).download(`${wcif.id}-scorecards.pdf`);
+  const { scorecardsBackgroundUrl } = getExtensionData('CompetitionConfig', wcif);
+  getImageDataUrl(scorecardsBackgroundUrl).then(imageData => {
+    const pdfDefinition = scorecardsPdfDefinition(wcif, rounds, imageData);
+    pdfMake.createPdf(pdfDefinition).download(`${wcif.id}-scorecards.pdf`);
+  });
 };
 
-const scorecardsPdfDefinition = (wcif, rounds) => ({
-  background: [{
+const scorecardsPdfDefinition = (wcif, rounds, imageData) => ({
+  background: [
+    ...(imageData === null ? [] : [
+        /* Determined empirically to fit results table. */
+        { x: 60, y: 170 }, { x: 360, y: 170 },
+        { x: 60, y: 590 }, { x: 360, y: 590 }
+      ].map(absolutePosition => ({ absolutePosition, image: imageData }))
+    ), {
     canvas: [
       cutLine({ x1: scorecardMargin, y1: pageHeight / 2, x2: pageWidth - scorecardMargin, y2: pageHeight / 2 }),
       cutLine({ x1: pageWidth / 2, y1: scorecardMargin, x2: pageWidth / 2, y2:  pageHeight - scorecardMargin })
