@@ -15,7 +15,7 @@ export const createGroupActivities = wcif => {
     if (roundGroupActivities(wcif, round.id).length > 0) return wcif;
     const currentActivityId = maxActivityId(wcif);
     const activitiesWithGroups = roundActivities(wcif, round.id).map(activity => {
-      const { groups } = getExtensionData('Activity', activity);
+      const { groups } = getExtensionData('ActivityConfig', activity);
       const totalDuration = activityDuration(activity);
       const groupDuration = totalDuration / groups;
       const groupActivities = Array.from({ length: groups }, (_, index) => ({
@@ -66,7 +66,7 @@ const assignGroups = (wcif, roundsToAssign) => {
       return updatePeople(wcif, updatedCompetitors);
     }
     const groupActivitiesWithCapacity = flatMap(roundActivities(wcif, round.id), activity => {
-      const { capacity } = getExtensionData('Activity', activity);
+      const { capacity } = getExtensionData('ActivityConfig', activity);
       return activity.childActivities.map(groupActivity =>
         [groupActivity, capacity / activity.childActivities.length]
       );
@@ -166,7 +166,7 @@ const assignScrambling = (wcif, roundsToAssign) => {
     if (hasDistributedAttempts(round.id)) return wcif;
     const eventId = parseActivityCode(round.id).eventId;
     return roundActivities(wcif, round.id).reduce((wcif, activity) => {
-      const { scramblers } = getExtensionData('Activity', activity);
+      const { scramblers } = getExtensionData('ActivityConfig', activity);
       if (scramblers === 0) return wcif;
       return activity.childActivities.reduce((wcif, groupActivity) => {
         const staffScramblers = acceptedPeople(wcif).filter(person => person.roles.includes('staff-scrambler'));
@@ -207,7 +207,7 @@ const assignRunning = (wcif, roundsToAssign) => {
     if (hasDistributedAttempts(round.id)) return wcif;
     const eventId = parseActivityCode(round.id).eventId;
     return roundActivities(wcif, round.id).reduce((wcif, activity) => {
-      const { runners } = getExtensionData('Activity', activity);
+      const { runners } = getExtensionData('ActivityConfig', activity);
       if (runners === 0) return wcif;
       return activity.childActivities.reduce((wcif, groupActivity) => {
         const [staffRunners, people] = partition(acceptedPeople(wcif), person => person.roles.includes('staff-runner'));
@@ -236,7 +236,7 @@ const assignJudging = (wcif, roundsToAssign) => {
     if (hasDistributedAttempts(round.id)) return wcif;
     const eventId = parseActivityCode(round.id).eventId;
     return roundActivities(wcif, round.id).reduce((wcif, activity) => {
-      const { assignJudges } = getExtensionData('Activity', activity);
+      const { assignJudges } = getExtensionData('ActivityConfig', activity);
       const stations = activityStations(wcif, activity);
       if (!assignJudges) return wcif;
       return activity.childActivities.reduce((wcif, groupActivity) => {

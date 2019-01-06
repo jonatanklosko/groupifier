@@ -33,7 +33,7 @@ export const activityDuration = activity =>
 
 export const activityStations = (wcif, activity) => {
   const room = rooms(wcif).find(room => room.activities.includes(activity));
-  return getExtensionData('Room', room).stations;
+  return getExtensionData('RoomConfig', room).stations;
 };
 
 export const populateActivitiesConfig = (wcif, expectedCompetitorsByRound, defaults) => {
@@ -52,7 +52,7 @@ export const populateActivitiesConfig = (wcif, expectedCompetitorsByRound, defau
         const scramblers = defaults.assignScramblers ? suggestedScramblerCount(competitors / groups, stations) : 0;
         const runners = defaults.assignRunners ? suggestedRunnerCount(competitors / groups, stations) : 0;
         const assignJudges = stations > 0 && defaults.assignJudges;
-        return setExtensionData('Activity', activity, {
+        return setExtensionData('ActivityConfig', activity, {
           capacity, groups, scramblers, runners, assignJudges
         });
       });
@@ -72,20 +72,20 @@ export const updateActivity = (wcif, updatedActivity) =>
 
 export const anyActivityConfigured = wcif =>
   rooms(wcif).some(room =>
-    room.activities.some(activity => getExtensionData('Activity', activity))
+    room.activities.some(activity => getExtensionData('ActivityConfig', activity))
   );
 
 export const activitiesConfigComplete = wcif =>
   rooms(wcif).every(room =>
     room.activities
       .filter(shouldHaveGroups)
-      .map(activity => getExtensionData('Activity', activity))
+      .map(activity => getExtensionData('ActivityConfig', activity))
       .every(isPresentDeep)
   );
 
 export const roomsConfigComplete = wcif =>
   rooms(wcif)
-    .map(room => getExtensionData('Room', room))
+    .map(room => getExtensionData('RoomConfig', room))
     .every(isPresentDeep);
 
 export const activitiesOverlap = (first, second) =>

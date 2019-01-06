@@ -7,13 +7,13 @@ import { getExtensionData, setExtensionData } from '../../../../logic/wcif-exten
 
 export default class RoomConfig extends Component {
   get roomData() {
-    return getExtensionData('Room', this.props.room) || { stations: null };
+    return getExtensionData('RoomConfig', this.props.room) || { stations: null };
   }
 
   handleInputChange = (event, value) => {
     const { room, onChange } = this.props;
     onChange(
-      setExtensionData('Room', room, setIn(
+      setExtensionData('RoomConfig', room, setIn(
         this.roomData, [event.target.name], value)
       )
     );

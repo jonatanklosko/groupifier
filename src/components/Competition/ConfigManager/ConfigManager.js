@@ -41,8 +41,8 @@ export default class ConfigManager extends Component {
       localWcif: mapIn(localWcif, ['schedule', 'venues'], venue =>
         mapIn(venue, ['rooms'], room =>
           removeExtensionData(
-            'Room',
-            mapIn(room, ['activities'], activity => removeExtensionData('Activity', activity))
+            'RoomConfig',
+            mapIn(room, ['activities'], activity => removeExtensionData('ActivityConfig', activity))
           )
         )
       )

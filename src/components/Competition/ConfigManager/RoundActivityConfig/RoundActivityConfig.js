@@ -13,7 +13,7 @@ export default class RoundActivityConfig extends Component {
   handlePropertyChange = (property, value) => {
     const { activity, onChange } = this.props;
     onChange(
-      setExtensionData('Activity', activity, setIn(getExtensionData('Activity', activity), [property], value))
+      setExtensionData('ActivityConfig', activity, setIn(getExtensionData('ActivityConfig', activity), [property], value))
     );
   };
 
@@ -32,9 +32,9 @@ export default class RoundActivityConfig extends Component {
 
   render() {
     const { activity, room, expectedCompetitors, wcif } = this.props;
-    const { groups, scramblers, runners, assignJudges, capacity } = getExtensionData('Activity', activity);
+    const { groups, scramblers, runners, assignJudges, capacity } = getExtensionData('ActivityConfig', activity);
 
-    const stations = getExtensionData('Room', room).stations;
+    const stations = getExtensionData('RoomConfig', room).stations;
     const competitors = Math.round(expectedCompetitors.length * capacity);
     const groupSize = Math.round(competitors / groups);
 
