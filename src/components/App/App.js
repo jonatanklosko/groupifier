@@ -55,7 +55,7 @@ export default class App extends Component {
               )}
             </Grid>
           </Grid>
-          <Route exact path="/" component={Footer} />
+          <Footer />
         </div>
       </Router>
     );
