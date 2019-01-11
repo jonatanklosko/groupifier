@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography';
 
 import RoomsConfig from './RoomsConfig/RoomsConfig';
 import RoundsConfig from './RoundsConfig/RoundsConfig';
+import GeneralConfig from './GeneralConfig/GeneralConfig';
 import SaveWcifButton from '../../common/SaveWcifButton/SaveWcifButton';
 import { getExpectedCompetitorsByRound } from '../../../logic/competitors';
 import { roomsConfigComplete, activitiesConfigComplete, anyGroupAssignedOrCreated } from '../../../logic/activities';
@@ -36,9 +37,10 @@ export default class ConfigManager extends Component {
 
   clearConfig = () => {
     const { localWcif } = this.state;
+    const withoutCompetitionConfig = removeExtensionData('CompetitionConfig', localWcif);
     this.setState({
       tabValue: 0,
-      localWcif: mapIn(localWcif, ['schedule', 'venues'], venue =>
+      localWcif: mapIn(withoutCompetitionConfig, ['schedule', 'venues'], venue =>
         mapIn(venue, ['rooms'], room =>
           removeExtensionData(
             'RoomConfig',
@@ -74,9 +76,7 @@ export default class ConfigManager extends Component {
             <RoundsConfig wcif={localWcif} onWcifChange={this.handleWcifChange} expectedCompetitorsByRound={this.expectedCompetitorsByRound} />
           )}
           {tabValue === 2 && (
-            <Paper>
-              <Typography>General settings</Typography>
-            </Paper>
+            <GeneralConfig wcif={localWcif} onWcifChange={this.handleWcifChange} />
           )}
         </Grid>
         <Grid item>
