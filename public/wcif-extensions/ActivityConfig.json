@@ -1,7 +1,7 @@
 {
-  "$id": "https://jonatanklosko.github.io/groupifier/wcif-extensions/Activity.json",
-  "title": "Activity",
-  "description": "WCIF extension with additional activity data.",
+  "$id": "https://jonatanklosko.github.io/groupifier-next/wcif-extensions/ActivityConfig.json",
+  "title": "ActivityConfig",
+  "description": "WCIF extension with additional round activity configuration.",
   "type": "object",
   "properties": {
     "capacity": {

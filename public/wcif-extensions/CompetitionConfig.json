@@ -1,0 +1,13 @@
+{
+  "$id": "https://jonatanklosko.github.io/groupifier-next/wcif-extensions/CompetitionConfig.json",
+  "title": "CompetitionConfig",
+  "description": "WCIF extension with additional competition configuration.",
+  "type": "object",
+  "properties": {
+    "localNamesFirst": {
+      "description": "A flag indicating whether to swap competitor latin names with local ones in generated PDF documents.",
+      "type": "boolean",
+    }
+  },
+  "required": ["localNamesFirst"]
+}

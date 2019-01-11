@@ -1,7 +1,7 @@
 {
-  "$id": "https://jonatanklosko.github.io/groupifier/wcif-extensions/Room.json",
-  "title": "Room",
-  "description": "WCIF extension with additional room data.",
+  "$id": "https://jonatanklosko.github.io/groupifier-next/wcif-extensions/RoomConfig.json",
+  "title": "RoomConfig",
+  "description": "WCIF extension with additional room configuration.",
   "type": "object",
   "properties": {
     "stations": {
