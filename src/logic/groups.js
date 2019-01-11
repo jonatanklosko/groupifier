@@ -2,8 +2,8 @@ import { addMilliseconds, difference, findLast, flatMap, intersection, partition
          scaleToOne, setIn, sortBy, sortByArray, sum, uniq, updateIn, mapIn, zip } from './utils';
 import { getExtensionData } from './wcif-extensions';
 import { activitiesIntersection, activitiesOverlap, activityById, activityCodeToName,
-         activityDuration, activityStations, hasDistributedAttempts, maxActivityId, parseActivityCode,
-         roundActivities, roundGroupActivities, roundsMissingAssignments, updateActivity } from './activities';
+         activityDuration, hasDistributedAttempts, maxActivityId, parseActivityCode,
+         roundActivities, groupActivitiesByRound, roundsMissingAssignments, stationsByActivity, updateActivity } from './activities';
 import { acceptedPeople, age, bestAverageAndSingle, competitorsForRound, hasAssignment, staffAssignments, staffAssignmentsForEvent } from './competitors';
 
 export const createGroupActivities = wcif => {
@@ -12,7 +12,7 @@ export const createGroupActivities = wcif => {
     /* For FMC and MBLD the activities are already scheduled, and there is always a single group. */
     if (hasDistributedAttempts(round.id)) return wcif;
     /* If there are already groups created, don't override them. */
-    if (roundGroupActivities(wcif, round.id).length > 0) return wcif;
+    if (groupActivitiesByRound(wcif, round.id).length > 0) return wcif;
     const currentActivityId = maxActivityId(wcif);
     const activitiesWithGroups = roundActivities(wcif, round.id).map(activity => {
       const { groups } = getExtensionData('ActivityConfig', activity);
@@ -54,14 +54,14 @@ export const assignTasks = wcif => {
 const assignGroups = (wcif, roundsToAssign) => {
   /* Sort rounds by the number of groups, so the further the more possible timeframes there are. */
   const sortedRoundsToAssign = sortBy(roundsToAssign, round =>
-    hasDistributedAttempts(round.id) ? -Infinity : roundGroupActivities(wcif, round.id).length
+    hasDistributedAttempts(round.id) ? -Infinity : groupActivitiesByRound(wcif, round.id).length
   );
   return sortedRoundsToAssign.reduce((wcif, round) => {
     const competitors = competitorsForRound(wcif, round.id);
     if (hasDistributedAttempts(round.id)) {
       /* In this case roundActivities are attempt activities, so we assign them all to the given person. */
       const updatedCompetitors = roundActivities(wcif, round.id).reduce((competitors, activity) =>
-        assignActivity(activity, 'competitor', competitors)
+        assignActivity(activity.id, 'competitor', competitors)
       , competitors);
       return updatePeople(wcif, updatedCompetitors);
     }
@@ -96,7 +96,7 @@ const assignGroups = (wcif, roundsToAssign) => {
       }
     }, sortedInitialGroups);
     const updatedCompetitors = flatMap(groups, ({ activity, competitors }) =>
-      assignActivity(activity, 'competitor', competitors)
+      assignActivity(activity.id, 'competitor', competitors)
     );
     return updatePeople(wcif, updatedCompetitors);
   }, wcif);
@@ -164,7 +164,7 @@ const assignScrambling = (wcif, roundsToAssign) => {
   const sortedRoundsToAssign = sortBy(roundsToAssign, round => competitorsForRound(wcif, round.id).length);
   return sortedRoundsToAssign.reduce((wcif, round) => {
     if (hasDistributedAttempts(round.id)) return wcif;
-    const eventId = parseActivityCode(round.id).eventId;
+    const { eventId } = parseActivityCode(round.id);
     return roundActivities(wcif, round.id).reduce((wcif, activity) => {
       const { scramblers } = getExtensionData('ActivityConfig', activity);
       if (scramblers === 0) return wcif;
@@ -195,7 +195,7 @@ const assignScrambling = (wcif, roundsToAssign) => {
           ...bestAverageAndSingle(competitor, eventId)
         ]);
         const potentialScramblers = [...sortedAvailableStaff, ...sortedAvailableCompetitors];
-        const updatedCompetitors = assignActivity(groupActivity, 'staff-scrambler', potentialScramblers.slice(0, scramblers));
+        const updatedCompetitors = assignActivity(groupActivity.id, 'staff-scrambler', potentialScramblers.slice(0, scramblers));
         return updatePeople(wcif, updatedCompetitors);
       }, wcif);
     }, wcif);
@@ -205,7 +205,7 @@ const assignScrambling = (wcif, roundsToAssign) => {
 const assignRunning = (wcif, roundsToAssign) => {
   return roundsToAssign.reduce((wcif, round) => {
     if (hasDistributedAttempts(round.id)) return wcif;
-    const eventId = parseActivityCode(round.id).eventId;
+    const { eventId } = parseActivityCode(round.id);
     return roundActivities(wcif, round.id).reduce((wcif, activity) => {
       const { runners } = getExtensionData('ActivityConfig', activity);
       if (runners === 0) return wcif;
@@ -224,7 +224,7 @@ const assignRunning = (wcif, roundsToAssign) => {
           competesIn15Minutes(wcif, competitor, groupActivity.endTime) ? 1 : -1
         ]);
         const potentialRunners = [...sortedAvailableStaff, ...sortedAvailablePeople];
-        const updatedPeople = assignActivity(groupActivity, 'staff-runner', potentialRunners.slice(0, runners));
+        const updatedPeople = assignActivity(groupActivity.id, 'staff-runner', potentialRunners.slice(0, runners));
         return updatePeople(wcif, updatedPeople);
       }, wcif);
     }, wcif);
@@ -234,10 +234,10 @@ const assignRunning = (wcif, roundsToAssign) => {
 const assignJudging = (wcif, roundsToAssign) => {
   return roundsToAssign.reduce((wcif, round) => {
     if (hasDistributedAttempts(round.id)) return wcif;
-    const eventId = parseActivityCode(round.id).eventId;
+    const { eventId } = parseActivityCode(round.id);
     return roundActivities(wcif, round.id).reduce((wcif, activity) => {
       const { assignJudges } = getExtensionData('ActivityConfig', activity);
-      const stations = activityStations(wcif, activity);
+      const stations = stationsByActivity(wcif, activity.id);
       if (!assignJudges) return wcif;
       return activity.childActivities.reduce((wcif, groupActivity) => {
         const competitors = wcif.persons.filter(competitor =>
@@ -262,7 +262,7 @@ const assignJudging = (wcif, roundsToAssign) => {
           competitor.registration ? competitor.registration.eventIds.length : 0,
         ]);
         const potentialJudges = [...sortedAvailableStaff, ...sortedAvailablePeople];
-        const updatedPeople = assignActivity(groupActivity, 'staff-judge', potentialJudges.slice(0, judges));
+        const updatedPeople = assignActivity(groupActivity.id, 'staff-judge', potentialJudges.slice(0, judges));
         return updatePeople(wcif, updatedPeople);
       }, wcif);
     }, wcif);
@@ -279,10 +279,10 @@ const competesIn15Minutes = (wcif, competitor, isoString) => {
   return (new Date(competingStart) - new Date(isoString)) <= 15 * 60 * 1000;
 };
 
-const assignActivity = (activity, assignmentCode, competitors) =>
+const assignActivity = (activityId, assignmentCode, competitors) =>
   competitors.map(competitor => ({
     ...competitor,
-    assignments: [...(competitor.assignments || []), { activityId: activity.id, assignmentCode }]
+    assignments: [...(competitor.assignments || []), { activityId, assignmentCode }]
   }));
 
 const updatePeople = (wcif, updatedPeople) =>
@@ -325,5 +325,5 @@ export const updateScrambleSetCount = wcif =>
 /* Assume one scramble set for each unique timeframe, i.e. (startTime, endTime) pair. */
 const scrambleSetCountForRound = (wcif, roundId) =>
   hasDistributedAttempts(roundId) ? 1 : uniq(
-    roundGroupActivities(wcif, roundId).map(({ startTime, endTime }) => startTime + endTime)
+    groupActivitiesByRound(wcif, roundId).map(({ startTime, endTime }) => startTime + endTime)
   ).length;

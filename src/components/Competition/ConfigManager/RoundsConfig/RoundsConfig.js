@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography';
 
 import RoundsNavigation from '../../../common/RoundsNavigation/RoundsNavigation';
 import RoundConfig from '../RoundConfig/RoundConfig';
-import { populateActivitiesConfig, anyActivityConfigured, hasDistributedAttempts } from '../../../../logic/activities';
+import { populateRoundActivitiesConfig, anyActivityConfig, hasDistributedAttempts } from '../../../../logic/activities';
 
 export default class RoundsConfig extends Component {
   constructor(props) {
@@ -27,14 +27,14 @@ export default class RoundsConfig extends Component {
 
   handleNextClick = () => {
     const { wcif, expectedCompetitorsByRound, onWcifChange } = this.props;
-    onWcifChange(populateActivitiesConfig(wcif, expectedCompetitorsByRound, this.state));
+    onWcifChange(populateRoundActivitiesConfig(wcif, expectedCompetitorsByRound, this.state));
   };
 
   render() {
     const { wcif } = this.props;
     const events = wcif.events.filter(event => !hasDistributedAttempts(event.id));
 
-    return anyActivityConfigured(wcif) ? (
+    return anyActivityConfig(wcif) ? (
       <RoundsNavigation events={events} render={this.renderRound} />
     ) : (
       <Paper style={{ padding: 16 }}>

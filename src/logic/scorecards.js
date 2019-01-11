@@ -1,5 +1,5 @@
 import { flatMap, sortBy, chunk } from './utils';
-import { parseActivityCode, roundGroupActivities } from './activities';
+import { parseActivityCode, groupActivitiesByRound } from './activities';
 import { eventNameById } from './events';
 import { cutoffToString, timeLimitToString } from './formatters';
 import { competitorsForRound, hasAssignment } from './competitors';
@@ -65,7 +65,7 @@ const cutLine = properties => ({
 const scorecards = (wcif, rounds) => {
   const { localNamesFirst } = getExtensionData('CompetitionConfig', wcif) || { localNamesFirst: false };
   return flatMap(rounds, round => {
-    const sortedGroupActivities = sortBy(roundGroupActivities(wcif, round.id),
+    const sortedGroupActivities = sortBy(groupActivitiesByRound(wcif, round.id),
       ({ activityCode }) => parseActivityCode(activityCode).groupNumber
     );
     const sortedCompetitors = competitorsForRound(wcif, round.id);

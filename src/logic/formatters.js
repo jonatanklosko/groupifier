@@ -11,7 +11,7 @@ export const cutoffToString = (cutoff, eventId) => {
   }
 }
 
-export const timeLimitToString = (timeLimit) => {
+export const timeLimitToString = timeLimit => {
   const { centiseconds, cumulativeRoundIds } = timeLimit;
   const clockFormat = centisecondsToClockFormat(centiseconds);
   if (cumulativeRoundIds.length === 0) {
