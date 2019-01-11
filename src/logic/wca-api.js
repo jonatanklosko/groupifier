@@ -1,5 +1,6 @@
 import { wcaAccessToken } from './auth';
 import { WCA_ORIGIN } from './wca-env';
+import { pick } from './utils';
 
 export const getUpcomingManageableCompetitions = () => {
   const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
@@ -10,18 +11,20 @@ export const getUpcomingManageableCompetitions = () => {
   return wcaApiFetch(`/competitions?${params}}`);
 };
 
-export const getCompetitionWcif = competitionId =>
+export const getWcif = competitionId =>
   wcaApiFetch(`/competitions/${competitionId}/wcif`);
 
-export const saveWcifChanges = (wcif, updatedWcif) =>
-  Promise.all([
-    wcif.persons !== updatedWcif.persons && patchWcifAttribute(updatedWcif, 'persons'),
-    wcif.events !== updatedWcif.events && patchWcifAttribute(updatedWcif, 'events'),
-    wcif.schedule !== updatedWcif.schedule && patchWcifAttribute(updatedWcif, 'schedule'),
-  ]);
+const updateWcif = wcif =>
+  wcaApiFetch(`/competitions/${wcif.id}/wcif`, {
+    method: 'PATCH',
+    body: JSON.stringify(wcif)
+  });
 
-const patchWcifAttribute = (wcif, attribute) =>
-  wcaApiFetch(`/competitions/${wcif.id}/wcif/${attribute}`, { method: 'PATCH', body: JSON.stringify(wcif[attribute]) });
+export const saveWcifChanges = (previousWcif, newWcif) => {
+  const keysDiff = Object.keys(newWcif).filter(key => previousWcif[key] !== newWcif[key]);
+  if (keysDiff.length === 0) return Promise.resolve();
+  return updateWcif(pick(newWcif, keysDiff));
+};
 
 const wcaApiFetch = (path, fetchOptions = {}) => {
   const baseApiUrl = `${WCA_ORIGIN}/api/v0`;

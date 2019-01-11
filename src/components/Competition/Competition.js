@@ -9,7 +9,7 @@ import GroupsManager from './GroupsManager/GroupsManager';
 import PrintingManager from './PrintingManager/PrintingManager';
 import RolesManager from './RolesManager/RolesManager';
 
-import { getCompetitionWcif } from '../../logic/wca-api';
+import { getWcif } from '../../logic/wca-api';
 import { sortWcifEvents } from '../../logic/events';
 import { updateIn } from '../../logic/utils';
 
@@ -20,7 +20,7 @@ export default class Competition extends Component {
   };
 
   componentDidMount() {
-    getCompetitionWcif(this.props.match.params.competitionId)
+    getWcif(this.props.match.params.competitionId)
       .then(wcif => updateIn(wcif, ['events'], sortWcifEvents)) /* Sort events, so that we don't need to remember about this everywhere. */
       .then(wcif => this.setState({ wcif, loading: false }))
   }

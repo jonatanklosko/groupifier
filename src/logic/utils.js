@@ -157,6 +157,9 @@ export const uniq = arr =>
 export const sum = arr =>
   arr.reduce((x, y) => x + y, 0);
 
+export const pick = (obj, keys) =>
+  keys.reduce((newObj, key) => ({ ...newObj, [key]: obj[key] }), {});
+
 export const inRange = (x, a, b) =>
   a <= x && x <= b;
 
