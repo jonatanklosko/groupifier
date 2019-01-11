@@ -2,6 +2,7 @@ import { chunk, sortBy, zip } from './utils';
 import { eventNameById } from './events';
 import { activityById, hasDistributedAttempts, parseActivityCode } from './activities';
 import { acceptedPeople } from './competitors';
+import { getExtensionData } from './wcif-extensions';
 import pdfMake from './pdfmake';
 import { pdfName } from './pdf-utils';
 
@@ -27,6 +28,7 @@ const competitorCards = wcif => {
 };
 
 const competitorCard = (wcif, person) => {
+  const { localNamesFirst } = getExtensionData('CompetitionConfig', wcif) || { localNamesFirst: false };
   const tasks = (person.assignments || []).map(({ activityId, assignmentCode }) => {
     const activity = activityById(wcif, activityId);
     const { eventId, roundNumber, groupNumber } = parseActivityCode(activity.activityCode);
@@ -46,7 +48,7 @@ const competitorCard = (wcif, person) => {
   return {
     margin: [5, 5],
     stack: [
-      { text: pdfName(person.name), fontSize: 10 },
+      { text: pdfName(person.name, localNamesFirst), fontSize: 10 },
       {
         columns: [
           `ID: ${person.registrantId}`,

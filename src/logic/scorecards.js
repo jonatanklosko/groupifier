@@ -3,6 +3,7 @@ import { parseActivityCode, roundGroupActivities } from './activities';
 import { eventNameById } from './events';
 import { cutoffToString, timeLimitToString } from './formatters';
 import { competitorsForRound, hasAssignment } from './competitors';
+import { getExtensionData } from './wcif-extensions';
 import pdfMake from './pdfmake';
 import { pdfName } from './pdf-utils';
 
@@ -53,6 +54,7 @@ const cutLine = properties => ({
 });
 
 const scorecards = (wcif, rounds) => {
+  const { localNamesFirst } = getExtensionData('CompetitionConfig', wcif) || { localNamesFirst: false };
   return flatMap(rounds, round => {
     const sortedGroupActivities = sortBy(roundGroupActivities(wcif, round.id),
       ({ activityCode }) => parseActivityCode(activityCode).groupNumber
@@ -69,7 +71,8 @@ const scorecards = (wcif, rounds) => {
           competitionName: wcif.shortName,
           activityCode: groupActivity.activityCode,
           round,
-          competitor
+          competitor,
+          localNamesFirst
         })
       );
       const scorecardsOnLastPage = groupScorecards.length % 4;
@@ -85,7 +88,8 @@ const scorecard = ({
   competitionName,
   activityCode,
   round,
-  competitor
+  competitor,
+  localNamesFirst
 }) => {
   const { eventId, roundNumber, groupNumber } = parseActivityCode(activityCode);
   const { cutoff, timeLimit } = round;
@@ -110,7 +114,7 @@ const scorecard = ({
         widths: ['auto', '*'],
         body: [
           columnLabels(['ID', 'Name']),
-          [{ text: competitor.registrantId, alignment: 'center' }, { text: pdfName(competitor.name), maxHeight: 20 /* See: https://github.com/bpampuch/pdfmake/issues/264#issuecomment-108347567 */ }]
+          [{ text: competitor.registrantId, alignment: 'center' }, { text: pdfName(competitor.name, localNamesFirst), maxHeight: 20 /* See: https://github.com/bpampuch/pdfmake/issues/264#issuecomment-108347567 */ }]
         ]
       }
     },

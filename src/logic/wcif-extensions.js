@@ -17,10 +17,20 @@ export const setExtensionData = (extensionName, wcifEntity, data) => {
   };
 };
 
+const defaultExtensionData = {
+  ActivityConfig: null, /* This always gets generated, so it's fine for it to be null until then. */
+  RoomConfig: {
+    stations: null
+  },
+  CompetitionConfig: {
+    localNamesFirst: false
+  }
+};
+
 export const getExtensionData = (extensionName, wcifEntity) => {
   const extension = extensions(wcifEntity)
     .find(extension => extension.id === groupifierExtensionId(extensionName));
-  return extension ? extension.data : null;
+  return extension ? extension.data : defaultExtensionData[extensionName];
 };
 
 export const removeExtensionData = (extensionName, wcifEntity) => ({

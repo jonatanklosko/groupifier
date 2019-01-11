@@ -9,20 +9,17 @@ import { getExtensionData, setExtensionData } from '../../../../logic/wcif-exten
 import { setIn } from '../../../../logic/utils';
 
 export default class GeneralConfig extends Component {
-  get competitionData() {
-    return getExtensionData('CompetitionConfig', this.props.wcif) || { localNamesFirst: false };
-  }
-
   handleCheckboxChange = event => {
     const { wcif, onWcifChange } = this.props;
     const { name, checked } = event.target;
     onWcifChange(
-      setExtensionData('CompetitionConfig', wcif, setIn(this.competitionData, [name], checked))
+      setExtensionData('CompetitionConfig', wcif, setIn(getExtensionData('CompetitionConfig', wcif), [name], checked))
     );
   };
 
   render() {
-    const { localNamesFirst } = this.competitionData;
+    const { wcif } = this.props;
+    const { localNamesFirst } = getExtensionData('CompetitionConfig', wcif);
 
     return (
       <Paper style={{ padding: 16 }}>
