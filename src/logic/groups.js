@@ -270,7 +270,7 @@ const assignJudging = (wcif, roundsToAssign) => {
 };
 
 const competesIn15Minutes = (wcif, competitor, isoString) => {
-  const competingStartTimes = (competitor.assignments || [])
+  const competingStartTimes = competitor.assignments
     .filter(({ assignmentCode }) => assignmentCode === 'competitor')
     .map(({ activityId }) => activityById(wcif, activityId).startTime)
     .filter(startTime => startTime >= isoString);
@@ -282,7 +282,7 @@ const competesIn15Minutes = (wcif, competitor, isoString) => {
 const assignActivity = (activityId, assignmentCode, competitors) =>
   competitors.map(competitor => ({
     ...competitor,
-    assignments: [...(competitor.assignments || []), { activityId, assignmentCode }]
+    assignments: [...competitor.assignments, { activityId, assignmentCode }]
   }));
 
 const updatePeople = (wcif, updatedPeople) =>
@@ -291,12 +291,12 @@ const updatePeople = (wcif, updatedPeople) =>
   );
 
 const availableDuring = (wcif, activity, competitor) =>
-  !(competitor.assignments || []).some(({ activityId }) =>
+  !competitor.assignments.some(({ activityId }) =>
     activitiesOverlap(activityById(wcif, activityId), activity)
   );
 
 const availabilityRate = (wcif, activity, competitor) => {
-  const intersections = (competitor.assignments || []).map(({ activityId }) =>
+  const intersections = competitor.assignments.map(({ activityId }) =>
     activitiesIntersection(activityById(wcif, activityId), activity)
   );
   const timeWhenBusy = sum(intersections);

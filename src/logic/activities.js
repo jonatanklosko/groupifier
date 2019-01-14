@@ -147,7 +147,7 @@ export const groupActivitiesByRound = (wcif, roundId) =>
 
 export const activityAssigned = (wcif, activityId) =>
   wcif.persons.some(person =>
-    (person.assignments || []).some(assignment => assignment.activityId === activityId)
+    person.assignments.some(assignment => assignment.activityId === activityId)
   );
 
 export const groupActivitiesAssigned = (wcif, roundId) =>
@@ -178,7 +178,7 @@ export const allGroupsCreated = wcif =>
 
 export const anyCompetitorAssignment = wcif =>
   wcif.persons.some(person =>
-    (person.assignments || []).some(assignment => assignment.assignmentCode === 'competitor')
+    person.assignments.some(assignment => assignment.assignmentCode === 'competitor')
   );
 
 export const anyGroupAssignedOrCreated = wcif =>

@@ -29,7 +29,7 @@ const competitorCards = wcif => {
 
 const competitorCard = (wcif, person) => {
   const { localNamesFirst } = getExtensionData('CompetitionConfig', wcif) || { localNamesFirst: false };
-  const tasks = (person.assignments || []).map(({ activityId, assignmentCode }) => {
+  const tasks = person.assignments.map(({ activityId, assignmentCode }) => {
     const activity = activityById(wcif, activityId);
     const { eventId, roundNumber, groupNumber } = parseActivityCode(activity.activityCode);
     return { assignmentCode, eventId, groupNumber, roundNumber };

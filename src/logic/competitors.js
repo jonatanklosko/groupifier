@@ -91,7 +91,7 @@ export const age = person => {
 }
 
 export const staffAssignments = person =>
-  (person.assignments || []).filter(({ assignmentCode }) => assignmentCode.startsWith('staff-'));
+  person.assignments.filter(({ assignmentCode }) => assignmentCode.startsWith('staff-'));
 
 export const staffAssignmentsForEvent = (wcif, person, eventId) =>
   staffAssignments(person).filter(({ activityId }) =>
@@ -102,6 +102,6 @@ export const acceptedPeople = wcif =>
   wcif.persons.filter(person => person.registration && person.registration.status === 'accepted');
 
 export const hasAssignment = (person, activityId, assignmentCode) =>
-  (person.assignments || []).some(assignment =>
+  person.assignments.some(assignment =>
     assignment.activityId === activityId && assignment.assignmentCode === assignmentCode
   );

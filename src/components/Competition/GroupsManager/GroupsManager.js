@@ -35,7 +35,7 @@ export default class GroupsManager extends Component {
     const { localWcif } = this.state;
     const persons = localWcif.persons.map(person =>
       updateIn(person, ['assignments'], assignments =>
-        (assignments || []).filter(({ assignmentCode }) =>
+        assignments.filter(({ assignmentCode }) =>
           !assignmentCode.startsWith('staff-') && assignmentCode !== 'competitor'
         )
       )
