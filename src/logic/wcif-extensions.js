@@ -6,10 +6,8 @@ const buildGroupifierExtension = (extensionName, data) => ({
   data
 });
 
-const extensions = wcifEntity => wcifEntity.extensions || [];
-
 export const setExtensionData = (extensionName, wcifEntity, data) => {
-  const otherExtensions = extensions(wcifEntity)
+  const otherExtensions = wcifEntity.extensions
     .filter(extension => extension.id !== groupifierExtensionId(extensionName));
   return {
     ...wcifEntity,
@@ -29,14 +27,14 @@ const defaultExtensionData = {
 };
 
 export const getExtensionData = (extensionName, wcifEntity) => {
-  const extension = extensions(wcifEntity)
+  const extension = wcifEntity.extensions
     .find(extension => extension.id === groupifierExtensionId(extensionName));
   return extension ? extension.data : defaultExtensionData[extensionName];
 };
 
 export const removeExtensionData = (extensionName, wcifEntity) => ({
   ...wcifEntity,
-  extensions: extensions(wcifEntity).filter(extension =>
+  extensions: wcifEntity.extensions.filter(extension =>
     extension.id !== groupifierExtensionId(extensionName)
   )
 });
