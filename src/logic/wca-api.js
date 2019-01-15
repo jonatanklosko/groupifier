@@ -14,8 +14,8 @@ export const getUpcomingManageableCompetitions = () => {
 export const getWcif = competitionId =>
   wcaApiFetch(`/competitions/${competitionId}/wcif`);
 
-const updateWcif = wcif =>
-  wcaApiFetch(`/competitions/${wcif.id}/wcif`, {
+const updateWcif = (competitionId, wcif) =>
+  wcaApiFetch(`/competitions/${competitionId}/wcif`, {
     method: 'PATCH',
     body: JSON.stringify(wcif)
   });
@@ -23,7 +23,7 @@ const updateWcif = wcif =>
 export const saveWcifChanges = (previousWcif, newWcif) => {
   const keysDiff = Object.keys(newWcif).filter(key => previousWcif[key] !== newWcif[key]);
   if (keysDiff.length === 0) return Promise.resolve();
-  return updateWcif(pick(newWcif, keysDiff));
+  return updateWcif(newWcif.id, pick(newWcif, keysDiff));
 };
 
 const wcaApiFetch = (path, fetchOptions = {}) => {
