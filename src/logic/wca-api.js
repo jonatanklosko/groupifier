@@ -35,5 +35,9 @@ const wcaApiFetch = (path, fetchOptions = {}) => {
       'Content-Type': 'application/json'
     })
   }))
+  .then(response => {
+    if (!response.ok) throw new Error(response.statusText);
+    return response;
+  })
   .then(response => response.json());
 };

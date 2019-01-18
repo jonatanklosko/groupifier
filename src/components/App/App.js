@@ -19,6 +19,9 @@ const theme = createMuiTheme({
     primary: indigo,
     secondary: grey
   },
+  typography: {
+    useNextVariants: true,
+  }
 });
 
 export default class App extends Component {
