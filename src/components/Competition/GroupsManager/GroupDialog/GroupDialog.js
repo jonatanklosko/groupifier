@@ -58,7 +58,7 @@ export default class GroupDialog extends Component {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose} color="primary">
+          <Button onClick={onClose} color="secondary">
             Ok
           </Button>
         </DialogActions>

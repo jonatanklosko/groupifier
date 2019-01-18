@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
+import pink from '@material-ui/core/colors/pink';
 
 import GroupsNavigation from './GroupsNavigation/GroupsNavigation';
 import SaveWcifButton from '../../common/SaveWcifButton/SaveWcifButton';
@@ -62,7 +63,7 @@ export default class GroupsManager extends Component {
               style={{ maxWidth: 'none' }}
               message="To assign tasks you need to create groups first. This will also determine scramble set count for each round."
               action={
-                <Button onClick={this.createGroupActivities} color="secondary" size="small">
+                <Button onClick={this.createGroupActivities} style={{ color: pink[500] }} size="small">
                   Create groups
                 </Button>
               }
@@ -73,7 +74,7 @@ export default class GroupsManager extends Component {
               style={{ maxWidth: 'none' }}
               message="There are rounds with no tasks assigned."
               action={
-                <Button onClick={this.assignTasks} color="secondary" size="small">
+                <Button onClick={this.assignTasks} style={{ color: pink[500] }} size="small">
                   Assign tasks
                 </Button>
               }
