@@ -15,7 +15,6 @@ describe('CompetitionList', () => {
     const wrapper = shallow(<CompetitionList />);
     expect(wrapper.contains(<LinearProgress />)).toEqual(true);
     return competitions.then(() => {
-      wrapper.update();
       expect(wrapper.contains(<LinearProgress />)).toEqual(false);
     });
   });
@@ -25,7 +24,6 @@ describe('CompetitionList', () => {
     getUpcomingManageableCompetitions.mockReturnValue(competitions);
     const wrapper = shallow(<CompetitionList />);
     return competitions.then(() => {
-      wrapper.update();
       expect(
         wrapper.contains(<ListItemText primary="You have no upcoming competitions to manage." />)
       ).toEqual(true);
@@ -37,7 +35,6 @@ describe('CompetitionList', () => {
     getUpcomingManageableCompetitions.mockReturnValue(competitions);
     const wrapper = shallow(<CompetitionList />);
     return competitions.then(() => {
-      wrapper.update();
       expect(wrapper.contains(<ListItemText primary="Example 2018" />)).toEqual(true);
     });
   });

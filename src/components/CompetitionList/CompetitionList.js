@@ -23,8 +23,12 @@ export default class CompetitionList extends Component {
 
   componentDidMount() {
     getUpcomingManageableCompetitions()
-      .then(competitions => sortBy(competitions, competition => competition['start_date']))
-      .then(competitions => this.setState({ competitions, loading: false }));
+      .then(competitions =>
+        this.setState({
+          competitions: sortBy(competitions, competition => competition['start_date']),
+          loading: false
+        })
+      );
   }
 
   render() {
