@@ -69,9 +69,8 @@ const advancingResults = (results, advancementCondition) => {
 export const competitorsForRound = (wcif, roundId) => {
   const { eventId, roundNumber } = parseActivityCode(roundId);
   if (roundNumber === 1) {
-    const registeredCompetitors = wcif.persons.filter(({ registration }) =>
-      registration && registration.status === 'accepted' && registration.eventIds.includes(eventId)
-    );
+    const registeredCompetitors = acceptedPeople(wcif)
+      .filter(({ registration }) => registration.eventIds.includes(eventId));
     return sortByArray(registeredCompetitors,
       competitor => bestAverageAndSingle(competitor, eventId).map(result => -result)
     );
