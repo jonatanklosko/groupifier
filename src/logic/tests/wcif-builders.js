@@ -8,7 +8,14 @@ export const Competition = ({
   schedule = {},
   extensions = []
 }) => ({
-  formatVersion, id, name, shortName, persons, events, schedule, extensions
+  formatVersion, id, name, shortName, persons, events,
+  schedule: {
+    startDate: '2020-01-01',
+    numberOfDays: 2,
+    venues: [],
+    ...schedule
+  },
+  extensions
 });
 
 let personId = 1;
@@ -91,4 +98,48 @@ export const Result = attributes => {
     ],
     ...attributes
   };
+};
+
+let venueId = 1;
+export const Venue = ({
+  id = venueId,
+  name = `Venue ${venueId}`,
+  latitudeMicrodegrees = 0,
+  longitudeMicrodegrees = 0,
+  timezone = 'UTC',
+  rooms = []
+}) => {
+  venueId++;
+  return {
+    id, name, latitudeMicrodegrees, longitudeMicrodegrees, timezone, rooms
+  }
+};
+
+let roomId = 1;
+export const Room = ({
+  id = roomId,
+  name = `Room ${roomId}`,
+  color = '#000000',
+  activities = []
+}) => {
+  roomId++;
+  return {
+    id, name, color, activities
+  };
+};
+
+let activityId = 1;
+export const Activity = ({
+  id = activityId,
+  name = `Activity ${activityId}`,
+  activityCode = 'other-misc-example',
+  startTime = '2020-01-01T10:00:00.000Z',
+  endTime = '2020-01-01T11:00:00.000Z',
+  childActivities = [],
+  scrambleSetId = null
+}) => {
+  activityId++;
+  return {
+    id, name, activityCode, startTime, endTime, childActivities, scrambleSetId
+  }
 };
