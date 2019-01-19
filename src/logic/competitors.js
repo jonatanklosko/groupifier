@@ -53,7 +53,7 @@ const satisfiesAdvancementCondition = (result, advancementCondition, resultCount
   throw new Error(`Unrecognised AdvancementCondition type: '${type}'`);
 };
 
-const advancingResults = (results, advancementCondition) => {
+export const advancingResults = (results, advancementCondition) => {
   const sortedResults = sortBy(
     results.filter(result => result.attempts.length > 0),
     result => result.ranking

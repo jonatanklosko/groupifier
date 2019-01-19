@@ -82,7 +82,13 @@ export const Result = attributes => {
   const { personId, ranking } = attributes;
   if (!personId || !ranking) throw new Error('Result requires personId and ranking.');
   return {
-    attempts: [ranking * 200, ranking * 205, ranking * 150, ranking * 300, ranking * 101],
+    attempts: [
+      { result: ranking * 200 },
+      { result: ranking * 205 },
+      { result: ranking * 150 },
+      { result: ranking * 300 },
+      { result: ranking * 101 }
+    ],
     ...attributes
   };
 };

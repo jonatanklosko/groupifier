@@ -1,5 +1,5 @@
 import { Competition, Person, PersonalBest, Event, Round, Result } from './wcif-builders';
-import { competitorsForRound } from '../competitors';
+import { competitorsForRound, advancingResults } from '../competitors';
 
 describe('competitorsForRound', () => {
   const person1 = Person({
@@ -75,8 +75,45 @@ describe('competitorsForRound', () => {
       })
     ];
     test('returns advancing people ordered by previous round ranking descending', () => {
-      const wcif = Competition({ persons: [person1, personWithoutAverage, personWithoutResults, person2], events });
+      const wcif = Competition({
+        persons: [person1, personWithoutAverage, personWithoutResults, person2],
+        events
+      });
       expect(competitorsForRound(wcif, '333-r2')).toEqual([person1, personWithoutResults, person2]);
     });
+  });
+});
+
+describe('advancingResults', () => {
+  test('returns results satisfying the given advancement condition', () => {
+    const results = [
+      Result({ ranking: 1, personId: 1 }),
+      Result({ ranking: 2, personId: 2 }),
+      Result({ ranking: 3, personId: 3 }),
+      Result({ ranking: 4, personId: 4 }),
+      Result({ ranking: 5, personId: 5 })
+    ];
+    const advancementCondition = { type: 'ranking', level: 3 };
+    expect(advancingResults(results, advancementCondition)).toEqual(results.slice(0, 3));
+  });
+  test('does not return more than 75% results in case of ties', () => {
+    const results = [
+      Result({ ranking: 1, personId: 1 }),
+      Result({ ranking: 2, personId: 2 }),
+      Result({ ranking: 3, personId: 3 }),
+      Result({ ranking: 3, personId: 4 }),
+      Result({ ranking: 5, personId: 5 })
+    ];
+    const advancementCondition = { type: 'percent', level: 75 };
+    expect(advancingResults(results, advancementCondition)).toEqual(results.slice(0, 2));
+  });
+
+  test('does not treat DNF results as satisfying attemptResult advancement condition', () => {
+    const results = [
+      Result({ ranking: 1, personId: 1, attempts: [{ result: 2000 }, { result: 1000 }, { result: -1 }, { result: 5000 }, { result: -2 }] }),
+      Result({ ranking: 2, personId: 2, attempts: [{ result: 1500 }, { result: 2000 }, { result: -1 }, { result: 5000 }, { result: 4000 }] }),
+    ];
+    const advancementCondition = { type: 'attemptResult', level: 1500 };
+    expect(advancingResults(results, advancementCondition)).toEqual(results.slice(0, 1));
   });
 });
