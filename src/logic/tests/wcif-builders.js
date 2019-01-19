@@ -4,11 +4,11 @@ export const Competition = ({
   name = 'Example Competition 2019',
   shortName = 'Example 2019',
   persons = [],
-  eventIds = [],
+  events = [],
   schedule = {},
   extensions = []
 }) => ({
-  formatVersion, id, name, shortName, persons, eventIds, schedule, extensions
+  formatVersion, id, name, shortName, persons, events, schedule, extensions
 });
 
 let personId = 1;
@@ -52,6 +52,37 @@ export const PersonalBest = attributes => {
     best: worldRanking * 200,
     continentalRanking: worldRanking,
     nationalRanking: worldRanking,
+    ...attributes
+  };
+};
+
+export const Event = ({
+  id = '333',
+  rounds = [],
+  competitorLimit = null,
+  qualification = null
+}) => ({
+  id, rounds, competitorLimit, qualification
+});
+
+export const Round = ({
+  id = '333-r1',
+  format = 'a',
+  timeLimit = null,
+  cutoff = null,
+  advancementCondition = null,
+  results = [],
+  scrambleSetCount = 1,
+  scrambleSets = []
+}) => ({
+  id, format, timeLimit, cutoff, advancementCondition, results, scrambleSetCount, scrambleSets
+});
+
+export const Result = attributes => {
+  const { personId, ranking } = attributes;
+  if (!personId || !ranking) throw new Error('Result requires personId and ranking.');
+  return {
+    attempts: [ranking * 200, ranking * 205, ranking * 150, ranking * 300, ranking * 101],
     ...attributes
   };
 };

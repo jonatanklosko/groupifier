@@ -1,4 +1,4 @@
-import { Competition, Person, PersonalBest } from './wcif-builders';
+import { Competition, Person, PersonalBest, Event, Round, Result } from './wcif-builders';
 import { competitorsForRound } from '../competitors';
 
 describe('competitorsForRound', () => {
@@ -52,6 +52,31 @@ describe('competitorsForRound', () => {
     test('returns only people with accepted registration', () => {
       const wcif = Competition({ persons: [person1, personNotAccepted] });
       expect(competitorsForRound(wcif, '333-r1')).toEqual([person1]);
+    });
+  });
+
+  describe('when given a subsequent round', () => {
+    const events = [
+      Event({
+        id: '333',
+        rounds: [
+          Round({
+            id: '333-r1',
+            results: [
+              Result({ ranking: 1, personId: person2.registrantId }),
+              Result({ ranking: 2, personId: personWithoutResults.registrantId }),
+              Result({ ranking: 3, personId: person1.registrantId  }),
+              Result({ ranking: 4, personId: personWithoutAverage.registrantId })
+            ],
+            advancementCondition: { type: 'ranking', level: 3 }
+          }),
+          Round({ id: '333-r2' })
+        ]
+      })
+    ];
+    test('returns advancing people ordered by previous round ranking descending', () => {
+      const wcif = Competition({ persons: [person1, personWithoutAverage, personWithoutResults, person2], events });
+      expect(competitorsForRound(wcif, '333-r2')).toEqual([person1, personWithoutResults, person2]);
     });
   });
 });
