@@ -1,3 +1,13 @@
+const nextIdByBuilder = new Map();
+const withId = builder => {
+  nextIdByBuilder.set(builder, 1);
+  return attributes => {
+    const id = nextIdByBuilder.get(builder);
+    nextIdByBuilder.set(builder, id + 1);
+    return builder(id)(attributes);
+  };
+};
+
 export const Competition = attributes => ({
   formatVersion: '1.0',
   id: 'Example2019',
@@ -15,36 +25,32 @@ export const Competition = attributes => ({
   }
 });
 
-let personId = 0;
-export const Person = attributes => {
-  personId++;
-  return {
-    name: `Person ${personId}`,
-    wcaUserId: personId,
-    wcaId: `2019PERS${personId % 100}`,
-    registrantId: personId,
-    countryIso2: 'GB',
-    gender: 'm',
-    birthdate: '2000-01-01',
-    email: `person${personId}@example.com`,
-    avatar: {
-      url: 'https://example.com/avatar.jpg',
-      thumbUrl: 'https://example.com/avatar-thumb.jpg'
-    },
-    roles: [],
-    assignments: [],
-    personalBests: [],
-    ...attributes,
-    registration: {
-      wcaRegistrationId: personId,
-      eventIds: [],
-      status: 'accepted',
-      guests: 0,
-      comments: '',
-      ...attributes.registration
-    }
-  };
-};
+export const Person = withId(id => attributes => ({
+  name: `Person ${id}`,
+  wcaUserId: id,
+  wcaId: `2019PERS${id % 100}`,
+  registrantId: id,
+  countryIso2: 'GB',
+  gender: 'm',
+  birthdate: '2000-01-01',
+  email: `person${id}@example.com`,
+  avatar: {
+    url: 'https://example.com/avatar.jpg',
+    thumbUrl: 'https://example.com/avatar-thumb.jpg'
+  },
+  roles: [],
+  assignments: [],
+  personalBests: [],
+  ...attributes,
+  registration: {
+    wcaRegistrationId: id,
+    eventIds: [],
+    status: 'accepted',
+    guests: 0,
+    comments: '',
+    ...attributes.registration
+  }
+}));
 
 export const PersonalBest = attributes => {
   const { eventId, worldRanking, type } = attributes;
@@ -92,43 +98,31 @@ export const Result = attributes => {
   };
 };
 
-let venueId = 1;
-export const Venue = attributes => {
-  venueId++;
-  return {
-    id: venueId,
-    name: `Venue ${venueId}`,
-    latitudeMicrodegrees: 0,
-    longitudeMicrodegrees: 0,
-    timezone: 'UTC',
-    rooms: [],
-    ...attributes
-  };
-};
+export const Venue = withId(id => attributes => ({
+  id,
+  name: `Venue ${id}`,
+  latitudeMicrodegrees: 0,
+  longitudeMicrodegrees: 0,
+  timezone: 'UTC',
+  rooms: [],
+  ...attributes
+}));
 
-let roomId = 1;
-export const Room = attributes => {
-  roomId++;
-  return {
-    id: roomId,
-    name: `Room ${roomId}`,
-    color: '#000000',
-    activities: [],
-    ...attributes
-  };
-};
+export const Room = withId(id => attributes => ({
+  id: id,
+  name: `Room ${id}`,
+  color: '#000000',
+  activities: [],
+  ...attributes
+}));
 
-let activityId = 1;
-export const Activity = attributes => {
-  activityId++;
-  return {
-    id: activityId,
-    name: `Activity ${activityId}`,
-    activityCode: 'other-misc-example',
-    startTime: '2020-01-01T10:00:00.000Z',
-    endTime: '2020-01-01T11:00:00.000Z',
-    childActivities: [],
-    scrambleSetId: null,
-    ...attributes
-  };
-};
+export const Activity = withId(id => attributes => ({
+  id: id,
+  name: `Activity ${id}`,
+  activityCode: 'other-misc-example',
+  startTime: '2020-01-01T10:00:00.000Z',
+  endTime: '2020-01-01T11:00:00.000Z',
+  childActivities: [],
+  scrambleSetId: null,
+  ...attributes
+}));
