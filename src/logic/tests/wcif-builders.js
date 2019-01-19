@@ -1,54 +1,48 @@
-export const Competition = ({
-  formatVersion = '1.0',
-  id = 'Example2019',
-  name = 'Example Competition 2019',
-  shortName = 'Example 2019',
-  persons = [],
-  events = [],
-  schedule = {},
-  extensions = []
-}) => ({
-  formatVersion, id, name, shortName, persons, events,
+export const Competition = attributes => ({
+  formatVersion: '1.0',
+  id: 'Example2019',
+  name: 'Example Competition 2019',
+  shortName: 'Example 2019',
+  persons: [],
+  events: [],
+  extensions: [],
+  ...attributes,
   schedule: {
     startDate: '2020-01-01',
     numberOfDays: 2,
     venues: [],
-    ...schedule
-  },
-  extensions
+    ...attributes.schedule
+  }
 });
 
-let personId = 1;
-export const Person = ({
-  name = `Person ${personId}`,
-  wcaUserId = personId,
-  wcaId = `2019PERS${personId % 100}`,
-  registrantId = personId,
-  countryIso2 = 'GB',
-  gender = 'm',
-  birthdate = '2000-01-01',
-  email = `person${personId}@example.com`,
-  registration = {},
-  avatar = {
-    url: 'https://example.com/avatar.jpg',
-    thumbUrl: 'https://example.com/avatar-thumb.jpg'
-  },
-  roles = [],
-  assignments = [],
-  personalBests = []
-}) => {
+let personId = 0;
+export const Person = attributes => {
   personId++;
   return {
-    name, wcaUserId, wcaId, registrantId, countryIso2, gender, birthdate, email,
+    name: `Person ${personId}`,
+    wcaUserId: personId,
+    wcaId: `2019PERS${personId % 100}`,
+    registrantId: personId,
+    countryIso2: 'GB',
+    gender: 'm',
+    birthdate: '2000-01-01',
+    email: `person${personId}@example.com`,
+    avatar: {
+      url: 'https://example.com/avatar.jpg',
+      thumbUrl: 'https://example.com/avatar-thumb.jpg'
+    },
+    roles: [],
+    assignments: [],
+    personalBests: [],
+    ...attributes,
     registration: {
       wcaRegistrationId: personId,
       eventIds: [],
       status: 'accepted',
       guests: 0,
       comments: '',
-      ...registration
-    },
-    avatar, roles, assignments, personalBests
+      ...attributes.registration
+    }
   };
 };
 
@@ -63,26 +57,24 @@ export const PersonalBest = attributes => {
   };
 };
 
-export const Event = ({
-  id = '333',
-  rounds = [],
-  competitorLimit = null,
-  qualification = null
-}) => ({
-  id, rounds, competitorLimit, qualification
+export const Event = attributes => ({
+  id: '333',
+  rounds: [],
+  competitorLimit: null,
+  qualification: null,
+  ...attributes
 });
 
-export const Round = ({
-  id = '333-r1',
-  format = 'a',
-  timeLimit = null,
-  cutoff = null,
-  advancementCondition = null,
-  results = [],
-  scrambleSetCount = 1,
-  scrambleSets = []
-}) => ({
-  id, format, timeLimit, cutoff, advancementCondition, results, scrambleSetCount, scrambleSets
+export const Round = attributes => ({
+  id: '333-r1',
+  format: 'a',
+  timeLimit: null,
+  cutoff: null,
+  advancementCondition: null,
+  results: [],
+  scrambleSetCount: 1,
+  scrambleSets: [],
+  ...attributes
 });
 
 export const Result = attributes => {
@@ -101,45 +93,42 @@ export const Result = attributes => {
 };
 
 let venueId = 1;
-export const Venue = ({
-  id = venueId,
-  name = `Venue ${venueId}`,
-  latitudeMicrodegrees = 0,
-  longitudeMicrodegrees = 0,
-  timezone = 'UTC',
-  rooms = []
-}) => {
+export const Venue = attributes => {
   venueId++;
   return {
-    id, name, latitudeMicrodegrees, longitudeMicrodegrees, timezone, rooms
-  }
+    id: venueId,
+    name: `Venue ${venueId}`,
+    latitudeMicrodegrees: 0,
+    longitudeMicrodegrees: 0,
+    timezone: 'UTC',
+    rooms: [],
+    ...attributes
+  };
 };
 
 let roomId = 1;
-export const Room = ({
-  id = roomId,
-  name = `Room ${roomId}`,
-  color = '#000000',
-  activities = []
-}) => {
+export const Room = attributes => {
   roomId++;
   return {
-    id, name, color, activities
+    id: roomId,
+    name: `Room ${roomId}`,
+    color: '#000000',
+    activities: [],
+    ...attributes
   };
 };
 
 let activityId = 1;
-export const Activity = ({
-  id = activityId,
-  name = `Activity ${activityId}`,
-  activityCode = 'other-misc-example',
-  startTime = '2020-01-01T10:00:00.000Z',
-  endTime = '2020-01-01T11:00:00.000Z',
-  childActivities = [],
-  scrambleSetId = null
-}) => {
+export const Activity = attributes => {
   activityId++;
   return {
-    id, name, activityCode, startTime, endTime, childActivities, scrambleSetId
-  }
+    id: activityId,
+    name: `Activity ${activityId}`,
+    activityCode: 'other-misc-example',
+    startTime: '2020-01-01T10:00:00.000Z',
+    endTime: '2020-01-01T11:00:00.000Z',
+    childActivities: [],
+    scrambleSetId: null,
+    ...attributes
+  };
 };
