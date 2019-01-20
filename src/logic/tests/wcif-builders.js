@@ -68,6 +68,7 @@ export const Event = attributes => ({
   rounds: [],
   competitorLimit: null,
   qualification: null,
+  extensions: [],
   ...attributes
 });
 
@@ -80,6 +81,7 @@ export const Round = attributes => ({
   results: [],
   scrambleSetCount: 1,
   scrambleSets: [],
+  extensions: [],
   ...attributes
 });
 
@@ -105,6 +107,7 @@ export const Venue = withId(id => attributes => ({
   longitudeMicrodegrees: 0,
   timezone: 'UTC',
   rooms: [],
+  extensions: [],
   ...attributes
 }));
 
@@ -113,6 +116,7 @@ export const Room = withId(id => attributes => ({
   name: `Room ${id}`,
   color: '#000000',
   activities: [],
+  extensions: [],
   ...attributes
 }));
 
@@ -124,5 +128,6 @@ export const Activity = withId(id => attributes => ({
   endTime: '2020-01-01T11:00:00.000Z',
   childActivities: [],
   scrambleSetId: null,
+  extensions: [],
   ...attributes
 }));
