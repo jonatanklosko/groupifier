@@ -1,6 +1,7 @@
 import { WCA_ORIGIN, WCA_OAUTH_CLIENT_ID } from './wca-env';
 
-const localStorageKey = key => `GroupifierNext.${key}`;
+/* Use separate set of keys for each OAuth client (e.g. for WCA production and staging). */
+const localStorageKey = key => `GroupifierNext.${WCA_OAUTH_CLIENT_ID}.${key}`;
 
 /**
  * Checks the URL hash for presence of OAuth access token
