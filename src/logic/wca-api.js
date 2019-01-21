@@ -8,7 +8,7 @@ export const getUpcomingManageableCompetitions = () => {
     managed_by_me: true,
     start: oneWeekAgo.toISOString()
   });
-  return wcaApiFetch(`/competitions?${params}`);
+  return wcaApiFetch(`/competitions?${params.toString()}`);
 };
 
 export const getWcif = competitionId =>

@@ -43,7 +43,7 @@ export const signIn = () => {
     redirect_uri: redirectUri,
     scope: 'manage_competitions'
   });
-  window.location = `${WCA_ORIGIN}/oauth/authorize?${params}`
+  window.location = `${WCA_ORIGIN}/oauth/authorize?${params.toString()}`
 };
 
 export const signOut = () =>

@@ -41,7 +41,7 @@ export const getImageDataUrl = url => {
     output: 'jpg',
     encoding: 'base64'
   });
-  return fetch(`https://images.weserv.nl/?${params}`)
+  return fetch(`https://images.weserv.nl/?${params.toString()}`)
     .then(response => response.text())
     .catch(() => null);
 };
