@@ -1,5 +1,7 @@
 import { WCA_ORIGIN, WCA_OAUTH_CLIENT_ID } from './wca-env';
 
+const localStorageKey = key => `GroupifierNext.${key}`;
+
 /**
  * Checks the URL hash for presence of OAuth access token
  * and saves it in the local storage if it's found.
@@ -9,17 +11,17 @@ export const initializeAuth = () => {
   const hash = window.location.hash.replace(/^\W*/, '');
   const hashParams = new URLSearchParams(hash);
   if (hashParams.has('access_token')) {
-    localStorage.setItem('Groupifier.accessToken', hashParams.get('access_token'));
+    localStorage.setItem(localStorageKey('accessToken'), hashParams.get('access_token'));
   }
   if (hashParams.has('expires_in')) {
     /* Expire the token 15 minutes before it actually does,
        this way it doesn't expire right after the user enters the page. */
     const expiresInSeconds = hashParams.get('expires_in') - 15 * 60;
     const expirationTime = new Date(new Date().getTime() + expiresInSeconds * 1000);
-    localStorage.setItem('Groupifier.expirationTime', expirationTime.toISOString());
+    localStorage.setItem(localStorageKey('expirationTime'), expirationTime.toISOString());
   }
   /* If the token expired, sign the user out. */
-  const expirationTime = localStorage.getItem('Groupifier.expirationTime');
+  const expirationTime = localStorage.getItem(localStorageKey('expirationTime'));
   if (expirationTime && new Date() >= new Date(expirationTime)) {
     signOut();
   }
@@ -30,7 +32,7 @@ export const initializeAuth = () => {
 };
 
 export const wcaAccessToken = () =>
-  localStorage.getItem('Groupifier.accessToken');
+  localStorage.getItem(localStorageKey('accessToken'));
 
 export const signIn = () => {
   const redirectUri = window.location.href.split('/#')[0];
@@ -44,6 +46,6 @@ export const signIn = () => {
 };
 
 export const signOut = () =>
-  localStorage.removeItem('Groupifier.accessToken');
+  localStorage.removeItem(localStorageKey('accessToken'));
 
 export const isSignedIn = () => !!wcaAccessToken();
