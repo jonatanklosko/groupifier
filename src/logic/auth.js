@@ -36,14 +36,21 @@ export const wcaAccessToken = () =>
   localStorage.getItem(localStorageKey('accessToken'));
 
 export const signIn = () => {
-  const redirectUri = window.location.href.split('/#')[0];
   const params = new URLSearchParams({
     client_id: WCA_OAUTH_CLIENT_ID,
     response_type: 'token',
-    redirect_uri: redirectUri,
+    redirect_uri: oauthRedirectUri(),
     scope: 'manage_competitions'
   });
   window.location = `${WCA_ORIGIN}/oauth/authorize?${params.toString()}`
+};
+
+const oauthRedirectUri = () => {
+  const { origin, pathname, search } = window.location;
+  const searchParams = new URLSearchParams(search);
+  const staging = searchParams.get('staging');
+  const appUri = `${origin}${pathname}`.replace(/\/$/, '');
+  return staging ? `${appUri}?staging=true` : appUri;
 };
 
 export const signOut = () =>
