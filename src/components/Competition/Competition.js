@@ -16,6 +16,7 @@ import { getWcif } from '../../logic/wca-api';
 import { sortWcifEvents } from '../../logic/events';
 import { updateIn } from '../../logic/utils';
 import { validateWcif } from '../../logic/wcif-validation';
+import { acceptedPeople } from '../../logic/competitors';
 
 export default class Competition extends Component {
   state = {
@@ -27,6 +28,11 @@ export default class Competition extends Component {
   componentDidMount() {
     getWcif(this.props.match.params.competitionId)
       .then(wcif => updateIn(wcif, ['events'], sortWcifEvents)) /* Sort events, so that we don't need to remember about this everywhere. */
+      .then(wcif => {
+        /* FIXME: dirty hack for registrantId to match Cubecomps competitor id. Get rid of that once WCA Live is ready. */
+        acceptedPeople(wcif).forEach((person, index) => person.registrantId = index + 1);
+        return wcif;
+      })
       .then(wcif => this.setState({ wcif, loading: false, errors: validateWcif(wcif) }))
       .catch(error => this.setState({ errors: [error.message], loading: false }))
   }
