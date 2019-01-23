@@ -29,10 +29,8 @@ const competitorsExpectedToAdvance = (sortedCompetitors, advancementCondition, e
 export const getExpectedCompetitorsByRound = wcif =>
   wcif.events.reduce((expectedCompetitorsByRound, event) => {
     const [firstRound, ...nextRounds] = event.rounds;
-    const registeredCompetitors = wcif.persons.filter(person =>
-      person.registration && person.registration.eventIds.includes(event.id)
-    );
-    expectedCompetitorsByRound[firstRound.id] = sortByArray(registeredCompetitors,
+    expectedCompetitorsByRound[firstRound.id] = sortByArray(
+      acceptedPeopleRegisteredForEvent(wcif, event.id),
       competitor => bestAverageAndSingle(competitor, event.id)
     );
     nextRounds.reduce(([round, competitors], nextRound) => {
@@ -69,9 +67,8 @@ export const advancingResults = (results, advancementCondition) => {
 export const competitorsForRound = (wcif, roundId) => {
   const { eventId, roundNumber } = parseActivityCode(roundId);
   if (roundNumber === 1) {
-    const registeredCompetitors = acceptedPeople(wcif)
-      .filter(({ registration }) => registration.eventIds.includes(eventId));
-    return sortByArray(registeredCompetitors,
+    return sortByArray(
+      acceptedPeopleRegisteredForEvent(wcif, eventId),
       competitor => bestAverageAndSingle(competitor, eventId).map(result => -result)
     );
   } else {
@@ -99,6 +96,9 @@ export const staffAssignmentsForEvent = (wcif, person, eventId) =>
 
 export const acceptedPeople = wcif =>
   wcif.persons.filter(person => person.registration && person.registration.status === 'accepted');
+
+const acceptedPeopleRegisteredForEvent = (wcif, eventId) =>
+  acceptedPeople(wcif).filter(({ registration }) => registration.eventIds.includes(eventId));
 
 export const hasAssignment = (person, activityId, assignmentCode) =>
   person.assignments.some(assignment =>
