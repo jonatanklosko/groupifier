@@ -38,7 +38,7 @@ const Footer = () => (
     <Grid item style={{ marginLeft: 8 }}>
       <Typography>
         <a href="https://github.com/jonatanklosko/groupifier-next" target="_blank" rel="noopener noreferrer">
-          v1.1.1
+          v1.1.2
         </a>
       </Typography>
     </Grid>
