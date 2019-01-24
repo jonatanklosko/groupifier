@@ -1,4 +1,4 @@
-# Groupifier
+# Groupifier [![Build Status](https://travis-ci.org/jonatanklosko/groupifier-next.svg?branch=master)](https://travis-ci.org/jonatanklosko/groupifier-next)
 
 Task and group management tool for WCA competition organizers.
 It's designed to be highly customizable and work well with complex schedules.
@@ -16,5 +16,8 @@ npm start
 
 Run `npm test`.
 
-## Docs
-Some stuff is documented under the [`docs`](docs) directory.
+## Documentation
+
+Some implementation details are documented under the [`docs`](docs) directory.
+Also the [wiki](https://github.com/jonatanklosko/groupifier-next/wiki)
+describes some usage related aspects.
