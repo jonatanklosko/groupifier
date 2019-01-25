@@ -2,25 +2,26 @@
 
 import { acceptedPeople } from './competitors';
 
-/* If the competition is already on Cubecomps, use those competitor ids.
-   Otherwise generate ids the same way Cubecomps would do that. */
-export const __withCubecompsIds__ = wcif =>
-  getCompetitions()
+/* Generate ids the same way Cubecomps would do that.
+   If competitors are already on Cubecomps, use those competitor ids instead. */
+export const __withCubecompsIds__ = wcif => {
+  const people = acceptedPeople(wcif);
+  people.forEach((person, index) => person.registrantId = index + 1);
+  return getCompetitions()
     .then(competitions => {
       const competition = competitions.find(competition => wcif.name.startsWith(competition.name));
-      if (competition) {
-        return getCompetition(competition.id).then(competition =>
-          acceptedPeople(wcif).forEach(person => {
-            const competitor = competition.competitors.find(competitor => person.name.includes(competitor.name));
-            if (!competitor) throw new Error(`Couldn't find Cubecomps competitor id for ${person.name}.`);
-            person.registrantId = parseInt(competitor.id, 10);
-          })
-        );
-      } else {
-        acceptedPeople(wcif).forEach((person, index) => person.registrantId = index + 1);
-      }
+      if (!competition) return null;
+      return getCompetition(competition.id).then(competition => {
+        if (competition.competitors.length === 0) return null;
+        people.forEach(person => {
+          const competitor = competition.competitors.find(competitor => person.name.includes(competitor.name));
+          if (!competitor) throw new Error(`Couldn't find Cubecomps competitor id for ${person.name}.`);
+          person.registrantId = parseInt(competitor.id, 10);
+        });
+      });
     })
     .then(() => wcif);
+};
 
 const getCompetitions = () =>
   cubecompsApiFetch('/competitions')
