@@ -28,12 +28,13 @@ const competitorCards = wcif => {
 };
 
 const competitorCard = (wcif, person) => {
+  const events = wcif.events.filter(event => !hasDistributedAttempts(event.id));
   const { localNamesFirst } = getExtensionData('CompetitionConfig', wcif) || { localNamesFirst: false };
   const tasks = person.assignments.map(({ activityId, assignmentCode }) => {
     const activity = activityById(wcif, activityId);
     const { eventId, roundNumber, groupNumber } = parseActivityCode(activity.activityCode);
     return { assignmentCode, eventId, groupNumber, roundNumber };
-  }).filter(({ eventId, roundNumber }) => !hasDistributedAttempts(eventId) && roundNumber === 1);
+  }).filter(({ roundNumber }) => roundNumber === 1);
   const groupsText = (eventId, assignmentCode) => ({
     text: tasks
       .filter(task => task.eventId === eventId && task.assignmentCode === assignmentCode)
@@ -60,7 +61,7 @@ const competitorCard = (wcif, person) => {
           widths: ['auto', ...headers.map(() => '*')],
           body: [
             ['Event', ...headers.map(header => ({ text: header, alignment: 'center'}))],
-            ...wcif.events.map(event => [
+            ...events.map(event => [
               eventNameById(event.id),
               ...assignmentCodes.map(assignmentCode => groupsText(event.id, assignmentCode))
             ])
