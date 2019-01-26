@@ -117,7 +117,7 @@ export const flatMap = (arr, fn) =>
   arr.reduce((xs, x) => xs.concat(fn(x)), []);
 
 export const zip = (...arrs) =>
-  arrs[0].map((_, i) => arrs.map(arr => arr[i]));
+  arrs.length === 0 ? [] : arrs[0].map((_, i) => arrs.map(arr => arr[i]));
 
 export const findLast = (arr, predicate) =>
   arr.reduceRight((found, x) =>
@@ -165,6 +165,9 @@ export const inRange = (x, a, b) =>
 
 export const addMilliseconds = (isoString, milliseconds) =>
   new Date(new Date(isoString).getTime() + milliseconds).toISOString();
+
+export const isoTimeDiff = (first, second) =>
+  Math.abs(new Date(first) - new Date(second));
 
 export const shortTime = (isoString, timeZone = 'UTC') =>
   new Date(isoString).toLocaleTimeString('en-US', { timeZone, hour: 'numeric', minute: 'numeric' });

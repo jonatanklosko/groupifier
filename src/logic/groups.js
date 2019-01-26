@@ -1,4 +1,4 @@
-import { addMilliseconds, difference, findLast, flatMap, intersection, partition,
+import { addMilliseconds, difference, findLast, flatMap, intersection, isoTimeDiff, partition,
          scaleToOne, setIn, sortBy, sortByArray, sum, uniq, updateIn, mapIn, zip } from './utils';
 import { getExtensionData } from './wcif-extensions';
 import { activitiesIntersection, activitiesOverlap, activityById, activityCodeToName,
@@ -189,6 +189,8 @@ const assignScrambling = (wcif, roundsToAssign) => {
           intersection(['dataentry', 'delegate', 'organizer'], competitor.roles).length,
           /* Avoid more than two assignments for the given event. */
           staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2 ? 1 : -1,
+          /* Prefer competitors that are likely to be on the venue. */
+          -presenceRate(wcif, competitor, groupActivity.startTime),
           /* Avoid difference in the number of tasks bigger than 6. */
           Math.floor(staffAssignments(competitor).length / 6),
           /* Prefer competitors who doesn't solve soon after the group ends. */
@@ -222,6 +224,7 @@ const assignRunning = (wcif, roundsToAssign) => {
           age(competitor) >= 10 ? -1 : 1,
           intersection(['dataentry', 'delegate', 'organizer'], competitor.roles).length,
           staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2 ? 1 : -1,
+          -presenceRate(wcif, competitor, groupActivity.startTime),
           Math.floor(staffAssignments(competitor).length / 6),
           competesIn15Minutes(wcif, competitor, groupActivity.endTime) ? 1 : -1
         ]);
@@ -257,6 +260,7 @@ const assignJudging = (wcif, roundsToAssign) => {
           age(competitor) >= 10 ? -1 : 1,
           intersection(['dataentry', 'delegate', 'organizer'], competitor.roles).length,
           staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2 ? 1 : -1,
+          -presenceRate(wcif, competitor, groupActivity.startTime),
           /* Equally distribute tasks (judging is assigned last, so we want to eliminate inequality introduced by other assignments). */
           staffAssignments(competitor).length,
           competesIn15Minutes(wcif, competitor, groupActivity.endTime) ? 1 : -1,
@@ -278,7 +282,31 @@ const competesIn15Minutes = (wcif, competitor, isoString) => {
     .filter(startTime => startTime >= isoString);
   if (competingStartTimes.length === 0) return false;
   const competingStart = competingStartTimes.reduce((x, y) => x < y ? x : y);
-  return (new Date(competingStart) - new Date(isoString)) <= 15 * 60 * 1000;
+  return isoTimeDiff(competingStart, isoString) <= 15 * 60 * 1000;
+};
+
+/* The lower, the less likely the competitor is to be at the venue. */
+const presenceRate = (wcif, competitor, time) => {
+  const activitiesThisDay = competitor.assignments
+    .map(({ activityId }) => activityById(wcif, activityId))
+    .filter(({ startTime }) => new Date(startTime).getDay() === new Date(time).getDay());
+  if (activitiesThisDay.length === 0) return 0;
+  const [startTimes, endTimes] = zip(
+    ...activitiesThisDay.map(({ startTime, endTime }) => [startTime, endTime])
+  ).map(times => times.sort());
+  if (startTimes[0] > time) return 1;
+  const previousEndTime = findLast(endTimes, endTime => endTime < time);
+  const nextStartTime = startTimes.find(startTime => startTime > time);
+  if (previousEndTime) {
+    if (nextStartTime) {
+      /* > 1 hour after last activity and > 1 hour before next one */
+      if (isoTimeDiff(time, previousEndTime) > 60 * 60 * 1000 && isoTimeDiff(time, nextStartTime) > 60 * 60 * 1000) return 3;
+    } else {
+      /* > 30 min after last activity */
+      if (isoTimeDiff(time, previousEndTime) > 30 * 60 * 1000) return 2;
+    }
+  }
+  return 4;
 };
 
 const assignActivity = (activityId, assignmentCode, competitors) =>
