@@ -6,9 +6,11 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
 
 import CubingIcon from '../../../common/CubingIcon/CubingIcon';
 import { downloadScorecards } from '../../../../logic/scorecards';
+import { downloadGroupOverview } from '../../../../logic/group-overview';
 import { roundsMissingScorecards, parseActivityCode, activityCodeToName } from '../../../../logic/activities';
 import { difference } from '../../../../logic/utils';
 
@@ -22,8 +24,12 @@ export default class Scorecards extends Component {
     };
   }
 
-  handleDownloadClick = () => {
+  handleScorecardsDownloadClick = () => {
     downloadScorecards(this.props.wcif, this.state.selectedRounds);
+  };
+
+  handleGroupOverviewDownloadClick = () => {
+    downloadGroupOverview(this.props.wcif, this.state.selectedRounds);
   };
 
   handleRoundClick = round => event => {
@@ -42,6 +48,7 @@ export default class Scorecards extends Component {
 
     return (
       <Paper style={{ padding: 16 }}>
+        <Typography variant="body1">Select rounds</Typography>
         <List style={{ width: 400 }}>
           {rounds.map(round => (
             <ListItem key={round.id} button onClick={this.handleRoundClick(round)}>
@@ -58,8 +65,11 @@ export default class Scorecards extends Component {
             </ListItem>
           ))}
         </List>
-        <Button onClick={this.handleDownloadClick} disabled={selectedRounds.length === 0}>
-          Download
+        <Button onClick={this.handleScorecardsDownloadClick} disabled={selectedRounds.length === 0}>
+          Scorecards
+        </Button>
+        <Button onClick={this.handleGroupOverviewDownloadClick} disabled={selectedRounds.length === 0}>
+          Group overview
         </Button>
       </Paper>
     );

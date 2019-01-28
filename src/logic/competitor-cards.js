@@ -49,7 +49,7 @@ const competitorCard = (wcif, person) => {
   return {
     margin: [5, 5],
     stack: [
-      { text: pdfName(person.name, localNamesFirst), fontSize: 10 },
+      { text: pdfName(person.name, { swapLatinWithLocalNames: localNamesFirst }), fontSize: 10 },
       {
         columns: [
           `ID: ${person.registrantId}`,

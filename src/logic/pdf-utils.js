@@ -19,13 +19,13 @@ const determineFont = text => {
   }
 };
 
-export const pdfName = (name, swapLatinWithLocalNames = false) => {
+export const pdfName = (name, { swapLatinWithLocalNames = false, short = false } = {}) => {
   /* Note: support normal and fullwidth parentheses. */
   const [, latinName, localName] = name.match(/(.+)\s*[(（](.+)[)）]/) || [null, name, null];
   if (!localName) return latinName;
   const pdfNames = [latinName, { text: localName, font: determineFont(localName) }];
   const [first, second] = swapLatinWithLocalNames ? pdfNames.reverse() : pdfNames;
-  return [first, ' (', second, ')'];
+  return short ? first : [first, ' (', second, ')'];
 };
 
 export const getImageDataUrl = url => {

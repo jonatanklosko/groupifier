@@ -123,7 +123,7 @@ const scorecard = ({
         widths: ['auto', '*'],
         body: [
           columnLabels(['ID', 'Name']),
-          [{ text: competitor.registrantId, alignment: 'center' }, { text: pdfName(competitor.name, localNamesFirst), maxHeight: 20 /* See: https://github.com/bpampuch/pdfmake/issues/264#issuecomment-108347567 */ }]
+          [{ text: competitor.registrantId, alignment: 'center' }, { text: pdfName(competitor.name, { swapLatinWithLocalNames: localNamesFirst }), maxHeight: 20 /* See: https://github.com/bpampuch/pdfmake/issues/264#issuecomment-108347567 */ }]
         ]
       }
     },
