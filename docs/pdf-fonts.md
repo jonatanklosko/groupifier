@@ -15,5 +15,5 @@ This file goes to the `public` directory, so that we can download it asynchronou
 Unfortunately a font is used only when we specify it explicitly.
 In general it's fine to use the default Roboto font and do some additional work
 only for competitor local names.
-We determine which font should be used in `src/logic/pdf-utils.js`
+We determine which font should be used in `src/logic/documents/pdf-utils.js`
 on the basis of [Unicode block ranges](https://en.wikipedia.org/wiki/Unicode_block).

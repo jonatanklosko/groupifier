@@ -9,8 +9,8 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
 import CubingIcon from '../../../common/CubingIcon/CubingIcon';
-import { downloadScorecards } from '../../../../logic/scorecards';
-import { downloadGroupOverview } from '../../../../logic/group-overview';
+import { downloadScorecards } from '../../../../logic/documents/scorecards';
+import { downloadGroupOverview } from '../../../../logic/documents/group-overview';
 import { roundsMissingScorecards, parseActivityCode, activityCodeToName } from '../../../../logic/activities';
 import { difference } from '../../../../logic/utils';
 

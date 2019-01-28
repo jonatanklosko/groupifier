@@ -1,4 +1,4 @@
-import { inRange } from './utils';
+import { inRange } from '../utils';
 
 const determineFont = text => {
   const code = text.charCodeAt(0);

@@ -1,10 +1,8 @@
-import { flatMap, chunk, sortBy, zip } from './utils';
-import { eventNameById } from './events';
-import { activityById, activityCodeToName, hasDistributedAttempts, parseActivityCode, groupActivitiesByRound } from './activities';
-import { acceptedPeople, hasAssignment } from './competitors';
-import { getExtensionData } from './wcif-extensions';
-import pdfMake from './pdfmake';
-import { pdfName } from './pdf-utils';
+import { flatMap } from '../utils';
+import { activityCodeToName, groupActivitiesByRound } from '../activities';
+import { hasAssignment } from '../competitors';
+import pdfMake from '../documents/pdfmake';
+import { pdfName } from '../documents/pdf-utils';
 
 export const downloadGroupOverview = (wcif, rounds) => {
   const pdfDefinition = groupOverviewPdfDefinition(wcif, rounds);

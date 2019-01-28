@@ -1,11 +1,11 @@
-import { flatMap, sortBy, chunk } from './utils';
-import { parseActivityCode, groupActivitiesByRound } from './activities';
-import { eventNameById } from './events';
-import { cutoffToString, timeLimitToString } from './formatters';
-import { competitorsForRound, hasAssignment } from './competitors';
-import { getExtensionData } from './wcif-extensions';
-import pdfMake from './pdfmake';
-import { pdfName, getImageDataUrl } from './pdf-utils';
+import { flatMap, sortBy, chunk } from '../utils';
+import { parseActivityCode, groupActivitiesByRound } from '../activities';
+import { eventNameById } from '../events';
+import { cutoffToString, timeLimitToString } from '../formatters';
+import { competitorsForRound, hasAssignment } from '../competitors';
+import { getExtensionData } from '../wcif-extensions';
+import pdfMake from '../documents/pdfmake';
+import { pdfName, getImageDataUrl } from '../documents/pdf-utils';
 
 /* See: https://github.com/bpampuch/pdfmake/blob/3da11bd8148b190808b06f7bc27883102bf82917/src/standardPageSizes.js#L10 */
 const pageWidth = 595.28;
