@@ -295,8 +295,8 @@ const presenceRate = (wcif, competitor, time) => {
     ...activitiesThisDay.map(({ startTime, endTime }) => [startTime, endTime])
   ).map(times => times.sort());
   if (startTimes[0] > time) return 1;
-  const previousEndTime = findLast(endTimes, endTime => endTime < time);
-  const nextStartTime = startTimes.find(startTime => startTime > time);
+  const previousEndTime = findLast(endTimes, endTime => endTime <= time);
+  const nextStartTime = startTimes.find(startTime => startTime >= time);
   if (previousEndTime) {
     if (nextStartTime) {
       /* > 1 hour after last activity and > 1 hour before next one */
