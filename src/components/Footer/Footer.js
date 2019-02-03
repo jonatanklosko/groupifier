@@ -6,6 +6,14 @@ import red from '@material-ui/core/colors/red'
 
 import './Footer.css';
 
+const links = [
+  { text: 'Donate', url: 'https://ko-fi.com/jonatanklosko' },
+  { text: 'Guide', url: 'https://github.com/jonatanklosko/groupifier-next/wiki/Guide' },
+  { text: 'GitHub', url: 'https://github.com/jonatanklosko/groupifier-next' },
+  { text: 'Contact', url: 'mailto:jonatanklosko@gmail.com' },
+  { text: 'v1.1.5', url: 'https://github.com/jonatanklosko/groupifier-next' }
+];
+
 const Footer = () => (
   <Grid container className="footer">
     <Grid item style={{ flexGrow: 1 }}>
@@ -15,32 +23,15 @@ const Footer = () => (
       </Typography>
     </Grid>
     <Grid item>
-      <Typography>
-        <a href="https://github.com/jonatanklosko/groupifier-next" target="_blank" rel="noopener noreferrer">
-          GitHub
-        </a>
-      </Typography>
-    </Grid>
-    <Grid item style={{ marginLeft: 8 }}>
-      <Typography>
-        <a href="https://github.com/jonatanklosko/groupifier-next/wiki/Guide" target="_blank" rel="noopener noreferrer">
-          Guide
-        </a>
-      </Typography>
-    </Grid>
-    <Grid item style={{ marginLeft: 8 }}>
-      <Typography>
-        <a href="mailto:jonatanklosko@gmail.com" target="_blank" rel="noopener noreferrer">
-          Contact
-        </a>
-      </Typography>
-    </Grid>
-    <Grid item style={{ marginLeft: 8 }}>
-      <Typography>
-        <a href="https://github.com/jonatanklosko/groupifier-next" target="_blank" rel="noopener noreferrer">
-          v1.1.5
-        </a>
-      </Typography>
+      <Grid container spacing={8}>
+        {links.map(({ text, url }) => (
+          <Grid item>
+            <Typography>
+              <a href={url} target="_blank" rel="noopener noreferrer">{text}</a>
+            </Typography>
+          </Grid>
+        ))}
+      </Grid>
     </Grid>
   </Grid>
 );
