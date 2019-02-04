@@ -11,7 +11,7 @@ const links = [
   { text: 'Guide', url: 'https://github.com/jonatanklosko/groupifier-next/wiki/Guide' },
   { text: 'GitHub', url: 'https://github.com/jonatanklosko/groupifier-next' },
   { text: 'Contact', url: 'mailto:jonatanklosko@gmail.com' },
-  { text: 'v1.1.5', url: 'https://github.com/jonatanklosko/groupifier-next' }
+  { text: 'v1.1.6', url: 'https://github.com/jonatanklosko/groupifier-next' }
 ];
 
 const Footer = () => (
@@ -25,7 +25,7 @@ const Footer = () => (
     <Grid item>
       <Grid container spacing={8}>
         {links.map(({ text, url }) => (
-          <Grid item>
+          <Grid item key={text}>
             <Typography>
               <a href={url} target="_blank" rel="noopener noreferrer">{text}</a>
             </Typography>
