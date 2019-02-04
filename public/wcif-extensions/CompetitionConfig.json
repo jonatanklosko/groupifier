@@ -6,11 +6,16 @@
   "properties": {
     "localNamesFirst": {
       "description": "A flag indicating whether to swap competitor latin names with local ones in generated PDF documents.",
-      "type": "boolean",
+      "type": "boolean"
     },
     "scorecardsBackgroundUrl": {
       "description": "URL of an image to be placed in the background of scorecards.",
+      "type": "string"
+    },
+    "competitorsSortingRule": {
+      "description": "Indicates how competitors should be assigned to groups.",
       "type": "string",
+      "enum": ["ranks", "balanced"]
     }
   },
   "required": ["localNamesFirst", "scorecardsBackgroundUrl"]

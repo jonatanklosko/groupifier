@@ -22,14 +22,17 @@ const defaultExtensionData = {
   },
   CompetitionConfig: {
     localNamesFirst: false,
-    scorecardsBackgroundUrl: null
+    scorecardsBackgroundUrl: '',
+    competitorsSortingRule: 'ranks'
   }
 };
 
 export const getExtensionData = (extensionName, wcifEntity) => {
   const extension = wcifEntity.extensions
     .find(extension => extension.id === groupifierExtensionId(extensionName));
-  return extension ? extension.data : defaultExtensionData[extensionName];
+  const defaultData = defaultExtensionData[extensionName];
+  if (defaultData === null) return extension && extension.data;
+  return extension ? { ...defaultData, ...extension.data } : defaultData;
 };
 
 export const removeExtensionData = (extensionName, wcifEntity) => ({

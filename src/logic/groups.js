@@ -57,7 +57,7 @@ const assignGroups = (wcif, roundsToAssign) => {
     hasDistributedAttempts(round.id) ? -Infinity : groupActivitiesByRound(wcif, round.id).length
   );
   return sortedRoundsToAssign.reduce((wcif, round) => {
-    const competitors = competitorsForRound(wcif, round.id);
+    const competitors = sortedCompetitorsForRound(wcif, round.id);
     if (hasDistributedAttempts(round.id)) {
       /* In this case roundActivities are attempt activities, so we assign them all to the given person. */
       const updatedCompetitors = roundActivities(wcif, round.id).reduce((competitors, activity) =>
@@ -106,6 +106,22 @@ const calculateGroupSizes = ([capacity, ...capacities], competitorCount) => {
   if (!capacity) return [];
   const groupSize = Math.round(capacity * competitorCount);
   return [groupSize, ...calculateGroupSizes(scaleToOne(capacities), competitorCount - groupSize)];
+};
+
+const sortedCompetitorsForRound = (wcif, roundId) => {
+  const { competitorsSortingRule } = getExtensionData('CompetitionConfig', wcif);
+  const sortedByRanks = competitorsForRound(wcif, roundId);
+  const { eventId, roundNumber } = parseActivityCode(roundId);
+  if (roundNumber > 1) return sortedByRanks;
+  if (competitorsSortingRule === 'ranks') return sortedByRanks;
+  if (competitorsSortingRule === 'balanced') {
+    if (['333', '222', '333bf', '333oh', '333ft', 'pyram', 'skewb'].includes(eventId)) return sortedByRanks;
+    const groupCount = groupActivitiesByRound(wcif, roundId).length;
+    return sortBy(sortedByRanks, competitor =>
+      groupCount - ((sortedByRanks.length - sortedByRanks.indexOf(competitor) - 1) % groupCount)
+    );
+  }
+  throw new Error(`Unrecognised sorting rule: '${competitorsSortingRule}'`);
 };
 
 const moveSomeoneRight = (wcif, groups, groupId) => {
