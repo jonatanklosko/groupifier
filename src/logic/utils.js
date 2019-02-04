@@ -116,6 +116,11 @@ export const firstResult = (arr, fn) =>
 export const flatMap = (arr, fn) =>
   arr.reduce((xs, x) => xs.concat(fn(x)), []);
 
+export const groupBy = (arr, fn) =>
+  arr.reduce((obj, x) =>
+    updateIn(obj, [fn(x)], xs => (xs || []).concat(x))
+  , {});
+
 export const zip = (...arrs) =>
   arrs.length === 0 ? [] : arrs[0].map((_, i) => arrs.map(arr => arr[i]));
 

@@ -15,7 +15,7 @@
     "competitorsSortingRule": {
       "description": "Indicates how competitors should be assigned to groups.",
       "type": "string",
-      "enum": ["ranks", "balanced"]
+      "enum": ["ranks", "balanced", "name-optimised"]
     }
   },
   "required": ["localNamesFirst", "scorecardsBackgroundUrl"]

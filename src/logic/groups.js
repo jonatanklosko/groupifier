@@ -1,4 +1,4 @@
-import { addMilliseconds, difference, findLast, flatMap, intersection, isoTimeDiff, partition,
+import { addMilliseconds, chunk, difference, findLast, flatMap, groupBy, intersection, isoTimeDiff, partition,
          scaleToOne, setIn, sortBy, sortByArray, sum, uniq, updateIn, mapIn, zip } from './utils';
 import { getExtensionData } from './wcif-extensions';
 import { activitiesIntersection, activitiesOverlap, activityById, activityCodeToName,
@@ -121,7 +121,23 @@ const sortedCompetitorsForRound = (wcif, roundId) => {
       groupCount - ((sortedByRanks.length - sortedByRanks.indexOf(competitor) - 1) % groupCount)
     );
   }
-  throw new Error(`Unrecognised sorting rule: '${competitorsSortingRule}'`);
+  if (competitorsSortingRule === 'name-optimised') {
+    const competitorsByName = groupBy(sortedByRanks, ({ name }) => name.split(' ')[0]);
+    /* We take sets of competitors with the same name and sort them by quantity.
+       Starting with the smallest sets we keep adding competitors to a single set of `competitors`.
+       For each set of competitors of length N (having the same name), we split `competitors` into N chunks
+       and add one competitor to each of those chunks. Then we join the chunks back forming the new `competitors` set.
+       This way we maximise the gap between people with the same name. */
+    return sortBy(Object.values(competitorsByName), competitors => competitors.length)
+      .reduce((competitors, competitorsWithSameName) => {
+        const chunkSize = Math.ceil(competitors.length / competitorsWithSameName.length);
+        return flatMap(
+          zip(chunk(competitors, chunkSize), competitorsWithSameName),
+          ([competitors, competitor]) => [...competitors, competitor]
+        );
+      });
+  }
+  throw new Error(`Unrecognised competitors sorting rule: '${competitorsSortingRule}'`);
 };
 
 const moveSomeoneRight = (wcif, groups, groupId) => {
