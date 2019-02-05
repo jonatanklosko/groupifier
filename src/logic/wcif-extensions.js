@@ -23,7 +23,9 @@ const defaultExtensionData = {
   CompetitionConfig: {
     localNamesFirst: false,
     scorecardsBackgroundUrl: '',
-    competitorsSortingRule: 'ranks'
+    competitorsSortingRule: 'ranks',
+    noTasksForNewcomers: false,
+    tasksForOwnEventsOnly: false
   }
 };
 

@@ -192,6 +192,7 @@ const moveCompetitorToGroupEnd = (groups, fromGroupId, toGroupId, competitor) =>
   addCompetitorToGroupEnd(removeCompetitorFromGroup(groups, fromGroupId, competitor), toGroupId, competitor);
 
 const assignScrambling = (wcif, roundsToAssign) => {
+  const { noTasksForNewcomers } = getExtensionData('CompetitionConfig', wcif);
   /* Sort rounds by the number of competitors, so the further the more people able to scramble there are. */
   const sortedRoundsToAssign = sortBy(roundsToAssign, round => competitorsForRound(wcif, round.id).length);
   return sortedRoundsToAssign.reduce((wcif, round) => {
@@ -215,6 +216,8 @@ const assignScrambling = (wcif, roundsToAssign) => {
           ...bestAverageAndSingle(competitor, eventId)
         ]);
         const sortedAvailableCompetitors = sortedAvailableStaff.length >= scramblers ? [] : sortByArray(available(competitors), competitor => [
+          /* Optionally avoid assigning tasks to newcomers. */
+          noTasksForNewcomers && !competitor.wcaId ? 1 : -1,
           /* Strongly prefer people at least 10 years old. */
           age(competitor) >= 10 ? -1 : 1,
           /* Avoid assigning tasks to people already busy due to their role. */
@@ -239,6 +242,7 @@ const assignScrambling = (wcif, roundsToAssign) => {
 };
 
 const assignRunning = (wcif, roundsToAssign) => {
+  const { noTasksForNewcomers, tasksForOwnEventsOnly } = getExtensionData('CompetitionConfig', wcif);
   return roundsToAssign.reduce((wcif, round) => {
     if (hasDistributedAttempts(round.id)) return wcif;
     const { eventId } = parseActivityCode(round.id);
@@ -253,6 +257,8 @@ const assignRunning = (wcif, roundsToAssign) => {
           competesIn15Minutes(wcif, competitor, groupActivity.endTime) ? 1 : -1
         ]);
         const sortedAvailablePeople = sortedAvailableStaff.length >= runners ? [] : sortByArray(available(people), competitor => [
+          noTasksForNewcomers && !competitor.wcaId ? 1 : -1,
+          tasksForOwnEventsOnly && !competitor.registration.eventIds.includes(eventId) ? 1 : -1,
           age(competitor) >= 10 ? -1 : 1,
           intersection(['dataentry', 'delegate', 'organizer'], competitor.roles).length,
           staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2 ? 1 : -1,
@@ -269,6 +275,7 @@ const assignRunning = (wcif, roundsToAssign) => {
 };
 
 const assignJudging = (wcif, roundsToAssign) => {
+  const { noTasksForNewcomers, tasksForOwnEventsOnly } = getExtensionData('CompetitionConfig', wcif);
   return roundsToAssign.reduce((wcif, round) => {
     if (hasDistributedAttempts(round.id)) return wcif;
     const { eventId } = parseActivityCode(round.id);
@@ -289,6 +296,8 @@ const assignJudging = (wcif, roundsToAssign) => {
           competesIn15Minutes(wcif, competitor, groupActivity.endTime) ? 1 : -1
         ]);
         const sortedAvailablePeople = sortedAvailableStaff.length >= judges ? [] : sortByArray(available(people), competitor => [
+          noTasksForNewcomers && !competitor.wcaId ? 1 : -1,
+          tasksForOwnEventsOnly && !competitor.registration.eventIds.includes(eventId) ? 1 : -1,
           age(competitor) >= 10 ? -1 : 1,
           intersection(['dataentry', 'delegate', 'organizer'], competitor.roles).length,
           staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2 ? 1 : -1,

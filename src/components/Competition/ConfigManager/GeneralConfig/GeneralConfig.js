@@ -48,7 +48,13 @@ export default class GeneralConfig extends Component {
 
   render() {
     const { wcif } = this.props;
-    const { competitorsSortingRule, localNamesFirst, scorecardsBackgroundUrl } = getExtensionData('CompetitionConfig', wcif);
+    const {
+      competitorsSortingRule,
+      noTasksForNewcomers,
+      tasksForOwnEventsOnly,
+      localNamesFirst,
+      scorecardsBackgroundUrl
+    } = getExtensionData('CompetitionConfig', wcif);
 
     return (
       <Paper style={{ padding: 16 }}>
@@ -70,6 +76,32 @@ export default class GeneralConfig extends Component {
                 {competitorsSortingRules.find(({ id }) => id === competitorsSortingRule).description + ' Note: this applies to first rounds only.'}
               </FormHelperText>
             </FormControl>
+            <Grid container direction="column">
+              <Grid item>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="noTasksForNewcomers"
+                      checked={noTasksForNewcomers}
+                      onChange={this.handleCheckboxChange}
+                      />
+                  }
+                  label="Don't assign tasks to newcomers"
+                />
+              </Grid>
+              <Grid item>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="tasksForOwnEventsOnly"
+                      checked={tasksForOwnEventsOnly}
+                      onChange={this.handleCheckboxChange}
+                      />
+                  }
+                  label="Assign tasks to competitors only in events they registered for"
+                />
+              </Grid>
+            </Grid>
           </Grid>
           <Grid item>
             <Typography variant="h5">Printing</Typography>
