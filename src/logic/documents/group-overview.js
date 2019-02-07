@@ -10,6 +10,9 @@ export const downloadGroupOverview = (wcif, rounds) => {
 };
 
 const groupOverviewPdfDefinition = (wcif, rounds) => ({
+  footer: (currentPage, pageCount) => ({
+    text: `${currentPage} of ${pageCount}`, alignment: 'center', fontSize: 10
+  }),
   content: sortByArray(
     flatMap(
       flatMap(rounds, round => roomsWithTimezoneAndGroups(wcif, round.id)),
