@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
 import Grid from '@material-ui/core/Grid';
+import Icon from '@material-ui/core/Icon';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -12,10 +13,11 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import SaveWcifButton from '../../common/SaveWcifButton/SaveWcifButton';
 import { acceptedPeople } from '../../../logic/competitors';
-import { difference } from '../../../logic/utils';
+import { difference, sortBy } from '../../../logic/utils';
 
 const roles = [
   { id: 'staff-scrambler', name: 'Scrambler' },
@@ -77,15 +79,28 @@ export default class RolesManager extends Component {
     const rowsPerPage = 5;
     const rowsPerPageOptions = [5];
 
-    const people = acceptedPeople(localWcif)
-      .filter(person => person.name.match(new RegExp(searchString, 'i')));
+    const allSortedPeople = sortBy(acceptedPeople(localWcif), person => person.name);
+    const people = !searchString ? allSortedPeople : allSortedPeople.filter(person =>
+      searchString.split(/\s*,\s*/).some(searchPart =>
+        searchPart && person.name.match(new RegExp(searchPart, 'i'))
+      )
+    );
 
     return (
       <Grid container spacing={8} justify="flex-end">
         <Grid item xs={12}>
           <Paper>
             <Toolbar>
-              <TextField label="Search" value={searchString} onChange={this.handleSearchChange} />
+              <Grid container spacing={8} alignItems="flex-end">
+                <Grid item>
+                  <TextField label="Search" value={searchString} onChange={this.handleSearchChange} />
+                </Grid>
+                <Grid item>
+                  <Tooltip title="If you separate search phrases with a comma, anyone matching either of them will show up." placement="right">
+                    <Icon>info</Icon>
+                  </Tooltip>
+                </Grid>
+              </Grid>
             </Toolbar>
             <div style={{ overflowX: 'auto' }}>
               <Table>
