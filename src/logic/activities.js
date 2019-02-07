@@ -26,8 +26,11 @@ export const activityCodeToName = activityCode => {
 export const hasDistributedAttempts = activityCode =>
   ['333fm', '333mbf'].includes(parseActivityCode(activityCode).eventId);
 
-export const activityDuration = activity =>
-  new Date(activity.endTime) - new Date(activity.startTime);
+export const activityDuration = ({ startTime, endTime }) =>
+  new Date(endTime) - new Date(startTime);
+
+export const activityDurationString = ({ startTime, endTime }, timezone = 'UTC') =>
+  `${shortTime(startTime, timezone)} - ${shortTime(endTime, timezone)}`;
 
 export const activitiesOverlap = (first, second) =>
   first.startTime < second.endTime && second.startTime < first.endTime;
@@ -145,6 +148,16 @@ export const groupActivitiesByRound = (wcif, roundId) =>
     hasDistributedAttempts(roundId) ? [activity] : activity.childActivities
   );
 
+export const roomsWithTimezoneAndGroups = (wcif, roundId) =>
+  flatMap(wcif.schedule.venues, venue =>
+    venue.rooms.map(room =>
+      [room, venue.timezone, flatMap(
+        room.activities.filter(activity => activity.activityCode === roundId),
+        activity => activity.childActivities
+      )]
+    )
+  );
+
 export const activityAssigned = (wcif, activityId) =>
   wcif.persons.some(person =>
     person.assignments.some(assignment => assignment.activityId === activityId)
@@ -193,17 +206,4 @@ export const anyGroupAssignedOrCreated = wcif =>
 export const anyResults = wcif =>
   wcif.events.some(event =>
     event.rounds.some(round => round.results.length > 0)
-  );
-
-export const activityDurationString = ({ startTime, endTime }, timezone = 'UTC') =>
-  `${shortTime(startTime, timezone)} - ${shortTime(endTime, timezone)}`;
-
-export const roomsWithTimezoneAndGroups = (wcif, roundId) =>
-  flatMap(wcif.schedule.venues, venue =>
-    venue.rooms.map(room =>
-      [room, venue.timezone, flatMap(
-        room.activities.filter(activity => activity.activityCode === roundId),
-        activity => activity.childActivities
-      )]
-    )
   );
