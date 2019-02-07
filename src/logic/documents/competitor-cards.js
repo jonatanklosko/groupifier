@@ -1,4 +1,4 @@
-import { chunk, sortBy, zip } from '../utils';
+import { chunk, sortBy, times, zip } from '../utils';
 import { eventNameById } from '../events';
 import { activityById, hasDistributedAttempts, parseActivityCode } from '../activities';
 import { acceptedPeople } from '../competitors';
@@ -22,9 +22,7 @@ const competitorCards = wcif => {
   const cards = sortBy(acceptedPeople(wcif), person => person.name)
     .map(person => competitorCard(wcif, person));
   const cardsInLastRow = cards.length % 3;
-  return cardsInLastRow === 0
-    ? cards
-    : cards.concat(Array.from({ length: 3 - cardsInLastRow }, () => ({})));
+  return cardsInLastRow === 0 ? cards : cards.concat(times(3 - cardsInLastRow, () => ({})));
 };
 
 const competitorCard = (wcif, person) => {
@@ -49,7 +47,7 @@ const competitorCard = (wcif, person) => {
   return {
     margin: [5, 5],
     stack: [
-      { text: pdfName(person.name, { swapLatinWithLocalNames: localNamesFirst }), fontSize: 10 },
+      { text: pdfName(person.name, { swapLatinWithLocalNames: localNamesFirst }), fontSize: 10, maxHeight: 20 /* See: https://github.com/bpampuch/pdfmake/issues/264#issuecomment-108347567 */ },
       {
         columns: [
           `ID: ${person.registrantId}`,
@@ -68,7 +66,8 @@ const competitorCard = (wcif, person) => {
           ]
         },
         layout: { paddingLeft: () => 2, paddingRight: () => 2, paddingTop: () => 1, paddingBottom: () => 1 }
-      }
+      },
+      ...times(Math.max(0, 12 - events.length), () => ({ text: ' ' })) /* Add some empty space if there are few events. */
     ]
   };
 };

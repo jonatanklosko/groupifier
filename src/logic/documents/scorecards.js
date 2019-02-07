@@ -1,4 +1,4 @@
-import { flatMap, sortBy, chunk } from '../utils';
+import { flatMap, sortBy, chunk, times } from '../utils';
 import { parseActivityCode, groupActivitiesByRound } from '../activities';
 import { eventNameById } from '../events';
 import { cutoffToString, timeLimitToString } from '../formatters';
@@ -87,7 +87,7 @@ const scorecards = (wcif, rounds) => {
       const scorecardsOnLastPage = groupScorecards.length % 4;
       return scorecardsOnLastPage === 0
         ? groupScorecards
-        : groupScorecards.concat(Array.from({ length: 4 - scorecardsOnLastPage }, () => ({})));
+        : groupScorecards.concat(times(4 - scorecardsOnLastPage, () => ({})));
     });
   });
 };
@@ -156,7 +156,7 @@ const columnLabels = (labels, style = {}) =>
   }));
 
 const attemptRows = (cutoff, attemptCount) =>
-  Array.from({ length: attemptCount }, (_, attemptIndex) => attemptRow(attemptIndex + 1))
+  times(attemptCount, attemptIndex => attemptRow(attemptIndex + 1))
     .reduce((rows, attemptRow, attemptIndex) =>
       (attemptIndex + 1 === attemptCount)
         ? [...rows, attemptRow]

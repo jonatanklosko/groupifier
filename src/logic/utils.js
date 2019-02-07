@@ -156,6 +156,9 @@ export const chunk = (arr, size) =>
     ? [arr]
     : [arr.slice(0, size), ...chunk(arr.slice(size), size)];
 
+export const times = (n, fn) =>
+  Array.from({ length: n }, (_, index) => fn(index));
+
 export const uniq = arr =>
   [...new Set(arr)];
 

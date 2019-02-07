@@ -1,5 +1,5 @@
 import { addMilliseconds, chunk, difference, findLast, flatMap, groupBy, intersection, isoTimeDiff, partition,
-         scaleToOne, setIn, sortBy, sortByArray, sum, uniq, updateIn, mapIn, zip } from './utils';
+         scaleToOne, setIn, sortBy, sortByArray, sum, uniq, updateIn, mapIn, times, zip } from './utils';
 import { getExtensionData } from './wcif-extensions';
 import { activitiesIntersection, activitiesOverlap, activityById, activityCodeToName,
          activityDuration, hasDistributedAttempts, maxActivityId, parseActivityCode,
@@ -18,7 +18,7 @@ export const createGroupActivities = wcif => {
       const { groups } = getExtensionData('ActivityConfig', activity);
       const totalDuration = activityDuration(activity);
       const groupDuration = totalDuration / groups;
-      const groupActivities = Array.from({ length: groups }, (_, index) => ({
+      const groupActivities = times(groups, index => ({
         id: null,
         name: null,
         activityCode: null,
