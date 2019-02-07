@@ -7,8 +7,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import RoundsNavigation from '../../../common/RoundsNavigation/RoundsNavigation';
 import RoomName from '../../../common/RoomName/RoomName';
 import GroupDialog from '../GroupDialog/GroupDialog';
-import { parseActivityCode, hasDistributedAttempts } from '../../../../logic/activities';
-import { flatMap, shortTime } from '../../../../logic/utils';
+import { activityDurationString, parseActivityCode, hasDistributedAttempts, roomsWithTimezoneAndGroups } from '../../../../logic/activities';
 
 export default class RoundWithGroups extends Component {
   state = {
@@ -45,18 +44,10 @@ export default class RoundWithGroups extends Component {
 
   renderRound = roundId => {
     const { wcif } = this.props;
-    const roomsWithTimezoneAndGroups = flatMap(wcif.schedule.venues, venue =>
-      venue.rooms.map(room =>
-        [room, venue.timezone, flatMap(
-          room.activities.filter(activity => activity.activityCode === roundId),
-          activity => activity.childActivities
-        )]
-      )
-    );
 
     return (
       <Grid container>
-        {roomsWithTimezoneAndGroups.map(([room, timezone, groupActivities]) => (
+        {roomsWithTimezoneAndGroups(wcif, roundId).map(([room, timezone, groupActivities]) => (
           groupActivities.length > 0 && (
             <Grid item xs={12} sm key={room.id}>
               <RoomName room={room} />
@@ -65,7 +56,7 @@ export default class RoundWithGroups extends Component {
                   <ListItem key={groupActivity.id} button onClick={() => this.handleGroupClick(groupActivity)}>
                     <ListItemText
                       primary={`Group ${parseActivityCode(groupActivity.activityCode).groupNumber}`}
-                      secondary={`${shortTime(groupActivity.startTime, timezone)} - ${shortTime(groupActivity.endTime, timezone)}`}
+                      secondary={activityDurationString(groupActivity, timezone)}
                     />
                   </ListItem>
                 ))}

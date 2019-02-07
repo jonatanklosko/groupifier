@@ -1,4 +1,4 @@
-import { mapIn, flatMap, zip, scaleToOne, isPresentDeep } from './utils';
+import { mapIn, flatMap, zip, scaleToOne, shortTime, isPresentDeep } from './utils';
 import { getExtensionData, setExtensionData } from './wcif-extensions';
 import { suggestedGroupCount, suggestedScramblerCount, suggestedRunnerCount } from './formulas';
 import { eventNameById } from './events';
@@ -193,4 +193,17 @@ export const anyGroupAssignedOrCreated = wcif =>
 export const anyResults = wcif =>
   wcif.events.some(event =>
     event.rounds.some(round => round.results.length > 0)
+  );
+
+export const activityDurationString = ({ startTime, endTime }, timezone = 'UTC') =>
+  `${shortTime(startTime, timezone)} - ${shortTime(endTime, timezone)}`;
+
+export const roomsWithTimezoneAndGroups = (wcif, roundId) =>
+  flatMap(wcif.schedule.venues, venue =>
+    venue.rooms.map(room =>
+      [room, venue.timezone, flatMap(
+        room.activities.filter(activity => activity.activityCode === roundId),
+        activity => activity.childActivities
+      )]
+    )
   );
