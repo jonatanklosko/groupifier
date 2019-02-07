@@ -32,7 +32,6 @@ export const getImageDataUrl = url => {
   if (!url) return Promise.resolve(null);
   const params = new URLSearchParams({
     url,
-    filt: 'greyscale',
     bri: 30,
     bg: 'white',
     w: 200,
