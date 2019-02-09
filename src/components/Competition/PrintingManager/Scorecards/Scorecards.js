@@ -45,7 +45,7 @@ export default class Scorecards extends Component {
     const { selectedRounds } = this.state;
     const { wcif } = this.props;
     const rounds = sortBy(
-      roundsWithoutResults(wcif),
+      roundsWithoutResults(wcif).filter(round => parseActivityCode(round.id).eventId !== '333fm'),
       round => parseActivityCode(round.id).roundNumber
     );
     const missingScorecards = roundsMissingScorecards(wcif);
