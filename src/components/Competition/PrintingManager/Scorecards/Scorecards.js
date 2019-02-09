@@ -11,14 +11,14 @@ import Typography from '@material-ui/core/Typography';
 import CubingIcon from '../../../common/CubingIcon/CubingIcon';
 import { downloadScorecards } from '../../../../logic/documents/scorecards';
 import { downloadGroupOverview } from '../../../../logic/documents/group-overview';
-import { roundsMissingScorecards, parseActivityCode, activityCodeToName } from '../../../../logic/activities';
-import { difference } from '../../../../logic/utils';
+import { roundsWithoutResults, roundsMissingScorecards, parseActivityCode, activityCodeToName } from '../../../../logic/activities';
+import { difference, sortBy } from '../../../../logic/utils';
 
 export default class Scorecards extends Component {
   constructor(props) {
     super(props);
-    const rounds = roundsMissingScorecards(this.props.wcif);
-    const selectedRounds = rounds.every(round => parseActivityCode(round.id).roundNumber === 1) ? rounds : []
+    const missingScorecards = roundsMissingScorecards(this.props.wcif);
+    const selectedRounds = missingScorecards.every(round => parseActivityCode(round.id).roundNumber === 1) ? missingScorecards : [];
     this.state = {
       selectedRounds
     };
@@ -44,14 +44,23 @@ export default class Scorecards extends Component {
   render() {
     const { selectedRounds } = this.state;
     const { wcif } = this.props;
-    const rounds = roundsMissingScorecards(wcif);
+    const rounds = sortBy(
+      roundsWithoutResults(wcif),
+      round => parseActivityCode(round.id).roundNumber
+    );
+    const missingScorecards = roundsMissingScorecards(wcif);
 
     return (
       <Paper style={{ padding: 16 }}>
         <Typography variant="body1">Select rounds</Typography>
         <List style={{ width: 400 }}>
           {rounds.map(round => (
-            <ListItem key={round.id} button onClick={this.handleRoundClick(round)}>
+            <ListItem
+              key={round.id}
+              button
+              onClick={this.handleRoundClick(round)}
+              style={missingScorecards.includes(round) ? {} : { opacity: 0.5 }}
+            >
               <ListItemIcon>
                 <CubingIcon eventId={parseActivityCode(round.id).eventId} />
               </ListItemIcon>

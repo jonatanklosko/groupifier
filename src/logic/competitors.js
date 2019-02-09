@@ -76,6 +76,7 @@ export const competitorsForRound = (wcif, roundId) => {
       .find(event => event.id === eventId).rounds
       .find(round => parseActivityCode(round.id).roundNumber === roundNumber - 1);
     const { results, advancementCondition } = previousRound;
+    if (results.length === 0) return null;
     return sortBy(advancingResults(results, advancementCondition), result => -result.ranking)
       .map(result => wcif.persons.find(person => person.registrantId === result.personId));
   }

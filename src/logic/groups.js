@@ -65,21 +65,13 @@ const assignGroups = (wcif, roundsToAssign) => {
       , competitors);
       return updatePeople(wcif, updatedCompetitors);
     }
-    const groupActivitiesWithCapacity = flatMap(roundActivities(wcif, round.id), activity => {
-      const { capacity } = getExtensionData('ActivityConfig', activity);
-      return activity.childActivities.map(groupActivity =>
-        [groupActivity, capacity / activity.childActivities.length]
-      );
-    });
-    const [groupActivities, capacities] = zip(...groupActivitiesWithCapacity);
-    const groupSizes = calculateGroupSizes(capacities, competitors.length);
-    const initialGroups = zip(groupActivities, groupSizes).map(([activity, size]) => ({
-      id: activity.id,
-      activity,
-      size,
-      competitors: []
-    }));
-    const sortedInitialGroups = sortBy(initialGroups, ({ activity }) => parseActivityCode(activity.activityCode).groupNumber);
+    const initialGroups = sortedGroupActivitiesWithSize(wcif, round.id, competitors.length)
+      .map(([activity, size]) => ({
+        id: activity.id,
+        activity,
+        size,
+        competitors: []
+      }));
     const groups = competitors.reduce((groups, competitor) => {
       const availabilityRates = groups.map(group => availabilityRate(wcif, group.activity, competitor));
       const maxAvailabilityRate = Math.max(...availabilityRates);
@@ -94,12 +86,27 @@ const assignGroups = (wcif, roundsToAssign) => {
         const updatedGroups = addCompetitorToGroupEnd(groups, group.id, competitor);
         return moveSomeoneRight(wcif, updatedGroups, group.id) || moveSomeoneLeft(wcif, updatedGroups, group.id) || updatedGroups;
       }
-    }, sortedInitialGroups);
+    }, initialGroups);
     const updatedCompetitors = flatMap(groups, ({ activity, competitors }) =>
       assignActivity(activity.id, 'competitor', competitors)
     );
     return updatePeople(wcif, updatedCompetitors);
   }, wcif);
+};
+
+export const sortedGroupActivitiesWithSize = (wcif, roundId, competitorCount) => {
+  const groupActivitiesWithCapacity = flatMap(roundActivities(wcif, roundId), activity => {
+    const { capacity } = getExtensionData('ActivityConfig', activity);
+    return activity.childActivities.map(groupActivity =>
+      [groupActivity, capacity / activity.childActivities.length]
+    );
+  });
+  const [groupActivities, capacities] = zip(...groupActivitiesWithCapacity);
+  const groupSizes = calculateGroupSizes(capacities, competitorCount);
+  return sortBy(
+    zip(groupActivities, groupSizes),
+    ([{ activityCode }]) => parseActivityCode(activityCode).groupNumber
+  );
 };
 
 const calculateGroupSizes = ([capacity, ...capacities], competitorCount) => {

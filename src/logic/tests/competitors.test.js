@@ -56,30 +56,40 @@ describe('competitorsForRound', () => {
   });
 
   describe('when given a subsequent round', () => {
-    const events = [
-      Event({
-        id: '333',
-        rounds: [
-          Round({
-            id: '333-r1',
-            results: [
-              Result({ ranking: 1, personId: person2.registrantId }),
-              Result({ ranking: 2, personId: personWithoutResults.registrantId }),
-              Result({ ranking: 3, personId: person1.registrantId  }),
-              Result({ ranking: 4, personId: personWithoutAverage.registrantId })
-            ],
-            advancementCondition: { type: 'ranking', level: 3 }
-          }),
-          Round({ id: '333-r2' })
-        ]
-      })
-    ];
     test('returns advancing people ordered by previous round ranking descending', () => {
+      const events = [
+        Event({
+          id: '333',
+          rounds: [
+            Round({
+              id: '333-r1',
+              results: [
+                Result({ ranking: 1, personId: person2.registrantId }),
+                Result({ ranking: 2, personId: personWithoutResults.registrantId }),
+                Result({ ranking: 3, personId: person1.registrantId  }),
+                Result({ ranking: 4, personId: personWithoutAverage.registrantId })
+              ],
+              advancementCondition: { type: 'ranking', level: 3 }
+            }),
+            Round({ id: '333-r2' })
+          ]
+        })
+      ];
       const wcif = Competition({
         persons: [person1, personWithoutAverage, personWithoutResults, person2],
         events
       });
       expect(competitorsForRound(wcif, '333-r2')).toEqual([person1, personWithoutResults, person2]);
+    });
+  });
+
+  describe('when competitors for the given round cannot be determined yet', () => {
+    test('returns null', () => {
+      const wcif = Competition({
+        persons: [person1, person2],
+        events: [Event({ rounds: [Round({ id: '333-r1' }), Round({ id: '333-r2' })] })]
+      });
+      expect(competitorsForRound(wcif, '333-r2')).toEqual(null);
     });
   });
 });

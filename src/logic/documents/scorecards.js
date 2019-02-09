@@ -1,11 +1,12 @@
-import { flatMap, sortBy, chunk, times } from '../utils';
+import pdfMake from '../documents/pdfmake';
+import { flatMap, sortBy, chunk, times, sum } from '../utils';
 import { parseActivityCode, groupActivitiesByRound } from '../activities';
 import { eventNameById } from '../events';
 import { cutoffToString, timeLimitToString } from '../formatters';
-import { competitorsForRound, hasAssignment } from '../competitors';
+import { getExpectedCompetitorsByRound, competitorsForRound, hasAssignment } from '../competitors';
 import { getExtensionData } from '../wcif-extensions';
-import pdfMake from '../documents/pdfmake';
 import { pdfName, getImageDataUrl } from '../documents/pdf-utils';
+import { sortedGroupActivitiesWithSize } from '../groups';
 
 /* See: https://github.com/bpampuch/pdfmake/blob/3da11bd8148b190808b06f7bc27883102bf82917/src/standardPageSizes.js#L10 */
 const pageWidth = 595.28;
@@ -63,17 +64,11 @@ const cutLine = properties => ({
 });
 
 const scorecards = (wcif, rounds) => {
-  const { localNamesFirst } = getExtensionData('CompetitionConfig', wcif) || { localNamesFirst: false };
+  const { localNamesFirst } = getExtensionData('CompetitionConfig', wcif);
   return flatMap(rounds, round => {
-    const sortedGroupActivities = sortBy(groupActivitiesByRound(wcif, round.id),
-      ({ activityCode }) => parseActivityCode(activityCode).groupNumber
-    );
-    const sortedCompetitors = competitorsForRound(wcif, round.id);
-    let scorecardNumber = sortedCompetitors.length;
-    return flatMap(sortedGroupActivities, groupActivity => {
-      const competitors = sortedCompetitors.filter(competitor =>
-        hasAssignment(competitor, groupActivity.id, 'competitor')
-      );
+    const groupsWithCompetitors = groupActivitiesWithCompetitors(wcif, round.id);
+    let scorecardNumber = sum(groupsWithCompetitors.map(([_, competitors]) => competitors.length));
+    return flatMap(groupsWithCompetitors, ([groupActivity, competitors]) => {
       const groupScorecards = competitors.map(competitor =>
         scorecard({
           scorecardNumber: scorecardNumber--,
@@ -90,6 +85,27 @@ const scorecards = (wcif, rounds) => {
         : groupScorecards.concat(times(4 - scorecardsOnLastPage, () => ({})));
     });
   });
+};
+
+const groupActivitiesWithCompetitors = (wcif, roundId) => {
+  const sortedCompetitors = competitorsForRound(wcif, roundId);
+  if (sortedCompetitors) {
+    const sortedGroupActivities = sortBy(groupActivitiesByRound(wcif, roundId),
+      ({ activityCode }) => parseActivityCode(activityCode).groupNumber
+    );
+    return sortedGroupActivities.map(groupActivity => [
+      groupActivity,
+      sortedCompetitors.filter(competitor => hasAssignment(competitor, groupActivity.id, 'competitor'))
+    ]);
+  } else {
+    /* If competitors for this round are not known yet, generate nameless scorecards. */
+    const expectedCompetitorCount = getExpectedCompetitorsByRound(wcif)[roundId].length;
+    const groupsWithSize = sortedGroupActivitiesWithSize(wcif, roundId, expectedCompetitorCount);
+    return groupsWithSize.map(([groupActivity, size]) => [
+      groupActivity,
+      times(size, () => ({ name: ' ', registrantId: ' ' }))
+    ]);
+  }
 };
 
 const scorecard = ({
@@ -120,7 +136,7 @@ const scorecard = ({
     {
       margin: [25, 0, 0, 0],
       table: {
-        widths: ['auto', '*'],
+        widths: [25, '*'],
         body: [
           columnLabels(['ID', 'Name']),
           [{ text: competitor.registrantId, alignment: 'center' }, { text: pdfName(competitor.name, { swapLatinWithLocalNames: localNamesFirst }), maxHeight: 20 /* See: https://github.com/bpampuch/pdfmake/issues/264#issuecomment-108347567 */ }]
