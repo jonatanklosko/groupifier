@@ -17,7 +17,8 @@ export default class CompetitionList extends Component {
     super(props);
     this.state = {
       competitions: [],
-      loading: true
+      loading: true,
+      error: null
     }
   }
 
@@ -28,17 +29,26 @@ export default class CompetitionList extends Component {
           competitions: sortBy(competitions, competition => competition['start_date']),
           loading: false
         })
-      );
+      )
+      .catch(error => this.setState({ error: error.message, loading: false }));
   }
 
   render() {
-    const { competitions, loading } = this.state;
+    const { competitions, loading, error } = this.state;
 
     return (
       <div>
         <Paper>
           <List subheader={<ListSubheader>Your competitions</ListSubheader>}>
-            {!loading && competitions.length === 0 &&
+            {error &&
+              <ListItem>
+                <ListItemIcon>
+                  <Icon>error</Icon>
+                </ListItemIcon>
+                <ListItemText primary={`Couldn't fetch competitions: ${error}`} />
+              </ListItem>
+            }
+            {!loading && !error && competitions.length === 0 &&
               <ListItem>
                 <ListItemIcon>
                   <Icon>sentiment_very_dissatisfied</Icon>
