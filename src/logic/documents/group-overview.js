@@ -1,8 +1,8 @@
+import pdfMake from './pdfmake';
 import { flatMap, sortByArray } from '../utils';
 import { activityCodeToName, activityDurationString, parseActivityCode, roomsWithTimezoneAndGroups } from '../activities';
 import { hasAssignment } from '../competitors';
-import pdfMake from '../documents/pdfmake';
-import { pdfName } from '../documents/pdf-utils';
+import { pdfName } from './pdf-utils';
 
 export const downloadGroupOverview = (wcif, rounds) => {
   const pdfDefinition = groupOverviewPdfDefinition(wcif, rounds);

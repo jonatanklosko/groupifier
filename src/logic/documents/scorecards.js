@@ -1,11 +1,11 @@
-import pdfMake from '../documents/pdfmake';
+import pdfMake from './pdfmake';
 import { flatMap, sortBy, chunk, times, sum } from '../utils';
 import { parseActivityCode, groupActivitiesByRound } from '../activities';
 import { eventNameById } from '../events';
 import { cutoffToString, timeLimitToString } from '../formatters';
 import { getExpectedCompetitorsByRound, competitorsForRound, hasAssignment } from '../competitors';
 import { getExtensionData } from '../wcif-extensions';
-import { pdfName, getImageDataUrl } from '../documents/pdf-utils';
+import { pdfName, getImageDataUrl } from './pdf-utils';
 import { sortedGroupActivitiesWithSize } from '../groups';
 
 /* See: https://github.com/bpampuch/pdfmake/blob/3da11bd8148b190808b06f7bc27883102bf82917/src/standardPageSizes.js#L10 */

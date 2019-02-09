@@ -3,8 +3,8 @@ import { eventNameById } from '../events';
 import { activityById, hasDistributedAttempts, parseActivityCode } from '../activities';
 import { acceptedPeople } from '../competitors';
 import { getExtensionData } from '../wcif-extensions';
-import pdfMake from '../documents/pdfmake';
-import { pdfName } from '../documents/pdf-utils';
+import pdfMake from './pdfmake';
+import { pdfName } from './pdf-utils';
 
 export const downloadCompetitorCards = wcif => {
   const pdfDefinition = competitorCardsPdfDefinition(wcif);
