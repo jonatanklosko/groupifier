@@ -14,7 +14,9 @@ export const __withCubecompsIds__ = wcif => {
       return getCompetition(competition.id).then(competition => {
         if (competition.competitors.length === 0) return null;
         people.forEach(person => {
-          const competitor = competition.competitors.find(competitor => person.name.includes(competitor.name));
+          const competitor = competition.competitors.find(competitor =>
+            normalizeName(person.name).includes(normalizeName(competitor.name))
+          );
           if (!competitor) throw new Error(`Couldn't find Cubecomps competitor id for ${person.name}.`);
           person.registrantId = parseInt(competitor.id, 10);
         });
@@ -22,6 +24,9 @@ export const __withCubecompsIds__ = wcif => {
     })
     .then(() => wcif);
 };
+
+const normalizeName = name =>
+  name.toLowerCase().trim().split(/s+/).join(' ');
 
 const getCompetitions = () =>
   cubecompsApiFetch('/competitions')

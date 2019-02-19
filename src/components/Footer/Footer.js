@@ -11,7 +11,7 @@ const links = [
   { text: 'Guide', url: 'https://github.com/jonatanklosko/groupifier-next/wiki/Guide' },
   { text: 'GitHub', url: 'https://github.com/jonatanklosko/groupifier-next' },
   { text: 'Contact', url: 'mailto:jonatanklosko@gmail.com' },
-  { text: 'v1.3.1', url: 'https://github.com/jonatanklosko/groupifier-next' }
+  { text: 'v1.3.2', url: 'https://github.com/jonatanklosko/groupifier-next' }
 ];
 
 const Footer = () => (
