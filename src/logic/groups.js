@@ -217,8 +217,6 @@ const assignScrambling = (wcif, roundsToAssign) => {
              (General note: this is better than sorting by the number of tasks,
              as it allows one person to be assigned a couple times in a row). */
           Math.floor(staffAssignments(competitor).length / 3),
-          /* Prefer competitors who doesn't solve soon after the group ends. */
-          competesIn15Minutes(wcif, competitor, groupActivity.endTime) ? 1 : -1,
           /* Prefer competitors better in the given event. */
           ...bestAverageAndSingle(competitor, eventId)
         ]);
