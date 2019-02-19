@@ -26,7 +26,7 @@ export const __withCubecompsIds__ = wcif => {
 };
 
 const normalizeName = name =>
-  name.toLowerCase().trim().split(/s+/).join(' ');
+  name.toUpperCase().trim().split(/s+/).join(' ');
 
 const getCompetitions = () =>
   cubecompsApiFetch('/competitions')
