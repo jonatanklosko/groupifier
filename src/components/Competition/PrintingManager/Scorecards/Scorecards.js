@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
+import Grid from '@material-ui/core/Grid';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -9,7 +10,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
 import CubingIcon from '../../../common/CubingIcon/CubingIcon';
-import { downloadScorecards } from '../../../../logic/documents/scorecards';
+import { downloadScorecards, downloadBlankScorecards } from '../../../../logic/documents/scorecards';
 import { downloadGroupOverview } from '../../../../logic/documents/group-overview';
 import { roundsWithoutResults, roundsMissingScorecards, parseActivityCode, activityCodeToName } from '../../../../logic/activities';
 import { difference, sortBy } from '../../../../logic/utils';
@@ -30,6 +31,10 @@ export default class Scorecards extends Component {
 
   handleGroupOverviewDownloadClick = () => {
     downloadGroupOverview(this.props.wcif, this.state.selectedRounds);
+  };
+
+  handleBlankScorecardsDownloadClick = () => {
+    downloadBlankScorecards(this.props.wcif);
   };
 
   handleRoundClick = round => event => {
@@ -74,12 +79,24 @@ export default class Scorecards extends Component {
             </ListItem>
           ))}
         </List>
-        <Button onClick={this.handleScorecardsDownloadClick} disabled={selectedRounds.length === 0}>
-          Scorecards
-        </Button>
-        <Button onClick={this.handleGroupOverviewDownloadClick} disabled={selectedRounds.length === 0}>
-          Group overview
-        </Button>
+        <Grid container spacing={8}>
+          <Grid item>
+            <Button onClick={this.handleScorecardsDownloadClick} disabled={selectedRounds.length === 0}>
+              Scorecards
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button onClick={this.handleGroupOverviewDownloadClick} disabled={selectedRounds.length === 0}>
+              Group overview
+            </Button>
+          </Grid>
+          <Grid item style={{ flexGrow: 1 }} />
+          <Grid item>
+            <Button onClick={this.handleBlankScorecardsDownloadClick}>
+              Blank scorecards
+            </Button>
+          </Grid>
+        </Grid>
       </Paper>
     );
   }

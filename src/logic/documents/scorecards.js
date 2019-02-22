@@ -1,5 +1,5 @@
 import pdfMake from './pdfmake';
-import { flatMap, sortBy, chunk, times, sum } from '../utils';
+import { flatMap, sortBy, chunk, times, sum, uniq } from '../utils';
 import { parseActivityCode, groupActivitiesByRound } from '../activities';
 import { eventNameById } from '../events';
 import { cutoffToString, timeLimitToString } from '../formatters';
@@ -18,12 +18,20 @@ const maxAttemptCountByFormat = { '1': 1, '2': 2, '3': 3, 'm': 3, 'a': 5 };
 export const downloadScorecards = (wcif, rounds) => {
   const { scorecardsBackgroundUrl } = getExtensionData('CompetitionConfig', wcif);
   getImageDataUrl(scorecardsBackgroundUrl).then(imageData => {
-    const pdfDefinition = scorecardsPdfDefinition(wcif, rounds, imageData);
+    const pdfDefinition = scorecardsPdfDefinition(scorecards(wcif, rounds), imageData);
     pdfMake.createPdf(pdfDefinition).download(`${wcif.id}-scorecards.pdf`);
   });
 };
 
-const scorecardsPdfDefinition = (wcif, rounds, imageData) => ({
+export const downloadBlankScorecards = wcif => {
+  const { scorecardsBackgroundUrl } = getExtensionData('CompetitionConfig', wcif);
+  getImageDataUrl(scorecardsBackgroundUrl).then(imageData => {
+    const pdfDefinition = scorecardsPdfDefinition(blankScorecards(wcif), imageData);
+    pdfMake.createPdf(pdfDefinition).download(`${wcif.id}-blank-scorecards.pdf`);
+  });
+};
+
+const scorecardsPdfDefinition = (scorecardList, imageData) => ({
   background: [
     ...(imageData === null ? [] : [
         /* Determined empirically to fit results table. */
@@ -53,7 +61,7 @@ const scorecardsPdfDefinition = (wcif, rounds, imageData) => ({
       /* A4 page height minus vertical margins, divided into a half. */
       heights: (pageHeight - 4 * scorecardMargin) / 2,
       dontBreakRows: true,
-      body: chunk(scorecards(wcif, rounds), 2)
+      body: chunk(scorecardList, 2)
     }
   }
 });
@@ -75,6 +83,7 @@ const scorecards = (wcif, rounds) => {
           competitionName: wcif.shortName,
           activityCode: groupActivity.activityCode,
           round,
+          attemptCount: maxAttemptCountByFormat[round.format],
           competitor,
           localNamesFirst
         })
@@ -108,17 +117,25 @@ const groupActivitiesWithCompetitors = (wcif, roundId) => {
   }
 };
 
+const blankScorecards = wcif => {
+  const attemptCounts = flatMap(wcif.events, event => event.rounds)
+    .map(round => maxAttemptCountByFormat[round.format]);
+  return flatMap(uniq(attemptCounts), attemptCount =>
+    times(4, () => scorecard({ competitionName: wcif.name, attemptCount }))
+  );
+};
+
 const scorecard = ({
   scorecardNumber,
   competitionName,
   activityCode,
   round,
-  competitor,
-  localNamesFirst
+  attemptCount = 5,
+  competitor = { name: ' ', registrantId: ' ' },
+  localNamesFirst = false
 }) => {
-  const { eventId, roundNumber, groupNumber } = parseActivityCode(activityCode);
-  const { cutoff, timeLimit } = round;
-  const attemptCount = maxAttemptCountByFormat[round.format];
+  const { eventId, roundNumber, groupNumber } = activityCode ? parseActivityCode(activityCode) : {};
+  const { cutoff, timeLimit } = round || {};
 
   return [
     { text: scorecardNumber, fontSize: 10 },
@@ -129,7 +146,7 @@ const scorecard = ({
         widths: ['*', 'auto', 'auto'],
         body: [
           columnLabels(['Event', 'Round', 'Group']),
-          [eventNameById(eventId), { text: roundNumber, alignment: 'center' }, { text: groupNumber, alignment: 'center' }]
+          [eventId ? eventNameById(eventId) : ' ', { text: roundNumber, alignment: 'center' }, { text: groupNumber, alignment: 'center' }]
         ]
       }
     },
