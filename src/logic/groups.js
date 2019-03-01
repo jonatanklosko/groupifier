@@ -382,7 +382,9 @@ const availabilityRate = (wcif, activity, competitor) => {
 const overlapsEveryoneWithSameRole = (wcif, groups, activity, competitor) =>
   intersection(['dataentry', 'delegate', 'organizer'], competitor.roles)
     .some(role => {
-      const others = acceptedPeople(wcif).filter(person => person.roles.includes(role));
+      const others = acceptedPeople(wcif)
+        .filter(person => person.wcaUserId !== competitor.wcaUserId)
+        .filter(person => person.roles.includes(role));
       return others.length > 0 && others.every(other =>
         !availableDuring(wcif, activity, other)
         || groups.some(({ activity: groupActivity, competitors }) =>
