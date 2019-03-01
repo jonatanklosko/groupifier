@@ -14,6 +14,7 @@ import TableRow from '@material-ui/core/TableRow';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip';
+import Typography from '@material-ui/core/Typography';
 
 import SaveWcifButton from '../../common/SaveWcifButton/SaveWcifButton';
 import { acceptedPeople } from '../../../logic/competitors';
@@ -138,6 +139,15 @@ export default class RolesManager extends Component {
               onChangePage={this.handleChangePage}
             />
           </Paper>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography variant="caption">
+            Use this section only if you have a group of staff among competitors.
+            People with the given role will be prioritized during task assignment.
+          </Typography>
+          <Typography variant="caption">
+            Note: if you don't set any roles, people will still be assigned tasks.
+          </Typography>
         </Grid>
         <Grid item>
           <Button variant="contained" component={Link} to={`/competitions/${localWcif.id}`}>
