@@ -33,7 +33,7 @@ export const activityDurationString = ({ startTime, endTime }, timezone = 'UTC')
   `${shortTime(startTime, timezone)} - ${shortTime(endTime, timezone)}`;
 
 export const activitiesOverlap = (first, second) =>
-  first.startTime < second.endTime && second.startTime < first.endTime;
+  new Date(first.startTime) < new Date(second.endTime) && new Date(second.startTime) < new Date(first.endTime);
 
 export const activitiesIntersection = (first, second) => {
   if (!activitiesOverlap(first, second)) return 0;
