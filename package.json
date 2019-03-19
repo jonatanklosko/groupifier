@@ -27,11 +27,11 @@
   "dependencies": {
     "@material-ui/core": "^3.9.2",
     "core-js": "^3.0.0-beta.14",
-    "pdfmake": "^0.1.50",
+    "pdfmake": "^0.1.54",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "^2.1.3",
+    "react-scripts": "^2.1.8",
     "smoothscroll-polyfill": "^0.4.3"
   },
   "devDependencies": {
