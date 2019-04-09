@@ -23,6 +23,10 @@ const competitorsSortingRules = [{
   name: 'Balanced',
   description: 'Sort competitors in 3x3x3 (any variation), 2x2x2, Pyraminx and Skewb by their official rankings. For other events put best people in different groups, so that there are good scramblers for each group.'
 }, {
+  id: 'symmetric',
+  name: 'Symmetric',
+  description: 'Put best people in different groups, so that there are good scramblers for each group.'
+}, {
   id: 'name-optimised',
   name: 'Name-optimised',
   description: 'Sort competitors by their official rankings, but also minimize the number of people with the same name in each group. Use it when many competitors have the same name.'

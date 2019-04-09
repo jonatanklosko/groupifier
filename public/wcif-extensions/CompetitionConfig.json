@@ -15,7 +15,7 @@
     "competitorsSortingRule": {
       "description": "Indicates how competitors should be assigned to groups.",
       "type": "string",
-      "enum": ["ranks", "balanced", "name-optimised"]
+      "enum": ["ranks", "balanced", "symmetric", "name-optimised"]
     },
     "noTasksForNewcomers": {
       "description": "A flag indicating whether newcomers should be assigned any tasks.",

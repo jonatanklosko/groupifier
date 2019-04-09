@@ -121,8 +121,8 @@ const sortedCompetitorsForRound = (wcif, roundId) => {
   const { eventId, roundNumber } = parseActivityCode(roundId);
   if (roundNumber > 1) return sortedByRanks;
   if (competitorsSortingRule === 'ranks') return sortedByRanks;
-  if (competitorsSortingRule === 'balanced') {
-    if (['333', '222', '333bf', '333oh', '333ft', 'pyram', 'skewb'].includes(eventId)) return sortedByRanks;
+  if (competitorsSortingRule === 'balanced' && ['333', '222', '333bf', '333oh', '333ft', 'pyram', 'skewb'].includes(eventId)) return sortedByRanks;
+  if (['balanced', 'symmetric'].includes(competitorsSortingRule)) {
     const groupCount = groupActivitiesByRound(wcif, roundId).length;
     return sortBy(sortedByRanks, competitor =>
       groupCount - ((sortedByRanks.length - sortedByRanks.indexOf(competitor) - 1) % groupCount)
