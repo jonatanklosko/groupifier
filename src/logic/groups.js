@@ -59,10 +59,23 @@ const assignGroups = (wcif, roundsToAssign) => {
   return sortedRoundsToAssign.reduce((wcif, round) => {
     const competitors = sortedCompetitorsForRound(wcif, round.id);
     if (hasDistributedAttempts(round.id)) {
-      /* In this case roundActivities are attempt activities, so we assign them all to the given person. */
-      const updatedCompetitors = roundActivities(wcif, round.id).reduce((competitors, activity) =>
-        assignActivity(activity.id, 'competitor', competitors)
-      , competitors);
+      /* In this case roundActivities are attempt activities.
+         We want every competitor to be assigned all attempts.
+         The same attempt may take place in many different rooms,
+         so for each attempt we split people among this attempt's activities. */
+      const activitiesByAttempt = groupBy(
+        roundActivities(wcif, round.id),
+        ({ activityCode }) => parseActivityCode(activityCode).attemptNumber
+      );
+      const updatedCompetitors = Object.values(activitiesByAttempt)
+        .reduce((competitors, attemptActivities) => {
+          const competitorsPerActivity = Math.ceil(competitors.length / attemptActivities.length);
+          const activitiesWithCompetitors = zip(attemptActivities, chunk(competitors, competitorsPerActivity));
+          return flatMap(
+            activitiesWithCompetitors,
+            ([activity, competitors]) => assignActivity(activity.id, 'competitor', competitors)
+          );
+        }, competitors)
       return updatePeople(wcif, updatedCompetitors);
     }
     const initialGroups = sortedGroupActivitiesWithSize(wcif, round.id, competitors.length)
