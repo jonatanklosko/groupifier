@@ -239,7 +239,7 @@ const assignScrambling = (wcif, roundsToAssign) => {
           /* Strongly prefer people at least 10 years old. */
           age(competitor) >= 10 ? -1 : 1,
           /* Avoid assigning tasks to people already busy due to their role. */
-          intersection(['dataentry', 'delegate', 'organizer'], competitor.roles).length,
+          intersection(['staff-dataentry', 'delegate', 'organizer'], competitor.roles).length,
           /* Avoid more than two assignments for the given event. */
           staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2 ? 1 : -1,
           /* Prefer competitors that are likely to be on the venue. */
@@ -278,7 +278,7 @@ const assignRunning = (wcif, roundsToAssign) => {
           noTasksForNewcomers && !competitor.wcaId ? 1 : -1,
           tasksForOwnEventsOnly && !competitor.registration.eventIds.includes(eventId) ? 1 : -1,
           age(competitor) >= 10 ? -1 : 1,
-          intersection(['dataentry', 'delegate', 'organizer'], competitor.roles).length,
+          intersection(['staff-dataentry', 'delegate', 'organizer'], competitor.roles).length,
           staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2 ? 1 : -1,
           -presenceRate(wcif, competitor, groupActivity.startTime),
           Math.floor(staffAssignments(competitor).length / 6),
@@ -317,7 +317,7 @@ const assignJudging = (wcif, roundsToAssign) => {
           noTasksForNewcomers && !competitor.wcaId ? 1 : -1,
           tasksForOwnEventsOnly && !competitor.registration.eventIds.includes(eventId) ? 1 : -1,
           age(competitor) >= 10 ? -1 : 1,
-          intersection(['dataentry', 'delegate', 'organizer'], competitor.roles).length,
+          intersection(['staff-dataentry', 'delegate', 'organizer'], competitor.roles).length,
           staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2 ? 1 : -1,
           -presenceRate(wcif, competitor, groupActivity.startTime),
           /* Equally distribute tasks (judging is assigned last, so we want to eliminate inequality introduced by other assignments). */
@@ -393,7 +393,7 @@ const availabilityRate = (wcif, activity, competitor) => {
 };
 
 const overlapsEveryoneWithSameRole = (wcif, groups, activity, competitor) =>
-  intersection(['dataentry', 'delegate', 'organizer'], competitor.roles)
+  intersection(['staff-dataentry', 'delegate', 'organizer'], competitor.roles)
     .some(role => {
       const others = acceptedPeople(wcif)
         .filter(person => person.wcaUserId !== competitor.wcaUserId)
