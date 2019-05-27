@@ -12,6 +12,8 @@ import Footer from '../Footer/Footer';
 import Header from '../Header/Header';
 import Home from '../Home/Home';
 
+import PrintingManager from '../Competition/PrintingManager/PrintingManager';
+
 import { isSignedIn, signIn, signOut } from '../../logic/auth';
 
 const theme = createMuiTheme({
@@ -55,18 +57,7 @@ export default class App extends Component {
             />
             <Grid container justify="center" style={{ flexGrow: 1 }}>
               <Grid item xs={12} md={8} style={{ padding: 16 }}>
-                {isSignedIn ? (
-                  <Switch>
-                    <Route path="/competitions/:competitionId" component={Competition} />
-                    <Route path="/competitions" component={CompetitionList} />
-                    <Redirect to="/competitions" />
-                  </Switch>
-                ) : (
-                  <Switch>
-                    <Route exact path="/" component={Home} />
-                    <Redirect to="/" />
-                  </Switch>
-                )}
+                <PrintingManager />
               </Grid>
             </Grid>
             <Footer />
