@@ -1,6 +1,6 @@
 import pdfMake from './pdfmake';
 import { flatMap, sortBy, chunk, times, sum, uniq } from '../utils';
-import { parseActivityCode, groupActivitiesByRound } from '../activities';
+import { parseActivityCode, groupActivitiesByRound, hasDistributedAttempts } from '../activities';
 import { eventNameById } from '../events';
 import { cutoffToString, timeLimitToString } from '../formatters';
 import { getExpectedCompetitorsByRound, competitorsForRound, hasAssignment } from '../competitors';
@@ -99,9 +99,11 @@ const scorecards = (wcif, rounds) => {
 const groupActivitiesWithCompetitors = (wcif, roundId) => {
   const sortedCompetitors = competitorsForRound(wcif, roundId);
   if (sortedCompetitors) {
-    const sortedGroupActivities = sortBy(groupActivitiesByRound(wcif, roundId),
-      ({ activityCode }) => parseActivityCode(activityCode).groupNumber
-    );
+    const sortedGroupActivities = hasDistributedAttempts(roundId)
+      ? groupActivitiesByRound(wcif, roundId).slice(0, 1)
+      : sortBy(groupActivitiesByRound(wcif, roundId),
+        ({ activityCode }) => parseActivityCode(activityCode).groupNumber
+      );
     return sortedGroupActivities.map(groupActivity => [
       groupActivity,
       sortedCompetitors.filter(competitor => hasAssignment(competitor, groupActivity.id, 'competitor'))
@@ -109,7 +111,9 @@ const groupActivitiesWithCompetitors = (wcif, roundId) => {
   } else {
     /* If competitors for this round are not known yet, generate nameless scorecards. */
     const expectedCompetitorCount = getExpectedCompetitorsByRound(wcif)[roundId].length;
-    const groupsWithSize = sortedGroupActivitiesWithSize(wcif, roundId, expectedCompetitorCount);
+    const groupsWithSize = hasDistributedAttempts(roundId)
+      ? [[groupActivitiesByRound(wcif, roundId)[0], expectedCompetitorCount]]
+      : sortedGroupActivitiesWithSize(wcif, roundId, expectedCompetitorCount);
     return groupsWithSize.map(([groupActivity, size]) => [
       groupActivity,
       times(size, () => ({ name: ' ', registrantId: ' ' }))
