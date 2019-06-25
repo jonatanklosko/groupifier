@@ -353,7 +353,8 @@ const presenceRate = (wcif, competitor, time) => {
   const [startTimes, endTimes] = zip(
     ...activitiesThisDay.map(({ startTime, endTime }) => [startTime, endTime])
   ).map(times => times.sort());
-  if (startTimes[0] > time) return 1;
+  /* If first activity is in the future, the sonner it is, the more likely the person is to be at the venue. */
+  if (startTimes[0] > time) return 1 + (1 / isoTimeDiff(time, startTimes[0]));
   const previousEndTime = findLast(endTimes, endTime => endTime <= time);
   const nextStartTime = startTimes.find(startTime => startTime >= time);
   if (previousEndTime) {
