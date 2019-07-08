@@ -17,8 +17,9 @@ pdfMake.fonts = {
     bolditalics: 'Roboto-MediumItalic.ttf'
   },
   WenQuanYiZenHei: singleFileFont('WenQuanYiZenHei.ttf'),
-  NotoSansThai: singleFileFont('NotoSansThai-Regular.ttf'),
-  NotoSansArabic: singleFileFont('NotoSansArabic-Regular.ttf'),
+  /* Note: https://github.com/googlefonts/noto-fonts/blob/master/FAQ.md#whats-the-difference-between-the-ui-and-non-ui-versions */
+  NotoSansThai: singleFileFont('NotoSansThaiUI-Regular.ttf'),
+  NotoSansArabic: singleFileFont('NotoSansArabicUI-Regular.ttf'),
   NotoSansGeorgian: singleFileFont('NotoSansGeorgian-Regular.ttf'),
   NotoSansArmenian: singleFileFont('NotoSansArmenian-Regular.ttf')
 };
