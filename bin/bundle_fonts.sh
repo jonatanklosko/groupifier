@@ -11,7 +11,7 @@ font_files=(
   https://github.com/googlei18n/noto-fonts/raw/master/hinted/NotoSansGeorgian-Regular.ttf
   https://github.com/googlei18n/noto-fonts/raw/master/hinted/NotoSansArmenian-Regular.ttf
 )
-target="$(pwd)/public/vfs-fonts.bundle.json"
+target="$(pwd)/public/vfs-fonts.bundle.v2.json"
 tmpdir=$(mktemp -d)
 
 if [ -f $target ]; then
