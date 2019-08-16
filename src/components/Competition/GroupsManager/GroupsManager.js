@@ -3,14 +3,14 @@ import { Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
+import Tooltip from '@material-ui/core/Tooltip';
 import pink from '@material-ui/core/colors/pink';
 
 import GroupsNavigation from './GroupsNavigation/GroupsNavigation';
 import SaveWcifButton from '../../common/SaveWcifButton/SaveWcifButton';
 
 import { createGroupActivities, updateScrambleSetCount, assignTasks } from '../../../logic/groups';
-import { allGroupsCreated, roundsMissingAssignments, anyResults } from '../../../logic/activities';
-import { updateIn, mapIn, setIn } from '../../../logic/utils';
+import { allGroupsCreated, roundsMissingAssignments, clearGroupsAndAssignments } from '../../../logic/activities';
 
 export default class GroupsManager extends Component {
   constructor(props) {
@@ -34,19 +34,7 @@ export default class GroupsManager extends Component {
 
   clearGroups = () => {
     const { localWcif } = this.state;
-    const persons = localWcif.persons.map(person =>
-      updateIn(person, ['assignments'], assignments =>
-        assignments.filter(({ assignmentCode }) =>
-          !assignmentCode.startsWith('staff-') && assignmentCode !== 'competitor'
-        )
-      )
-    );
-    const schedule = mapIn(localWcif.schedule, ['venues'], venue =>
-      mapIn(venue, ['rooms'], room =>
-        mapIn(room, ['activities'], activity => setIn(activity, ['childActivities'], []))
-      )
-    );
-    this.setState({ localWcif: { ...localWcif, persons, schedule } });
+    this.setState({ localWcif: clearGroupsAndAssignments(localWcif) });
   };
 
   render() {
@@ -90,9 +78,11 @@ export default class GroupsManager extends Component {
           </Button>
         </Grid>
         <Grid item>
-          <Button variant="contained" onClick={this.clearGroups} disabled={anyResults(localWcif)}>
-            Clear
-          </Button>
+          <Tooltip title="This clears groups and assignments only for rounds without results." placement="bottom">
+            <Button variant="contained" onClick={this.clearGroups}>
+              Clear
+            </Button>
+          </Tooltip>
         </Grid>
         <Grid item>
           <SaveWcifButton wcif={wcif} updatedWcif={localWcif} onWcifUpdate={onWcifUpdate} history={history} />

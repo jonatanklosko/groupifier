@@ -1,4 +1,4 @@
-import { mapIn, flatMap, zip, scaleToOne, shortTime, isPresentDeep } from './utils';
+import { mapIn, updateIn, setIn, flatMap, zip, scaleToOne, shortTime, isPresentDeep } from './utils';
 import { getExtensionData, setExtensionData } from './wcif-extensions';
 import { suggestedGroupCount, suggestedScramblerCount, suggestedRunnerCount } from './formulas';
 import { eventNameById } from './events';
@@ -220,3 +220,31 @@ export const anyResults = wcif =>
   wcif.events.some(event =>
     event.rounds.some(round => round.results.length > 0)
   );
+
+/* Clears groups and assignments only for rounds without results. */
+export const clearGroupsAndAssignments = wcif => {
+  const clearableRounds = roundsWithoutResults(wcif);
+  const clearableRoundIds = clearableRounds.map(({ id }) => id);
+  const clearableActivities = flatMap(clearableRounds, round =>
+    groupActivitiesByRound(wcif, round.id)
+  );
+  const clearableActivityIds = clearableActivities.map(({ id }) => id);
+
+  const persons = wcif.persons.map(person =>
+    updateIn(person, ['assignments'], assignments =>
+      assignments
+        .filter(({ activityId }) => !clearableActivityIds.includes(activityId))
+        .filter(({ assignmentCode }) =>
+          !assignmentCode.startsWith('staff-') && assignmentCode !== 'competitor'
+        )
+    )
+  );
+  const schedule = mapIn(wcif.schedule, ['venues'], venue =>
+    mapIn(venue, ['rooms'], room =>
+      mapIn(room, ['activities'], activity =>
+        clearableRoundIds.includes(activity.activityCode) ? setIn(activity, ['childActivities'], []) : activity
+      )
+    )
+  );
+  return { ...wcif, persons, schedule };
+};
