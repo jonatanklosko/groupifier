@@ -3,6 +3,7 @@ import Icon from '@material-ui/core/Icon';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import red from '@material-ui/core/colors/red'
+import { version } from '../../../package.json';
 
 import './Footer.css';
 
@@ -11,7 +12,7 @@ const links = [
   { text: 'Guide', url: 'https://github.com/jonatanklosko/groupifier-next/wiki/Guide' },
   { text: 'GitHub', url: 'https://github.com/jonatanklosko/groupifier-next' },
   { text: 'Contact', url: 'mailto:jonatanklosko@gmail.com' },
-  { text: 'v1.4.5', url: 'https://github.com/jonatanklosko/groupifier-next' }
+  { text: `v${version}`, url: 'https://github.com/jonatanklosko/groupifier-next' }
 ];
 
 const Footer = () => (
