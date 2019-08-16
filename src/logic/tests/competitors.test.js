@@ -1,5 +1,5 @@
 import { Competition, Person, PersonalBest, Event, Round, Result } from './wcif-builders';
-import { competitorsForRound, advancingResults } from '../competitors';
+import { competitorsForRound } from '../competitors';
 
 describe('competitorsForRound', () => {
   const person1 = Person({
@@ -22,7 +22,7 @@ describe('competitorsForRound', () => {
       PersonalBest({ eventId: '333', type: 'single', worldRanking: 1 })
     ]
   });
-  const personWithoutResults = Person({
+  const personWithoutPersonalBests = Person({
     registration: { eventIds: ['333'] }
   });
   const personNotRegistered = Person({
@@ -37,21 +37,69 @@ describe('competitorsForRound', () => {
   });
 
   describe('when given a first round', () => {
-    test('returns people ordered by official average then single descending', () => {
-      const wcif = Competition({ persons: [person1, personWithoutAverage, personWithoutResults, person2] });
-      expect(competitorsForRound(wcif, '333-r1')).toEqual(
-        [personWithoutResults, personWithoutAverage, person2, person1]
-      );
+    describe('when has no results', () => {
+      const events = [
+        Event({
+          id: '333',
+          rounds: [
+            Round({ id: '333-r1', results: [] }),
+            Round({ id: '333-r2' })
+          ]
+        })
+      ];
+
+      test('returns people ordered by official average then single descending', () => {
+        const wcif = Competition({ events, persons: [person1, personWithoutAverage, personWithoutPersonalBests, person2] });
+        expect(competitorsForRound(wcif, '333-r1')).toEqual(
+          [personWithoutPersonalBests, personWithoutAverage, person2, person1]
+        );
+      });
+
+      test('returns only people who registered for the given event', () => {
+        const wcif = Competition({ events, persons: [person1, personNotRegistered] });
+        expect(competitorsForRound(wcif, '333-r1')).toEqual([person1]);
+      });
+
+      test('returns only people with accepted registration', () => {
+        const wcif = Competition({ events, persons: [person1, personNotAccepted] });
+        expect(competitorsForRound(wcif, '333-r1')).toEqual([person1]);
+      });
     });
 
-    test('returns only people who registered for the given event', () => {
-      const wcif = Competition({ persons: [person1, personNotRegistered] });
-      expect(competitorsForRound(wcif, '333-r1')).toEqual([person1]);
-    });
+    describe('when has results', () => {
+      const events = [
+        Event({
+          id: '333',
+          rounds: [
+            Round({
+              id: '333-r1',
+              results: [
+                Result({ attempts: [], personId: person1.registrantId }),
+                Result({ attempts: [], personId: personWithoutAverage.registrantId }),
+                Result({ attempts: [], personId: personWithoutPersonalBests.registrantId  }),
+              ]
+            }),
+            Round({ id: '333-r2' })
+          ]
+        })
+      ];
 
-    test('returns only people with accepted registration', () => {
-      const wcif = Competition({ persons: [person1, personNotAccepted] });
-      expect(competitorsForRound(wcif, '333-r1')).toEqual([person1]);
+      test('returns people ordered by official average then single descending', () => {
+        const wcif = Competition({ events, persons: [person1, personWithoutAverage, personWithoutPersonalBests] });
+        expect(competitorsForRound(wcif, '333-r1')).toEqual(
+          [personWithoutPersonalBests, personWithoutAverage, person1]
+        );
+      });
+
+      test('returns only people corresponding to the results', () => {
+        const wcif = Competition({
+          events,
+          persons: [person2, person1, personWithoutAverage, personWithoutPersonalBests, personNotAccepted]
+        });
+        expect(competitorsForRound(wcif, '333-r1')).toEqual(
+          [personWithoutPersonalBests, personWithoutAverage, person1]
+        );
+      });
     });
   });
 
@@ -65,21 +113,27 @@ describe('competitorsForRound', () => {
               id: '333-r1',
               results: [
                 Result({ ranking: 1, personId: person2.registrantId }),
-                Result({ ranking: 2, personId: personWithoutResults.registrantId }),
+                Result({ ranking: 2, personId: personWithoutPersonalBests.registrantId }),
                 Result({ ranking: 3, personId: person1.registrantId  }),
                 Result({ ranking: 4, personId: personWithoutAverage.registrantId })
-              ],
-              advancementCondition: { type: 'ranking', level: 3 }
+              ]
             }),
-            Round({ id: '333-r2' })
+            Round({
+              id: '333-r2',
+              results: [
+                Result({ attempts: [], personId: person2.registrantId }),
+                Result({ attempts: [], personId: personWithoutPersonalBests.registrantId }),
+                Result({ attempts: [], personId: person1.registrantId  })
+              ]
+            })
           ]
         })
       ];
       const wcif = Competition({
-        persons: [person1, personWithoutAverage, personWithoutResults, person2],
+        persons: [person1, personWithoutAverage, personWithoutPersonalBests, person2],
         events
       });
-      expect(competitorsForRound(wcif, '333-r2')).toEqual([person1, personWithoutResults, person2]);
+      expect(competitorsForRound(wcif, '333-r2')).toEqual([person1, personWithoutPersonalBests, person2]);
     });
   });
 
@@ -91,39 +145,5 @@ describe('competitorsForRound', () => {
       });
       expect(competitorsForRound(wcif, '333-r2')).toEqual(null);
     });
-  });
-});
-
-describe('advancingResults', () => {
-  test('returns results satisfying the given advancement condition', () => {
-    const results = [
-      Result({ ranking: 1, personId: 1 }),
-      Result({ ranking: 2, personId: 2 }),
-      Result({ ranking: 3, personId: 3 }),
-      Result({ ranking: 4, personId: 4 }),
-      Result({ ranking: 5, personId: 5 })
-    ];
-    const advancementCondition = { type: 'ranking', level: 3 };
-    expect(advancingResults(results, advancementCondition)).toEqual(results.slice(0, 3));
-  });
-  test('does not return more than 75% results in case of ties', () => {
-    const results = [
-      Result({ ranking: 1, personId: 1 }),
-      Result({ ranking: 2, personId: 2 }),
-      Result({ ranking: 3, personId: 3 }),
-      Result({ ranking: 3, personId: 4 }),
-      Result({ ranking: 5, personId: 5 })
-    ];
-    const advancementCondition = { type: 'percent', level: 75 };
-    expect(advancingResults(results, advancementCondition)).toEqual(results.slice(0, 2));
-  });
-
-  test('does not treat DNF results as satisfying attemptResult advancement condition', () => {
-    const results = [
-      Result({ ranking: 1, personId: 1, attempts: [{ result: 2000 }, { result: 1000 }, { result: -1 }, { result: 5000 }, { result: -2 }] }),
-      Result({ ranking: 2, personId: 2, attempts: [{ result: 1500 }, { result: 2000 }, { result: -1 }, { result: 5000 }, { result: 4000 }] }),
-    ];
-    const advancementCondition = { type: 'attemptResult', level: 1500 };
-    expect(advancingResults(results, advancementCondition)).toEqual(results.slice(0, 1));
   });
 });

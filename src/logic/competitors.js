@@ -1,4 +1,5 @@
 import { parseActivityCode, activityCodeToName, activityById } from './activities';
+import { personById, roundById, previousRound } from './wcif';
 import { sortBy, sortByArray } from './utils';
 
 export const best = (person, eventId, type) => {
@@ -43,42 +44,30 @@ export const getExpectedCompetitorsByRound = wcif =>
     return expectedCompetitorsByRound;
   }, {});
 
-const satisfiesAdvancementCondition = (result, advancementCondition, resultCount) => {
-  const { type, level } = advancementCondition;
-  if (type === 'ranking') return result.ranking <= level;
-  if (type === 'percent') return result.ranking <= Math.floor(resultCount * level * 0.01);
-  if (type === 'attemptResult') return result.attempts.some(attempt => attempt.result > 0 && attempt.result < level);
-  throw new Error(`Unrecognised AdvancementCondition type: '${type}'`);
-};
-
-export const advancingResults = (results, advancementCondition) => {
-  const sortedResults = sortBy(
-    results.filter(result => result.attempts.length > 0),
-    result => result.ranking
-  );
-  const maxAdvanceable = Math.floor(sortedResults.length * 0.75); /* See: https://www.worldcubeassociation.org/regulations/#9p1 */
-  const firstNonAdvancingRank = sortedResults[maxAdvanceable].ranking;
-  /* Note: this ensures that people who tied either advance altogether or not. */
-  return sortedResults
-    .filter(result => result.ranking < firstNonAdvancingRank)
-    .filter(result => satisfiesAdvancementCondition(result, advancementCondition, sortedResults.length));
-};
-
+/* Returns competitors for the given round sorted from worst to best. */
 export const competitorsForRound = (wcif, roundId) => {
   const { eventId, roundNumber } = parseActivityCode(roundId);
+  const round = roundById(wcif, roundId);
+  const competitorsInRound = round.results.map(({ personId }) => personById(wcif, personId));
   if (roundNumber === 1) {
-    return sortByArray(
-      acceptedPeopleRegisteredForEvent(wcif, eventId),
-      competitor => bestAverageAndSingle(competitor, eventId).map(result => -result)
+    /* For first rounds, if there are no empty results to use, get whoever registered for the given event. */
+    const competitors =
+      competitorsInRound.length > 0
+        ? competitorsInRound
+        : acceptedPeopleRegisteredForEvent(wcif, eventId);
+    return sortByArray(competitors, competitor =>
+      bestAverageAndSingle(competitor, eventId).map(result => -result)
     );
+  } else if (competitorsInRound.length > 0) {
+    const previous = previousRound(wcif, roundId);
+    return sortBy(competitorsInRound, person => {
+      const previousResult = previous.results.find(
+        result => result.personId === person.registrantId
+      );
+      return -previousResult.ranking;
+    });
   } else {
-    const previousRound = wcif.events
-      .find(event => event.id === eventId).rounds
-      .find(round => parseActivityCode(round.id).roundNumber === roundNumber - 1);
-    const { results, advancementCondition } = previousRound;
-    if (results.length === 0) return null;
-    return sortBy(advancingResults(results, advancementCondition), result => -result.ranking)
-      .map(result => wcif.persons.find(person => person.registrantId === result.personId));
+    return null;
   }
 };
 

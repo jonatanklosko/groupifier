@@ -87,7 +87,7 @@ export const Round = attributes => ({
 
 export const Result = attributes => {
   const { personId, ranking } = attributes;
-  if (!personId || !ranking) throw new Error('Result requires personId and ranking.');
+  if (!personId) throw new Error('Result requires personId.');
   return {
     attempts: [
       { result: ranking * 200 },

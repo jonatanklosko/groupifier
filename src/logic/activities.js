@@ -169,12 +169,22 @@ export const groupActivitiesAssigned = (wcif, roundId) =>
   );
 
 export const roundsWithoutResults = wcif =>
-  flatMap(wcif.events, event => event.rounds).filter(round => round.results.length === 0);
+  flatMap(wcif.events, event => event.rounds).filter(round =>
+    round.results.length === 0 || round.results.every(result => result.attempts.length === 0)
+  );
 
-export const roundsMissingResults = wcif =>
-  wcif.events
-    .map(event => event.rounds.find(round => round.results.length === 0))
-    .filter(round => round);
+/* Round is missing results if it has all results empty
+   or it's the first round and has no results at all.
+   In other words no one's competed in such round, but we know who should compete in it. */
+const roundsMissingResults = wcif =>
+  wcif.events.map(event =>
+    event.rounds.find(round => {
+      const { roundNumber } = parseActivityCode(round.id);
+      return (round.results.length === 0 && roundNumber === 1)
+          || (round.results.length > 0 && round.results.every(result => result.attempts.length === 0));
+    })
+  )
+  .filter(round => round);
 
 export const roundsMissingAssignments = wcif =>
   roundsMissingResults(wcif)
