@@ -30,6 +30,19 @@ export const initializeAuth = () => {
   if (hashParams.has('access_token')) {
     window.location.hash = '';
   }
+
+  /* Check if we know what path to redirect to (after OAuth redirect). */
+  const redirectPath = localStorage.getItem(localStorageKey('redirectPath'));
+  if (redirectPath) {
+    window.location.hash = redirectPath;
+    localStorage.removeItem(localStorageKey('redirectPath'));
+  }
+  /* If non-signed in user tries accessing a competition path, redirect to OAuth sign in straightaway. */
+  const path = window.location.hash.replace(/^#/, '');
+  if (path.startsWith('/competitions') && !isSignedIn()) {
+    localStorage.setItem(localStorageKey('redirectPath'), path);
+    signIn();
+  }
 };
 
 export const wcaAccessToken = () =>
