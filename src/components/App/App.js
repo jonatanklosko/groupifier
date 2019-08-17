@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import indigo from '@material-ui/core/colors/indigo';
 import grey from '@material-ui/core/colors/grey';
 
+import history from '../../logic/history';
 import Competition from '../Competition/Competition';
 import CompetitionList from '../CompetitionList/CompetitionList';
 import Footer from '../Footer/Footer';
@@ -44,7 +45,7 @@ export default class App extends Component {
   render() {
     const { isSignedIn } = this.state;
     return (
-      <Router>
+      <Router history={history}>
         <MuiThemeProvider theme={theme}>
           <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
             <CssBaseline />

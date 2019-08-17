@@ -1,4 +1,4 @@
-import { WCA_ORIGIN, WCA_OAUTH_CLIENT_ID } from './wca-env';
+import { WCA_ORIGIN, WCA_OAUTH_CLIENT_ID, PRODUCTION } from './wca-env';
 
 /* Use separate set of keys for each OAuth client (e.g. for WCA production and staging). */
 const localStorageKey = key => `GroupifierNext.${WCA_OAUTH_CLIENT_ID}.${key}`;
@@ -59,11 +59,8 @@ export const signIn = () => {
 };
 
 const oauthRedirectUri = () => {
-  const { origin, pathname, search } = window.location;
-  const searchParams = new URLSearchParams(search);
-  const staging = searchParams.get('staging');
-  const appUri = `${origin}${pathname}`.replace(/\/$/, '');
-  return staging ? `${appUri}?staging=true` : appUri;
+  const appUri = window.location.origin;
+  return PRODUCTION ? appUri : `${appUri}?staging=true`;
 };
 
 export const signOut = () =>
