@@ -16,7 +16,6 @@ import { getWcif } from '../../logic/wca-api';
 import { sortWcifEvents } from '../../logic/events';
 import { updateIn } from '../../logic/utils';
 import { validateWcif } from '../../logic/wcif-validation';
-import { __withCubecompsIds__ } from '../../logic/__cubecomps__';
 
 export default class Competition extends Component {
   state = {
@@ -28,7 +27,6 @@ export default class Competition extends Component {
   componentDidMount() {
     getWcif(this.props.match.params.competitionId)
       .then(wcif => updateIn(wcif, ['events'], sortWcifEvents)) /* Sort events, so that we don't need to remember about this everywhere. */
-      .then(__withCubecompsIds__)
       .then(wcif => this.setState({ wcif, loading: false, errors: validateWcif(wcif) }))
       .catch(error => this.setState({ errors: [error.message], loading: false }))
   }
