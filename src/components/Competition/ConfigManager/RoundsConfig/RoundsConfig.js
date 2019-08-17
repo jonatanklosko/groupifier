@@ -8,7 +8,8 @@ import Typography from '@material-ui/core/Typography';
 
 import RoundsNavigation from '../../../common/RoundsNavigation/RoundsNavigation';
 import RoundConfig from '../RoundConfig/RoundConfig';
-import { populateRoundActivitiesConfig, anyActivityConfig, hasDistributedAttempts } from '../../../../logic/activities';
+import { populateRoundActivitiesConfig, anyActivityConfig, hasDistributedAttempts, activitiesWithUnpopulatedConfig, activityCodeToName } from '../../../../logic/activities';
+import { uniq } from '../../../../logic/utils';
 
 export default class RoundsConfig extends Component {
   constructor(props) {
@@ -34,11 +35,22 @@ export default class RoundsConfig extends Component {
     const { wcif } = this.props;
     const events = wcif.events.filter(event => !hasDistributedAttempts(event.id));
 
-    return anyActivityConfig(wcif) ? (
+    const activityCodesMissingConfig = uniq(
+      activitiesWithUnpopulatedConfig(wcif).map(activity => activity.activityCode)
+    );
+
+    return activityCodesMissingConfig.length === 0 ? (
       <RoundsNavigation events={events} render={this.renderRound} />
     ) : (
       <Paper style={{ padding: 16 }}>
-        <Typography variant="h5">Generate configuration</Typography>
+        <Typography variant="h5">
+          {anyActivityConfig(wcif) ? (
+            `Generate missing configuration for
+            ${activityCodesMissingConfig.map(activityCodeToName).join(', ')}`
+          ) : (
+            `Generate initial configuration`
+          )}
+        </Typography>
         <Grid container direction="column">
           <Grid item style={{ margin: '0.5em 0' }}>
             <Typography variant="body1">
