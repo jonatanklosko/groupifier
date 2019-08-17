@@ -28,7 +28,7 @@ export default class RoundWithGroups extends Component {
       <ExpansionPanel
         onChange={this.handlePanelChange}
         expanded={expanded}
-        CollapseProps={{ onEntered: this.scrollToElement }}
+        TransitionProps={{ onEntered: this.scrollToElement }}
       >
         <ExpansionPanelSummary expandIcon={<Icon>expand_more</Icon>}>
           <Typography variant="subtitle1">

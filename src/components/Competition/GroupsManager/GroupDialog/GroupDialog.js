@@ -37,7 +37,7 @@ export default class GroupDialog extends Component {
       <Dialog open={open} onClose={onClose} maxWidth={false}>
         <DialogTitle>{activityCodeToName(groupActivity.activityCode)}</DialogTitle>
         <DialogContent>
-          <Grid container spacing={16}>
+          <Grid container spacing={1}>
             {rolesWithPeople.map(([role, people]) => (
               <Grid item xs={12} sm={6} md key={role.id}>
                 <Typography variant="subtitle2">{role.label}</Typography>

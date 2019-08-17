@@ -56,7 +56,7 @@ export default class ConfigManager extends Component {
     const wcifConfigComplete = roomsConfigComplete(localWcif) && activitiesConfigComplete(localWcif);
 
     return (
-      <Grid container spacing={8} justify="flex-end">
+      <Grid container spacing={1} justify="flex-end">
         <Grid item xs={12}>
           <AppBar position="static" color="default">
             <Tabs value={tabValue} onChange={this.handleTabChange} centered>

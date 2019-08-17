@@ -27,7 +27,7 @@ export default class RoundsNavigation extends Component {
     const selectedEvent = events.find(event => event.id === selectedEventId);
 
     return (
-      <Grid container spacing={8} justify="flex-end">
+      <Grid container spacing={1} justify="flex-end">
         <Grid item xs={12}>
           <EventSelect selected={selectedEventId} events={events} onChange={this.handleEventChange} />
         </Grid>

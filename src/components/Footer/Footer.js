@@ -1,11 +1,34 @@
 import React from 'react';
 import Icon from '@material-ui/core/Icon';
 import Grid from '@material-ui/core/Grid';
+import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
 import red from '@material-ui/core/colors/red'
+import grey from '@material-ui/core/colors/grey'
+import { makeStyles } from '@material-ui/core/styles';
 import { version } from '../../../package.json';
 
-import './Footer.css';
+const useStyles = makeStyles(theme => ({
+  root: {
+    padding: theme.spacing(2),
+  },
+  icon: {
+    verticalAlign: 'middle',
+    color: red[700],
+  },
+  grow: {
+    flexGrow: 1,
+  },
+  link: {
+    verticalAlign: 'middle',
+    fontWeight: 500,
+    color: grey['900'],
+    '&:hover': {
+      textDecoration: 'none',
+      opacity: 0.7,
+    },
+  },
+}));
 
 const links = [
   { text: 'Donate', url: 'https://ko-fi.com/jonatanklosko' },
@@ -15,26 +38,44 @@ const links = [
   { text: `v${version}`, url: 'https://github.com/jonatanklosko/groupifier-next' }
 ];
 
-const Footer = () => (
-  <Grid container className="footer">
-    <Grid item style={{ flexGrow: 1 }}>
-      <Typography>
-        Made with <Icon className="footer-icon" style={{ color: red[700] }}>favorite</Icon>
-        {' '}by <a href="https://github.com/jonatanklosko" target="_blank" rel="noopener noreferrer">Jonatan Kłosko</a>
-      </Typography>
-    </Grid>
-    <Grid item>
-      <Grid container spacing={8}>
-        {links.map(({ text, url }) => (
-          <Grid item key={text}>
-            <Typography>
-              <a href={url} target="_blank" rel="noopener noreferrer">{text}</a>
-            </Typography>
-          </Grid>
-        ))}
+const Footer = () => {
+  const classes = useStyles();
+  return (
+    <Grid container className={classes.root}>
+      <Grid item>
+        <Typography variant="body2">
+          Made with <Icon className={classes.icon}>favorite</Icon>
+          {' '}by{' '}
+          <Link
+            className={classes.link}
+            href="https://github.com/jonatanklosko"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Jonatan Kłosko
+          </Link>
+        </Typography>
+      </Grid>
+      <Grid item className={classes.grow} />
+      <Grid item>
+        <Grid container spacing={1}>
+          {links.map(({ text, url }) => (
+            <Grid item key={text}>
+              <Link
+                className={classes.link}
+                variant="body2"
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {text}
+              </Link>
+            </Grid>
+          ))}
+        </Grid>
       </Grid>
     </Grid>
-  </Grid>
-);
+  );
+};
 
 export default Footer;

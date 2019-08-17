@@ -44,7 +44,7 @@ export default class GroupsManager extends Component {
     const groupsCreated = allGroupsCreated(localWcif);
 
     return (
-      <Grid container spacing={8} justify="flex-end">
+      <Grid container spacing={1} justify="flex-end">
         <Grid item xs={12}>
           {!groupsCreated && (
             <SnackbarContent

@@ -79,7 +79,7 @@ export default class Scorecards extends Component {
             </ListItem>
           ))}
         </List>
-        <Grid container spacing={8}>
+        <Grid container spacing={1}>
           <Grid item>
             <Button onClick={this.handleScorecardsDownloadClick} disabled={selectedRounds.length === 0}>
               Scorecards

@@ -22,7 +22,7 @@ export default class RoundConfig extends PureComponent {
     );
 
     return (
-      <Grid container spacing={16}>
+      <Grid container spacing={1}>
         {activitiesWithRooms.map(([activity, room]) =>
           <Grid item xs key={activity.id}>
             <RoomName room={room} />

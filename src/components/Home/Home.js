@@ -16,7 +16,7 @@ const features = [
 ];
 
 const Home = () => (
-  <Grid container spacing={24} direction="column">
+  <Grid container spacing={1} direction="column">
     <Grid item>
       <Typography variant="h4">What is Groupifier?</Typography>
     </Grid>

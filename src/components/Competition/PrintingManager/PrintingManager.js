@@ -23,7 +23,7 @@ export default class PrintingManager extends Component {
     const { wcif } = this.props;
 
     return (
-      <Grid container spacing={8} justify="flex-end">
+      <Grid container spacing={1} justify="flex-end">
         <Grid item xs={12}>
           <AppBar position="static" color="default">
             <Tabs value={tabValue} onChange={this.handleTabChange} centered>

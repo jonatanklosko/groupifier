@@ -62,7 +62,7 @@ export default class GeneralConfig extends Component {
 
     return (
       <Paper style={{ padding: 16 }}>
-        <Grid container direction="column" spacing={16}>
+        <Grid container direction="column" spacing={1}>
           <Grid item>
             <Typography variant="h5">Assignments</Typography>
             <FormControl fullWidth>

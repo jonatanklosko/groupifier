@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { createMuiTheme } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
 import indigo from '@material-ui/core/colors/indigo';
 import grey from '@material-ui/core/colors/grey';
 
@@ -20,9 +21,6 @@ const theme = createMuiTheme({
     primary: indigo,
     secondary: grey
   },
-  typography: {
-    useNextVariants: true,
-  }
 });
 
 export default class App extends Component {
@@ -46,7 +44,7 @@ export default class App extends Component {
     const { isSignedIn } = this.state;
     return (
       <Router history={history}>
-        <MuiThemeProvider theme={theme}>
+        <ThemeProvider theme={theme}>
           <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
             <CssBaseline />
             <Header
@@ -72,7 +70,7 @@ export default class App extends Component {
             </Grid>
             <Footer />
           </div>
-        </MuiThemeProvider>
+        </ThemeProvider>
       </Router>
     );
   }

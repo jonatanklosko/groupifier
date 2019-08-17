@@ -88,11 +88,11 @@ export default class RolesManager extends Component {
     );
 
     return (
-      <Grid container spacing={8} justify="flex-end">
+      <Grid container spacing={1} justify="flex-end">
         <Grid item xs={12}>
           <Paper>
             <Toolbar>
-              <Grid container spacing={8} alignItems="flex-end">
+              <Grid container spacing={1} alignItems="flex-end">
                 <Grid item>
                   <TextField label="Search" value={searchString} onChange={this.handleSearchChange} />
                 </Grid>
@@ -106,10 +106,17 @@ export default class RolesManager extends Component {
             <div style={{ overflowX: 'auto' }}>
               <Table>
                 <TableHead>
-                  <TableRow>
+                  <TableRow style={{ whiteSpace: 'nowrap' }}>
                     <TableCell>Person</TableCell>
                     {roles.map(role =>
-                      <TableCell key={role.id} padding="none" style={{ textAlign: 'center' }}>{role.name}</TableCell>
+                      <TableCell
+                        key={role.id}
+                        padding="none"
+                        align="center"
+                        style={{ minWidth: 100 }}
+                      >
+                        {role.name}
+                      </TableCell>
                     )}
                   </TableRow>
                 </TableHead>
@@ -118,7 +125,7 @@ export default class RolesManager extends Component {
                     <TableRow key={person.wcaUserId} hover>
                       <TableCell>{person.name}</TableCell>
                       {roles.map(role =>
-                        <TableCell key={role.id} padding="checkbox" style={{ textAlign: 'center' }}>
+                        <TableCell key={role.id} padding="checkbox" align="center">
                           <Checkbox
                             checked={person.roles.includes(role.id)}
                             onChange={this.handleRoleChange.bind(this, role.id, person.wcaUserId)}
@@ -141,12 +148,12 @@ export default class RolesManager extends Component {
           </Paper>
         </Grid>
         <Grid item xs={12}>
-          <Typography variant="caption">
-            Use this section only if you have a group of staff among competitors.
-            People with the given role will be prioritized during task assignment.
+          <Typography variant="caption" component="div">
+            {`Use this section only if you have a group of staff among competitors.
+              People with the given role will be prioritized during task assignment.`}
           </Typography>
           <Typography variant="caption">
-            Note: if you don't set any roles, people will still be assigned tasks.
+            {`Note: if you don't set any roles, people will still be assigned tasks if configured to.`}
           </Typography>
         </Grid>
         <Grid item>
