@@ -6,10 +6,10 @@ font_files=(
   https://github.com/google/fonts/raw/master/apache/roboto/Roboto-Italic.ttf
   https://github.com/google/fonts/raw/master/apache/roboto/Roboto-MediumItalic.ttf
   https://github.com/layerssss/wqy/raw/gh-pages/fonts/WenQuanYiZenHei.ttf
-  https://github.com/googlei18n/noto-fonts/raw/master/hinted/NotoSansThaiUI-Regular.ttf
-  https://github.com/googlei18n/noto-fonts/raw/master/hinted/NotoSansArabicUI-Regular.ttf
-  https://github.com/googlei18n/noto-fonts/raw/master/hinted/NotoSansGeorgian-Regular.ttf
-  https://github.com/googlei18n/noto-fonts/raw/master/hinted/NotoSansArmenian-Regular.ttf
+  https://github.com/googlei18n/noto-fonts/raw/master/hinted/NotoSansThaiUI/NotoSansThaiUI-Regular.ttf
+  https://github.com/googlei18n/noto-fonts/raw/master/hinted/NotoSansArabicUI/NotoSansArabicUI-Regular.ttf
+  https://github.com/googlei18n/noto-fonts/raw/master/hinted/NotoSansGeorgian/NotoSansGeorgian-Regular.ttf
+  https://github.com/googlei18n/noto-fonts/raw/master/hinted/NotoSansArmenian/NotoSansArmenian-Regular.ttf
 )
 target="$(pwd)/public/vfs-fonts.bundle.v2.json"
 tmpdir=$(mktemp -d)
