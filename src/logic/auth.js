@@ -34,11 +34,11 @@ export const initializeAuth = () => {
   /* Check if we know what path to redirect to (after OAuth redirect). */
   const redirectPath = localStorage.getItem(localStorageKey('redirectPath'));
   if (redirectPath) {
-    window.location.hash = redirectPath;
+    window.history.replaceState(null, null, redirectPath);
     localStorage.removeItem(localStorageKey('redirectPath'));
   }
   /* If non-signed in user tries accessing a competition path, redirect to OAuth sign in straightaway. */
-  const path = window.location.hash.replace(/^#/, '');
+  const path = window.location.pathname;
   if (path.startsWith('/competitions') && !isSignedIn()) {
     localStorage.setItem(localStorageKey('redirectPath'), path);
     signIn();
@@ -55,7 +55,7 @@ export const signIn = () => {
     redirect_uri: oauthRedirectUri(),
     scope: 'manage_competitions'
   });
-  window.location = `${WCA_ORIGIN}/oauth/authorize?${params.toString()}`
+  window.location = `${WCA_ORIGIN}/oauth/authorize?${params.toString()}`;
 };
 
 const oauthRedirectUri = () => {
