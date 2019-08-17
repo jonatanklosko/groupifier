@@ -1,4 +1,4 @@
-/* Customize react router history to always preserve staging query parameter on location change. */
+/* Customized history preserving `staging` query parameter on location change. */
 
 import { createBrowserHistory } from 'history'
 

@@ -1,4 +1,5 @@
-import { WCA_ORIGIN, WCA_OAUTH_CLIENT_ID, PRODUCTION } from './wca-env';
+import { WCA_ORIGIN, WCA_OAUTH_CLIENT_ID } from './wca-env';
+import history from './history';
 
 /* Use separate set of keys for each OAuth client (e.g. for WCA production and staging). */
 const localStorageKey = key => `GroupifierNext.${WCA_OAUTH_CLIENT_ID}.${key}`;
@@ -9,7 +10,7 @@ const localStorageKey = key => `GroupifierNext.${WCA_OAUTH_CLIENT_ID}.${key}`;
  * Should be called on application initialization (before any kind of router takes over the location).
  */
 export const initializeAuth = () => {
-  const hash = window.location.hash.replace(/^\W*/, '');
+  const hash = window.location.hash.replace(/^#/, '');
   const hashParams = new URLSearchParams(hash);
   if (hashParams.has('access_token')) {
     localStorage.setItem(localStorageKey('accessToken'), hashParams.get('access_token'));
@@ -26,15 +27,15 @@ export const initializeAuth = () => {
   if (expirationTime && new Date() >= new Date(expirationTime)) {
     signOut();
   }
-  /* Clear the hash only if there is a token, otherwise it may be a router path. */
+  /* Clear the hash if there is a token. */
   if (hashParams.has('access_token')) {
-    window.location.hash = '';
+    history.replace({ ...history.location, hash: null })
   }
 
   /* Check if we know what path to redirect to (after OAuth redirect). */
   const redirectPath = localStorage.getItem(localStorageKey('redirectPath'));
   if (redirectPath) {
-    window.history.replaceState(null, null, redirectPath);
+    history.replace(redirectPath);
     localStorage.removeItem(localStorageKey('redirectPath'));
   }
   /* If non-signed in user tries accessing a competition path, redirect to OAuth sign in straightaway. */
@@ -60,7 +61,9 @@ export const signIn = () => {
 
 const oauthRedirectUri = () => {
   const appUri = window.location.origin;
-  return PRODUCTION ? appUri : `${appUri}?staging=true`;
+  const searchParams = new URLSearchParams(window.location.search);
+  const stagingParam = searchParams.has('staging');
+  return stagingParam ? `${appUri}?staging=true` : appUri;
 };
 
 export const signOut = () =>
