@@ -12,7 +12,7 @@ import { roomsConfigComplete, activitiesConfigComplete, anyCompetitorAssignment 
 const menuItems = [
   { path: '/roles', text: "Edit roles", icon: 'perm_contact_calendar', enabled: wcif => true },
   { path: '/config', text: "Configure", icon: 'settings', enabled: wcif => true },
-  { path: '/groups', text: "Manage groups", icon: 'people', enabled: wcif => (roomsConfigComplete(wcif) && activitiesConfigComplete(wcif)) || anyCompetitorAssignment(wcif) },
+  { path: '/groups', text: "Manage groups", icon: 'people', enabled: wcif => roomsConfigComplete(wcif) && activitiesConfigComplete(wcif) },
   { path: '/printing', text: "Print documents", icon: 'print', enabled: wcif => anyCompetitorAssignment(wcif) }
 ];
 

@@ -96,6 +96,8 @@ export const populateRoundActivitiesConfig = (wcif, expectedCompetitorsByRound, 
       const { roundNumber } = parseActivityCode(round.id);
       const expectedRoundCompetitors = expectedCompetitorsByRound[round.id].length;
       const activities = roundActivities(wcif, round.id).filter(shouldHaveGroups);
+      const alreadyHaveConfig = activities.every(activity => getExtensionData('ActivityConfig', activity));
+      if (alreadyHaveConfig) return activities;
       const capacities = scaleToOne(activities.map(activity =>
         stationsByActivity(wcif, activity.id) * activityDuration(activity)
       ));
@@ -123,6 +125,13 @@ export const shouldHaveGroups = activity => {
 export const anyActivityConfig = wcif =>
   rooms(wcif).some(room =>
     room.activities.some(activity => getExtensionData('ActivityConfig', activity))
+  );
+
+export const activitiesWithUnpopulatedConfig = wcif =>
+  flatMap(rooms(wcif), room =>
+    room.activities
+      .filter(shouldHaveGroups)
+      .filter(activity => !getExtensionData('ActivityConfig', activity))
   );
 
 export const activitiesConfigComplete = wcif =>
