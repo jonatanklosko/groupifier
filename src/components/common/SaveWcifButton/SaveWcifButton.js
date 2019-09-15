@@ -6,7 +6,13 @@ import Snackbar from '@material-ui/core/Snackbar';
 
 import { saveWcifChanges } from '../../../logic/wca-api';
 
-const SaveWcifButton = ({ wcif, updatedWcif, onWcifUpdate, disabled, history }) => {
+const SaveWcifButton = ({
+  wcif,
+  updatedWcif,
+  onWcifUpdate,
+  disabled,
+  history,
+}) => {
   const [saving, setSaving] = useState(false);
   const [failed, setFailed] = useState(false);
 
@@ -36,9 +42,16 @@ const SaveWcifButton = ({ wcif, updatedWcif, onWcifUpdate, disabled, history }) 
         autoHideDuration={5000}
         onClose={() => setFailed(false)}
       />
-      <Button variant="contained" color="primary" onClick={handleSaveClick} disabled={disabled || saving}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleSaveClick}
+        disabled={disabled || saving}
+      >
         <span style={saving ? { visibility: 'hidden' } : {}}>Save</span>
-        {saving && <CircularProgress size={20} style={{ position: 'absolute' }} />}
+        {saving && (
+          <CircularProgress size={20} style={{ position: 'absolute' }} />
+        )}
       </Button>
     </Fragment>
   );

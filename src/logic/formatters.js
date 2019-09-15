@@ -9,7 +9,7 @@ export const cutoffToString = (cutoff, eventId) => {
   } else {
     return centisecondsToClockFormat(cutoff.attemptResult);
   }
-}
+};
 
 export const timeLimitToString = timeLimit => {
   const { centiseconds, cumulativeRoundIds } = timeLimit;
@@ -25,7 +25,7 @@ export const timeLimitToString = timeLimit => {
     });
     return `${clockFormat} total for ${roundStrings.join(', ')}`;
   }
-}
+};
 
 const multibldAttemptResultToPoints = attemptResult =>
   99 - (Math.floor(attemptResult / 10000000) % 100);
@@ -33,5 +33,8 @@ const multibldAttemptResultToPoints = attemptResult =>
 const centisecondsToClockFormat = centiseconds => {
   const date = new Date(null);
   date.setUTCMilliseconds(centiseconds * 10);
-  return date.toISOString().substr(11, 11).replace(/^[0:]*(?!\.)/g, '');
+  return date
+    .toISOString()
+    .substr(11, 11)
+    .replace(/^[0:]*(?!\.)/g, '');
 };

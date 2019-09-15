@@ -13,7 +13,11 @@ const RoundsNavigation = ({ events, render }) => {
   return (
     <Grid container spacing={1}>
       <Grid item xs={12}>
-        <EventSelect selected={selectedEventId} events={events} onChange={setSelectedEventId} />
+        <EventSelect
+          selected={selectedEventId}
+          events={events}
+          onChange={setSelectedEventId}
+        />
       </Grid>
       <Grid item xs={12}>
         {selectedEvent.rounds.map(round => (

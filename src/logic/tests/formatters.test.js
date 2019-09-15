@@ -29,12 +29,20 @@ describe('timeLimitToString', () => {
   });
 
   test('makes it clear that a limit is cumulative for all sovles', () => {
-    const timeLimit = { centiseconds: 60 * 100, cumulativeRoundIds: ['333bf-r1'] };
+    const timeLimit = {
+      centiseconds: 60 * 100,
+      cumulativeRoundIds: ['333bf-r1'],
+    };
     expect(timeLimitToString(timeLimit)).toEqual('1:00.00 in total');
   });
 
   test('includes list of short round names for multi-round cumulative limit', () => {
-    const timeLimit = { centiseconds: 1.5 * 3600 * 100, cumulativeRoundIds: ['444bf-r1', '555bf-r1'] };
-    expect(timeLimitToString(timeLimit)).toEqual('1:30:00.00 total for 4BLD R1, 5BLD R1');
+    const timeLimit = {
+      centiseconds: 1.5 * 3600 * 100,
+      cumulativeRoundIds: ['444bf-r1', '555bf-r1'],
+    };
+    expect(timeLimitToString(timeLimit)).toEqual(
+      '1:30:00.00 total for 4BLD R1, 5BLD R1'
+    );
   });
 });

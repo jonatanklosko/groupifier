@@ -4,7 +4,9 @@ export const suggestedGroupCount = (competitors, stations, roundNumber) => {
   /* We calculate the number of perfectly-sized groups, and round it up starting from x.1,
      this way we don't end up with much more than the perfect amount of people in a single group.
      Having more small groups is preferred over having fewer big groups. */
-  const calculatedGroupCount = Math.round(competitors / preferredGroupSize + 0.4);
+  const calculatedGroupCount = Math.round(
+    competitors / preferredGroupSize + 0.4
+  );
   /* Suggest at least 2 groups for first rounds, so that there are people to scramble. */
   return Math.max(calculatedGroupCount, roundNumber === 1 ? 2 : 1);
 };

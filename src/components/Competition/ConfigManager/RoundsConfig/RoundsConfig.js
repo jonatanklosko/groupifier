@@ -8,7 +8,13 @@ import Typography from '@material-ui/core/Typography';
 
 import RoundsNavigation from '../../../common/RoundsNavigation/RoundsNavigation';
 import RoundConfig from '../RoundConfig/RoundConfig';
-import { populateRoundActivitiesConfig, anyActivityConfig, hasDistributedAttempts, activitiesWithUnpopulatedConfig, activityCodeToName } from '../../../../logic/activities';
+import {
+  populateRoundActivitiesConfig,
+  anyActivityConfig,
+  hasDistributedAttempts,
+  activitiesWithUnpopulatedConfig,
+  activityCodeToName,
+} from '../../../../logic/activities';
 import { uniq } from '../../../../logic/utils';
 
 const RoundsConfig = ({ wcif, onWcifChange, expectedCompetitorsByRound }) => {
@@ -30,26 +36,27 @@ const RoundsConfig = ({ wcif, onWcifChange, expectedCompetitorsByRound }) => {
     activitiesWithUnpopulatedConfig(wcif).map(activity => activity.activityCode)
   );
 
-  const renderRound = useCallback(roundId => (
-    <RoundConfig
-      roundId={roundId}
-      expectedCompetitorsByRound={expectedCompetitorsByRound}
-      wcif={wcif}
-      onWcifChange={onWcifChange}
-    />
-  ), [wcif, onWcifChange, expectedCompetitorsByRound]);
+  const renderRound = useCallback(
+    roundId => (
+      <RoundConfig
+        roundId={roundId}
+        expectedCompetitorsByRound={expectedCompetitorsByRound}
+        wcif={wcif}
+        onWcifChange={onWcifChange}
+      />
+    ),
+    [wcif, onWcifChange, expectedCompetitorsByRound]
+  );
 
   return activityCodesMissingConfig.length === 0 ? (
     <RoundsNavigation events={events} render={renderRound} />
   ) : (
     <Paper style={{ padding: 16 }}>
       <Typography variant="h5">
-        {anyActivityConfig(wcif) ? (
-          `Generate missing configuration for
+        {anyActivityConfig(wcif)
+          ? `Generate missing configuration for
           ${activityCodesMissingConfig.map(activityCodeToName).join(', ')}`
-        ) : (
-          `Generate initial configuration`
-        )}
+          : `Generate initial configuration`}
       </Typography>
       <Grid container direction="column">
         <Grid item style={{ margin: '0.5em 0' }}>
@@ -57,7 +64,7 @@ const RoundsConfig = ({ wcif, onWcifChange, expectedCompetitorsByRound }) => {
             Which of the following roles would you like to assign?
           </Typography>
         </Grid>
-        {['Scramblers', 'Runners', 'Judges'].map(roleLabel =>
+        {['Scramblers', 'Runners', 'Judges'].map(roleLabel => (
           <Grid item key={roleLabel}>
             <FormControlLabel
               control={
@@ -73,11 +80,9 @@ const RoundsConfig = ({ wcif, onWcifChange, expectedCompetitorsByRound }) => {
               label={roleLabel}
             />
           </Grid>
-        )}
+        ))}
       </Grid>
-      <Button onClick={handleNextClick}>
-        Next
-      </Button>
+      <Button onClick={handleNextClick}>Next</Button>
     </Paper>
   );
 };

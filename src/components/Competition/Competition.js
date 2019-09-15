@@ -34,7 +34,9 @@ const Competition = ({ match }) => {
       .finally(() => setLoading(false));
   }, [match.params.competitionId]);
 
-  return loading ? <LinearProgress /> : (
+  return loading ? (
+    <LinearProgress />
+  ) : (
     <div>
       {errors.length === 0 ? (
         <Fragment>
@@ -42,21 +44,35 @@ const Competition = ({ match }) => {
             {wcif.name}
           </Typography>
           <Switch>
-            <Route exact path={match.url} render={
-              props => <CompetitionMenu {...props} wcif={wcif} baseUrl={match.url} />
-            } />
-            <Route path={`${match.url}/roles`} render={
-              props => <RolesManager {...props} wcif={wcif} onWcifUpdate={setWcif} />
-            } />
-            <Route path={`${match.url}/config`} render={
-              props => <ConfigManager {...props} wcif={wcif} onWcifUpdate={setWcif} />
-            } />
-            <Route path={`${match.url}/groups`} render={
-              props => <GroupsManager {...props} wcif={wcif} onWcifUpdate={setWcif} />
-            } />
-            <Route path={`${match.url}/printing`} render={
-              props => <PrintingManager {...props} wcif={wcif} />
-            } />
+            <Route
+              exact
+              path={match.url}
+              render={props => (
+                <CompetitionMenu {...props} wcif={wcif} baseUrl={match.url} />
+              )}
+            />
+            <Route
+              path={`${match.url}/roles`}
+              render={props => (
+                <RolesManager {...props} wcif={wcif} onWcifUpdate={setWcif} />
+              )}
+            />
+            <Route
+              path={`${match.url}/config`}
+              render={props => (
+                <ConfigManager {...props} wcif={wcif} onWcifUpdate={setWcif} />
+              )}
+            />
+            <Route
+              path={`${match.url}/groups`}
+              render={props => (
+                <GroupsManager {...props} wcif={wcif} onWcifUpdate={setWcif} />
+              )}
+            />
+            <Route
+              path={`${match.url}/printing`}
+              render={props => <PrintingManager {...props} wcif={wcif} />}
+            />
           </Switch>
         </Fragment>
       ) : (

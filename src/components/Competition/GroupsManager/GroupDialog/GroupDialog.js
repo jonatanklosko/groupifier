@@ -22,17 +22,20 @@ const roles = [
 ];
 
 const GroupDialog = ({ groupActivity, wcif, onClose }) => {
-  const rolesWithPeople = roles.map(role => [
-    role,
-    wcif.persons.filter(person =>
-      hasAssignment(person, groupActivity.id, role.id)
-    )
-  ])
-  .filter(([role, people]) => people.length > 0);
+  const rolesWithPeople = roles
+    .map(role => [
+      role,
+      wcif.persons.filter(person =>
+        hasAssignment(person, groupActivity.id, role.id)
+      ),
+    ])
+    .filter(([role, people]) => people.length > 0);
 
   return (
     <Dialog open={true} onClose={onClose} maxWidth={false}>
-      <DialogTitle>{activityCodeToName(groupActivity.activityCode)}</DialogTitle>
+      <DialogTitle>
+        {activityCodeToName(groupActivity.activityCode)}
+      </DialogTitle>
       <DialogContent>
         <Grid container spacing={1}>
           {rolesWithPeople.map(([role, people]) => (
@@ -49,7 +52,9 @@ const GroupDialog = ({ groupActivity, wcif, onClose }) => {
           ))}
           {rolesWithPeople.length === 0 && (
             <Grid item>
-              <Typography variant="body2">No assignments for this round.</Typography>
+              <Typography variant="body2">
+                No assignments for this round.
+              </Typography>
             </Grid>
           )}
         </Grid>

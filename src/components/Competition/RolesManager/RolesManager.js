@@ -35,12 +35,20 @@ const RolesManager = ({ wcif, onWcifUpdate }) => {
   const [page, setPage] = useState(0);
   const [searchString, setSearchString] = useState('');
 
-  const allSortedPeople = sortBy(acceptedPeople(localWcif), person => person.name);
-  const people = !searchString ? allSortedPeople : allSortedPeople.filter(person =>
-    searchString.split(/\s*,\s*/).some(searchPart =>
-      searchPart && person.name.match(new RegExp(searchPart, 'i'))
-    )
+  const allSortedPeople = sortBy(
+    acceptedPeople(localWcif),
+    person => person.name
   );
+  const people = !searchString
+    ? allSortedPeople
+    : allSortedPeople.filter(person =>
+        searchString
+          .split(/\s*,\s*/)
+          .some(
+            searchPart =>
+              searchPart && person.name.match(new RegExp(searchPart, 'i'))
+          )
+      );
 
   const handleRoleChange = (roleId, personWcaUserId, event) => {
     const { checked } = event.target;
@@ -48,19 +56,25 @@ const RolesManager = ({ wcif, onWcifUpdate }) => {
       ...localWcif,
       persons: localWcif.persons.map(person =>
         person.wcaUserId === personWcaUserId
-          ? { ...person, roles: checked ? [...person.roles, roleId] : difference(person.roles, [roleId]) }
+          ? {
+              ...person,
+              roles: checked
+                ? [...person.roles, roleId]
+                : difference(person.roles, [roleId]),
+            }
           : person
-      )
+      ),
     });
-  }
+  };
 
   const clearRoles = () => {
     const roleIds = roles.map(role => role.id);
     setLocalWcif({
       ...localWcif,
-      persons: localWcif.persons.map(person =>
-        ({ ...person, roles: difference(person.roles, roleIds)})
-      )
+      persons: localWcif.persons.map(person => ({
+        ...person,
+        roles: difference(person.roles, roleIds),
+      })),
     });
   };
 
@@ -92,7 +106,7 @@ const RolesManager = ({ wcif, onWcifUpdate }) => {
               <TableHead>
                 <TableRow style={{ whiteSpace: 'nowrap' }}>
                   <TableCell>Person</TableCell>
-                  {roles.map(role =>
+                  {roles.map(role => (
                     <TableCell
                       key={role.id}
                       padding="none"
@@ -101,23 +115,33 @@ const RolesManager = ({ wcif, onWcifUpdate }) => {
                     >
                       {role.name}
                     </TableCell>
-                  )}
+                  ))}
                 </TableRow>
               </TableHead>
               <TableBody>
-                {people.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(person =>
-                  <TableRow key={person.wcaUserId} hover>
-                    <TableCell>{person.name}</TableCell>
-                    {roles.map(role =>
-                      <TableCell key={role.id} padding="checkbox" align="center">
-                        <Checkbox
-                          checked={person.roles.includes(role.id)}
-                          onChange={handleRoleChange.bind(this, role.id, person.wcaUserId)}
-                        />
-                      </TableCell>
-                    )}
-                  </TableRow>
-                )}
+                {people
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map(person => (
+                    <TableRow key={person.wcaUserId} hover>
+                      <TableCell>{person.name}</TableCell>
+                      {roles.map(role => (
+                        <TableCell
+                          key={role.id}
+                          padding="checkbox"
+                          align="center"
+                        >
+                          <Checkbox
+                            checked={person.roles.includes(role.id)}
+                            onChange={handleRoleChange.bind(
+                              this,
+                              role.id,
+                              person.wcaUserId
+                            )}
+                          />
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </div>
@@ -141,7 +165,11 @@ const RolesManager = ({ wcif, onWcifUpdate }) => {
         </Typography>
       </Grid>
       <Grid item>
-        <Button variant="contained" component={Link} to={`/competitions/${localWcif.id}`}>
+        <Button
+          variant="contained"
+          component={Link}
+          to={`/competitions/${localWcif.id}`}
+        >
           Cancel
         </Button>
       </Grid>
@@ -151,7 +179,11 @@ const RolesManager = ({ wcif, onWcifUpdate }) => {
         </Button>
       </Grid>
       <Grid item>
-        <SaveWcifButton wcif={wcif} updatedWcif={localWcif} onWcifUpdate={onWcifUpdate} />
+        <SaveWcifButton
+          wcif={wcif}
+          updatedWcif={localWcif}
+          onWcifUpdate={onWcifUpdate}
+        />
       </Grid>
     </Grid>
   );

@@ -12,7 +12,7 @@ const features = [
   'Supports multiple rooms/stages running simultaneously.',
   'Suggests number of groups and necessary roles, while leaving the final decision to the user.',
   'Once configured, creates groups and does its best to optimally assign people to these groups.',
-  'Generates documents like scorecards and competitor cards with task assignments.'
+  'Generates documents like scorecards and competitor cards with task assignments.',
 ];
 
 const Home = () => (
@@ -22,8 +22,8 @@ const Home = () => (
     </Grid>
     <Grid item>
       <Typography variant="subtitle1">
-        Task and group management tool for WCA competition organizers.
-        It's designed to be highly customizable and work well with complex schedules.
+        Task and group management tool for WCA competition organizers. It's
+        designed to be highly customizable and work well with complex schedules.
       </Typography>
     </Grid>
     <Grid item>
@@ -31,14 +31,14 @@ const Home = () => (
     </Grid>
     <Grid item>
       <List>
-        {features.map(feature =>
+        {features.map(feature => (
           <ListItem key={feature}>
             <ListItemIcon>
               <Icon>check</Icon>
             </ListItemIcon>
             <ListItemText primary={feature} />
           </ListItem>
-        )}
+        ))}
       </List>
     </Grid>
   </Grid>

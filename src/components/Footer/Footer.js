@@ -3,8 +3,8 @@ import Icon from '@material-ui/core/Icon';
 import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
-import red from '@material-ui/core/colors/red'
-import grey from '@material-ui/core/colors/grey'
+import red from '@material-ui/core/colors/red';
+import grey from '@material-ui/core/colors/grey';
 import { makeStyles } from '@material-ui/core/styles';
 import { version } from '../../../package.json';
 
@@ -32,10 +32,16 @@ const useStyles = makeStyles(theme => ({
 
 const links = [
   { text: 'Donate', url: 'https://ko-fi.com/jonatanklosko' },
-  { text: 'Guide', url: 'https://github.com/jonatanklosko/groupifier-next/wiki/Guide' },
+  {
+    text: 'Guide',
+    url: 'https://github.com/jonatanklosko/groupifier-next/wiki/Guide',
+  },
   { text: 'GitHub', url: 'https://github.com/jonatanklosko/groupifier-next' },
   { text: 'Contact', url: 'mailto:jonatanklosko@gmail.com' },
-  { text: `v${version}`, url: 'https://github.com/jonatanklosko/groupifier-next' }
+  {
+    text: `v${version}`,
+    url: 'https://github.com/jonatanklosko/groupifier-next',
+  },
 ];
 
 const Footer = () => {
@@ -44,8 +50,7 @@ const Footer = () => {
     <Grid container className={classes.root}>
       <Grid item>
         <Typography variant="body2">
-          Made with <Icon className={classes.icon}>favorite</Icon>
-          {' '}by{' '}
+          Made with <Icon className={classes.icon}>favorite</Icon> by{' '}
           <Link
             className={classes.link}
             href="https://github.com/jonatanklosko"

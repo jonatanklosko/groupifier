@@ -16,7 +16,10 @@ const RoomName = ({ room }) => {
   const classes = useStyles();
   return (
     <Typography variant="subtitle2">
-      <span className={classes.roomDot} style={{ backgroundColor: room.color }} />
+      <span
+        className={classes.roomDot}
+        style={{ backgroundColor: room.color }}
+      />
       <span>{room.name}</span>
     </Typography>
   );

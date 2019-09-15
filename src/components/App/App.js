@@ -67,7 +67,10 @@ const App = () => {
             <Grid item xs={12} md={8} xl={6} className={classes.main}>
               {signedIn ? (
                 <Switch>
-                  <Route path="/competitions/:competitionId" component={Competition} />
+                  <Route
+                    path="/competitions/:competitionId"
+                    component={Competition}
+                  />
                   <Route path="/competitions" component={CompetitionList} />
                   <Redirect to="/competitions" />
                 </Switch>

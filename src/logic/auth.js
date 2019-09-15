@@ -13,23 +13,33 @@ export const initializeAuth = () => {
   const hash = window.location.hash.replace(/^#/, '');
   const hashParams = new URLSearchParams(hash);
   if (hashParams.has('access_token')) {
-    localStorage.setItem(localStorageKey('accessToken'), hashParams.get('access_token'));
+    localStorage.setItem(
+      localStorageKey('accessToken'),
+      hashParams.get('access_token')
+    );
   }
   if (hashParams.has('expires_in')) {
     /* Expire the token 15 minutes before it actually does,
        this way it doesn't expire right after the user enters the page. */
     const expiresInSeconds = hashParams.get('expires_in') - 15 * 60;
-    const expirationTime = new Date(new Date().getTime() + expiresInSeconds * 1000);
-    localStorage.setItem(localStorageKey('expirationTime'), expirationTime.toISOString());
+    const expirationTime = new Date(
+      new Date().getTime() + expiresInSeconds * 1000
+    );
+    localStorage.setItem(
+      localStorageKey('expirationTime'),
+      expirationTime.toISOString()
+    );
   }
   /* If the token expired, sign the user out. */
-  const expirationTime = localStorage.getItem(localStorageKey('expirationTime'));
+  const expirationTime = localStorage.getItem(
+    localStorageKey('expirationTime')
+  );
   if (expirationTime && new Date() >= new Date(expirationTime)) {
     signOut();
   }
   /* Clear the hash if there is a token. */
   if (hashParams.has('access_token')) {
-    history.replace({ ...history.location, hash: null })
+    history.replace({ ...history.location, hash: null });
   }
 
   /* Check if we know what path to redirect to (after OAuth redirect). */
@@ -54,7 +64,7 @@ export const signIn = () => {
     client_id: WCA_OAUTH_CLIENT_ID,
     response_type: 'token',
     redirect_uri: oauthRedirectUri(),
-    scope: 'manage_competitions'
+    scope: 'manage_competitions',
   });
   window.location = `${WCA_ORIGIN}/oauth/authorize?${params.toString()}`;
 };

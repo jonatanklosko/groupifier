@@ -21,8 +21,8 @@ export const Competition = attributes => ({
     startDate: '2020-01-01',
     numberOfDays: 2,
     venues: [],
-    ...attributes.schedule
-  }
+    ...attributes.schedule,
+  },
 });
 
 export const Person = withId(id => attributes => ({
@@ -36,7 +36,7 @@ export const Person = withId(id => attributes => ({
   email: `person${id}@example.com`,
   avatar: {
     url: 'https://example.com/avatar.jpg',
-    thumbUrl: 'https://example.com/avatar-thumb.jpg'
+    thumbUrl: 'https://example.com/avatar-thumb.jpg',
   },
   roles: [],
   assignments: [],
@@ -48,18 +48,19 @@ export const Person = withId(id => attributes => ({
     status: 'accepted',
     guests: 0,
     comments: '',
-    ...attributes.registration
-  }
+    ...attributes.registration,
+  },
 }));
 
 export const PersonalBest = attributes => {
   const { eventId, worldRanking, type } = attributes;
-  if (!eventId || !worldRanking || !type) throw new Error('PersonalBest requires eventId, worldRanking and type.');
+  if (!eventId || !worldRanking || !type)
+    throw new Error('PersonalBest requires eventId, worldRanking and type.');
   return {
     best: worldRanking * 200,
     continentalRanking: worldRanking,
     nationalRanking: worldRanking,
-    ...attributes
+    ...attributes,
   };
 };
 
@@ -69,7 +70,7 @@ export const Event = attributes => ({
   competitorLimit: null,
   qualification: null,
   extensions: [],
-  ...attributes
+  ...attributes,
 });
 
 export const Round = attributes => ({
@@ -82,7 +83,7 @@ export const Round = attributes => ({
   scrambleSetCount: 1,
   scrambleSets: [],
   extensions: [],
-  ...attributes
+  ...attributes,
 });
 
 export const Result = attributes => {
@@ -94,9 +95,9 @@ export const Result = attributes => {
       { result: ranking * 205 },
       { result: ranking * 150 },
       { result: ranking * 300 },
-      { result: ranking * 101 }
+      { result: ranking * 101 },
     ],
-    ...attributes
+    ...attributes,
   };
 };
 
@@ -108,7 +109,7 @@ export const Venue = withId(id => attributes => ({
   timezone: 'UTC',
   rooms: [],
   extensions: [],
-  ...attributes
+  ...attributes,
 }));
 
 export const Room = withId(id => attributes => ({
@@ -117,7 +118,7 @@ export const Room = withId(id => attributes => ({
   color: '#000000',
   activities: [],
   extensions: [],
-  ...attributes
+  ...attributes,
 }));
 
 export const Activity = withId(id => attributes => ({
@@ -129,5 +130,5 @@ export const Activity = withId(id => attributes => ({
   childActivities: [],
   scrambleSetId: null,
   extensions: [],
-  ...attributes
+  ...attributes,
 }));

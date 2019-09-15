@@ -9,7 +9,10 @@
 export const updateIn = (object, [property, ...properyChain], updater) =>
   properyChain.length === 0
     ? { ...object, [property]: updater(object[property]) }
-    : { ...object, [property]: updateIn(object[property], properyChain, updater) };
+    : {
+        ...object,
+        [property]: updateIn(object[property], properyChain, updater),
+      };
 
 /**
  * Returns a copy of the object with the value at the specified path set to the given one.
@@ -31,7 +34,10 @@ export const setIn = (object, properyChain, value) =>
  * @returns {Object}
  */
 export const mergeIn = (object, properyChain, newValue) =>
-  updateIn(object, properyChain, currentValue => ({ ...currentValue, ...newValue }));
+  updateIn(object, properyChain, currentValue => ({
+    ...currentValue,
+    ...newValue,
+  }));
 
 /**
  * Returns a copy of the object with the array at the specified path mapped with the given function.
@@ -52,12 +58,18 @@ export const mapIn = (object, properyChain, mapper) =>
  * @param {*} defaultValue
  * @returns {*}
  */
-export const getIn = (object, [property, ...propertyChain], defaultValue = null) =>
-  object ? (
-    propertyChain.length === 0
-      ? (object.hasOwnProperty(property) ? object[property] : defaultValue)
+export const getIn = (
+  object,
+  [property, ...propertyChain],
+  defaultValue = null
+) =>
+  object
+    ? propertyChain.length === 0
+      ? object.hasOwnProperty(property)
+        ? object[property]
+        : defaultValue
       : getIn(object[property], propertyChain, defaultValue)
-  ) : defaultValue;
+    : defaultValue;
 
 /**
  * Checks if the given value is an object.
@@ -75,9 +87,7 @@ const isObject = obj => obj === Object(obj);
  * @returns {boolean}
  */
 export const isPresentDeep = value =>
-  isObject(value)
-    ? Object.values(value).every(isPresentDeep)
-    : value != null;
+  isObject(value) ? Object.values(value).every(isPresentDeep) : value != null;
 
 /**
  * Pluralizes a word according to the given number.
@@ -89,7 +99,7 @@ export const isPresentDeep = value =>
  * @returns {string}
  */
 export const pluralize = (count, singular, plural) =>
-  `${count} ${count === 1 ? singular : (plural || singular + 's')}`
+  `${count} ${count === 1 ? singular : plural || singular + 's'}`;
 
 /**
  * Returns a new array with items summing up to 1, preserving elements proportionality.
@@ -101,7 +111,7 @@ export const pluralize = (count, singular, plural) =>
 export const scaleToOne = arr => {
   if (arr.length === 0) return [];
   const arrSum = sum(arr);
-  return arr.map(x => arrSum !== 0 ? x / arrSum : 1 / arr.length);
+  return arr.map(x => (arrSum !== 0 ? x / arrSum : 1 / arr.length));
 };
 
 /**
@@ -113,43 +123,46 @@ export const scaleToOne = arr => {
 export const firstResult = (arr, fn) =>
   arr.reduce((result, x) => result || fn(x), null);
 
-export const flatMap = (arr, fn) =>
-  arr.reduce((xs, x) => xs.concat(fn(x)), []);
+export const flatMap = (arr, fn) => arr.reduce((xs, x) => xs.concat(fn(x)), []);
 
 export const groupBy = (arr, fn) =>
-  arr.reduce((obj, x) =>
-    updateIn(obj, [fn(x)], xs => (xs || []).concat(x))
-  , {});
+  arr.reduce(
+    (obj, x) => updateIn(obj, [fn(x)], xs => (xs || []).concat(x)),
+    {}
+  );
 
 export const zip = (...arrs) =>
   arrs.length === 0 ? [] : arrs[0].map((_, i) => arrs.map(arr => arr[i]));
 
 export const findLast = (arr, predicate) =>
-  arr.reduceRight((found, x) =>
-    found !== undefined ? found : (predicate(x) ? x : undefined)
-  , undefined);
+  arr.reduceRight(
+    (found, x) => (found !== undefined ? found : predicate(x) ? x : undefined),
+    undefined
+  );
 
-export const intersection = (xs, ys) =>
-  xs.filter(x => ys.includes(x));
+export const intersection = (xs, ys) => xs.filter(x => ys.includes(x));
 
-export const difference = (xs, ys) =>
-  xs.filter(x => !ys.includes(x));
+export const difference = (xs, ys) => xs.filter(x => !ys.includes(x));
 
-export const partition = (xs, fn) =>
-  [xs.filter(fn), xs.filter(x => !fn(x))];
+export const partition = (xs, fn) => [xs.filter(fn), xs.filter(x => !fn(x))];
 
-const sortCompare = (x, y) =>
-  x < y ? -1 : (x > y ? 1 : 0);
+const sortCompare = (x, y) => (x < y ? -1 : x > y ? 1 : 0);
 
 export const sortBy = (arr, fn) =>
   arr.slice().sort((x, y) => sortCompare(fn(x), fn(y)));
 
 export const sortByArray = (arr, fn) => {
-  const values = new Map(arr.map(x => [x, fn(x)])); /* Compute every value once. */
-  return arr.slice().sort((x, y) =>
-    firstResult(zip(values.get(x), values.get(y)), ([a, b]) => sortCompare(a, b))
-  );
-}
+  const values = new Map(
+    arr.map(x => [x, fn(x)])
+  ); /* Compute every value once. */
+  return arr
+    .slice()
+    .sort((x, y) =>
+      firstResult(zip(values.get(x), values.get(y)), ([a, b]) =>
+        sortCompare(a, b)
+      )
+    );
+};
 
 export const chunk = (arr, size) =>
   arr.length <= size
@@ -159,17 +172,14 @@ export const chunk = (arr, size) =>
 export const times = (n, fn) =>
   Array.from({ length: n }, (_, index) => fn(index));
 
-export const uniq = arr =>
-  [...new Set(arr)];
+export const uniq = arr => [...new Set(arr)];
 
-export const sum = arr =>
-  arr.reduce((x, y) => x + y, 0);
+export const sum = arr => arr.reduce((x, y) => x + y, 0);
 
 export const pick = (obj, keys) =>
   keys.reduce((newObj, key) => ({ ...newObj, [key]: obj[key] }), {});
 
-export const inRange = (x, a, b) =>
-  a <= x && x <= b;
+export const inRange = (x, a, b) => a <= x && x <= b;
 
 export const addMilliseconds = (isoString, milliseconds) =>
   new Date(new Date(isoString).getTime() + milliseconds).toISOString();
@@ -178,4 +188,8 @@ export const isoTimeDiff = (first, second) =>
   Math.abs(new Date(first) - new Date(second));
 
 export const shortTime = (isoString, timeZone = 'UTC') =>
-  new Date(isoString).toLocaleTimeString('en-US', { timeZone, hour: 'numeric', minute: 'numeric' });
+  new Date(isoString).toLocaleTimeString('en-US', {
+    timeZone,
+    hour: 'numeric',
+    minute: 'numeric',
+  });

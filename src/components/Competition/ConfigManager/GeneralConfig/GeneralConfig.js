@@ -11,31 +11,46 @@ import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 
-import { getExtensionData, setExtensionData } from '../../../../logic/wcif-extensions';
+import {
+  getExtensionData,
+  setExtensionData,
+} from '../../../../logic/wcif-extensions';
 import { setIn } from '../../../../logic/utils';
 
-const competitorsSortingRules = [{
-  id: 'ranks',
-  name: 'Official rankings',
-  description: 'Sort competitors by their official rankings.'
-}, {
-  id: 'balanced',
-  name: 'Balanced',
-  description: 'Sort competitors in 3x3x3 (any variation), 2x2x2, Pyraminx and Skewb by their official rankings. For other events put best people in different groups, so that there are good scramblers for each group.'
-}, {
-  id: 'symmetric',
-  name: 'Symmetric',
-  description: 'Put best people in different groups, so that there are good scramblers for each group.'
-}, {
-  id: 'name-optimised',
-  name: 'Name-optimised',
-  description: 'Sort competitors by their official rankings, but also minimize the number of people with the same name in each group. Use it when many competitors have the same name.'
-}];
+const competitorsSortingRules = [
+  {
+    id: 'ranks',
+    name: 'Official rankings',
+    description: 'Sort competitors by their official rankings.',
+  },
+  {
+    id: 'balanced',
+    name: 'Balanced',
+    description:
+      'Sort competitors in 3x3x3 (any variation), 2x2x2, Pyraminx and Skewb by their official rankings. For other events put best people in different groups, so that there are good scramblers for each group.',
+  },
+  {
+    id: 'symmetric',
+    name: 'Symmetric',
+    description:
+      'Put best people in different groups, so that there are good scramblers for each group.',
+  },
+  {
+    id: 'name-optimised',
+    name: 'Name-optimised',
+    description:
+      'Sort competitors by their official rankings, but also minimize the number of people with the same name in each group. Use it when many competitors have the same name.',
+  },
+];
 
 const GeneralConfig = ({ wcif, onWcifChange }) => {
   const handlePropertyChange = (property, value) => {
     onWcifChange(
-      setExtensionData('CompetitionConfig', wcif, setIn(getExtensionData('CompetitionConfig', wcif), [property], value))
+      setExtensionData(
+        'CompetitionConfig',
+        wcif,
+        setIn(getExtensionData('CompetitionConfig', wcif), [property], value)
+      )
     );
   };
 
@@ -54,7 +69,7 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
     noTasksForNewcomers,
     tasksForOwnEventsOnly,
     localNamesFirst,
-    scorecardsBackgroundUrl
+    scorecardsBackgroundUrl,
   } = getExtensionData('CompetitionConfig', wcif);
 
   return (
@@ -63,18 +78,27 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
         <Grid item>
           <Typography variant="h5">Assignments</Typography>
           <FormControl fullWidth>
-            <InputLabel htmlFor="competitors-sorting-rule">Competitors sorting rule</InputLabel>
+            <InputLabel htmlFor="competitors-sorting-rule">
+              Competitors sorting rule
+            </InputLabel>
             <Select
               value={competitorsSortingRule}
               onChange={handleTextFieldChange}
-              inputProps={{ name: 'competitorsSortingRule', id: 'competitors-sorting-rule' }}
+              inputProps={{
+                name: 'competitorsSortingRule',
+                id: 'competitors-sorting-rule',
+              }}
             >
               {competitorsSortingRules.map(({ id, name }) => (
-                <MenuItem value={id} key={id}>{name}</MenuItem>
+                <MenuItem value={id} key={id}>
+                  {name}
+                </MenuItem>
               ))}
             </Select>
             <FormHelperText>
-              {competitorsSortingRules.find(({ id }) => id === competitorsSortingRule).description + ' Note: this applies to first rounds only.'}
+              {competitorsSortingRules.find(
+                ({ id }) => id === competitorsSortingRule
+              ).description + ' Note: this applies to first rounds only.'}
             </FormHelperText>
           </FormControl>
           <Grid container direction="column">
@@ -85,7 +109,7 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
                     name="noTasksForNewcomers"
                     checked={noTasksForNewcomers}
                     onChange={handleCheckboxChange}
-                    />
+                  />
                 }
                 label="Don't assign tasks to newcomers"
               />
@@ -97,7 +121,7 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
                     name="tasksForOwnEventsOnly"
                     checked={tasksForOwnEventsOnly}
                     onChange={handleCheckboxChange}
-                    />
+                  />
                 }
                 label="Assign tasks to competitors only in events they registered for"
               />

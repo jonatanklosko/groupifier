@@ -9,12 +9,10 @@ const CompetitorCards = ({ wcif }) => {
   return (
     <Paper style={{ padding: 16 }}>
       <Typography variant="body1">
-        First round task assignments for every competitor.
-        Useful to be distributed along with name tags.
+        First round task assignments for every competitor. Useful to be
+        distributed along with name tags.
       </Typography>
-      <Button onClick={() => downloadCompetitorCards(wcif)}>
-        Download
-      </Button>
+      <Button onClick={() => downloadCompetitorCards(wcif)}>Download</Button>
     </Paper>
   );
 };

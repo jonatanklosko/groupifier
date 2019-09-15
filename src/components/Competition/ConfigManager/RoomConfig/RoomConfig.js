@@ -3,13 +3,18 @@ import React from 'react';
 import RoomName from '../../../common/RoomName/RoomName';
 import ZeroablePositiveIntegerInput from '../../../common/ZeroablePositiveIntegerInput/ZeroablePositiveIntegerInput';
 import { setIn } from '../../../../logic/utils';
-import { getExtensionData, setExtensionData } from '../../../../logic/wcif-extensions';
+import {
+  getExtensionData,
+  setExtensionData,
+} from '../../../../logic/wcif-extensions';
 
 const RoomConfig = ({ room, onChange, disabled }) => {
   const handleInputChange = (event, value) => {
     onChange(
-      setExtensionData('RoomConfig', room, setIn(
-        getExtensionData('RoomConfig', room), [event.target.name], value)
+      setExtensionData(
+        'RoomConfig',
+        room,
+        setIn(getExtensionData('RoomConfig', room), [event.target.name], value)
       )
     );
   };

@@ -10,18 +10,32 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
 import CubingIcon from '../../../common/CubingIcon/CubingIcon';
-import { downloadScorecards, downloadBlankScorecards } from '../../../../logic/documents/scorecards';
+import {
+  downloadScorecards,
+  downloadBlankScorecards,
+} from '../../../../logic/documents/scorecards';
 import { downloadGroupOverview } from '../../../../logic/documents/group-overview';
-import { roundsWithoutResults, roundsMissingScorecards, parseActivityCode, activityCodeToName } from '../../../../logic/activities';
+import {
+  roundsWithoutResults,
+  roundsMissingScorecards,
+  parseActivityCode,
+  activityCodeToName,
+} from '../../../../logic/activities';
 import { difference, sortBy } from '../../../../logic/utils';
 
 const Scorecards = ({ wcif }) => {
   const missingScorecards = roundsMissingScorecards(wcif);
   const [selectedRounds, setSelectedRounds] = useState(
-    missingScorecards.every(round => parseActivityCode(round.id).roundNumber === 1) ? missingScorecards : []
+    missingScorecards.every(
+      round => parseActivityCode(round.id).roundNumber === 1
+    )
+      ? missingScorecards
+      : []
   );
   const rounds = sortBy(
-    roundsWithoutResults(wcif).filter(round => parseActivityCode(round.id).eventId !== '333fm'),
+    roundsWithoutResults(wcif).filter(
+      round => parseActivityCode(round.id).eventId !== '333fm'
+    ),
     round => parseActivityCode(round.id).roundNumber
   );
 

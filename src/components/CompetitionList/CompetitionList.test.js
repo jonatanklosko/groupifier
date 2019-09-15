@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow, mount } from 'enzyme';
 import { act } from 'react-dom/test-utils';
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter } from 'react-router-dom';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import ListItemText from '@material-ui/core/ListItemText';
 
@@ -36,12 +36,16 @@ describe('CompetitionList', () => {
       wrapper.update();
     });
     expect(
-      wrapper.contains(<ListItemText primary="You have no upcoming competitions to manage." />)
+      wrapper.contains(
+        <ListItemText primary="You have no upcoming competitions to manage." />
+      )
     ).toEqual(true);
   });
 
   it('renders list of competitions if there are any', async () => {
-    const competitions = Promise.resolve([{ id: 'Example2018', name: 'Example 2018' }]);
+    const competitions = Promise.resolve([
+      { id: 'Example2018', name: 'Example 2018' },
+    ]);
     getUpcomingManageableCompetitions.mockReturnValue(competitions);
     let wrapper;
     await act(async () => {
@@ -54,6 +58,8 @@ describe('CompetitionList', () => {
     act(() => {
       wrapper.update();
     });
-    expect(wrapper.contains(<ListItemText primary="Example 2018" />)).toEqual(true);
+    expect(wrapper.contains(<ListItemText primary="Example 2018" />)).toEqual(
+      true
+    );
   });
 });

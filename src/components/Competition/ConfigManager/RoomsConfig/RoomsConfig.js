@@ -23,11 +23,15 @@ const RoomsConfig = ({ wcif, onWcifChange }) => {
   return (
     <Paper style={{ padding: 16 }}>
       <Grid container spacing={2}>
-        {rooms(wcif).map(room =>
+        {rooms(wcif).map(room => (
           <Grid item key={room.id}>
-            <RoomConfig room={room} onChange={handleRoomChange} disabled={disabled} />
+            <RoomConfig
+              room={room}
+              onChange={handleRoomChange}
+              disabled={disabled}
+            />
           </Grid>
-        )}
+        ))}
       </Grid>
     </Paper>
   );

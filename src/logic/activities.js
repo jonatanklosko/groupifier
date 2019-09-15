@@ -1,26 +1,48 @@
-import { mapIn, updateIn, setIn, flatMap, zip, scaleToOne, shortTime, isPresentDeep } from './utils';
+import {
+  mapIn,
+  updateIn,
+  setIn,
+  flatMap,
+  zip,
+  scaleToOne,
+  shortTime,
+  isPresentDeep,
+} from './utils';
 import { getExtensionData, setExtensionData } from './wcif-extensions';
-import { suggestedGroupCount, suggestedScramblerCount, suggestedRunnerCount } from './formulas';
+import {
+  suggestedGroupCount,
+  suggestedScramblerCount,
+  suggestedRunnerCount,
+} from './formulas';
 import { eventNameById } from './events';
 
 export const parseActivityCode = activityCode => {
-  const [, e, r, g, a] = activityCode.match(/(\w+)(?:-r(\d+))?(?:-g(\d+))?(?:-a(\d+))?/);
+  const [, e, r, g, a] = activityCode.match(
+    /(\w+)(?:-r(\d+))?(?:-g(\d+))?(?:-a(\d+))?/
+  );
   return {
     eventId: e,
     roundNumber: r && parseInt(r, 10),
     groupNumber: g && parseInt(g, 10),
-    attemptNumber: a && parseInt(a, 10)
+    attemptNumber: a && parseInt(a, 10),
   };
 };
 
 export const activityCodeToName = activityCode => {
-  const { eventId, roundNumber, groupNumber, attemptNumber } = parseActivityCode(activityCode);
+  const {
+    eventId,
+    roundNumber,
+    groupNumber,
+    attemptNumber,
+  } = parseActivityCode(activityCode);
   return [
     eventId && eventNameById(eventId),
     roundNumber && `Round ${roundNumber}`,
     groupNumber && `Group ${groupNumber}`,
-    attemptNumber && `Attempt ${attemptNumber}`
-  ].filter(x => x).join(', ');
+    attemptNumber && `Attempt ${attemptNumber}`,
+  ]
+    .filter(x => x)
+    .join(', ');
 };
 
 export const hasDistributedAttempts = activityCode =>
@@ -29,15 +51,23 @@ export const hasDistributedAttempts = activityCode =>
 export const activityDuration = ({ startTime, endTime }) =>
   new Date(endTime) - new Date(startTime);
 
-export const activityDurationString = ({ startTime, endTime }, timezone = 'UTC') =>
-  `${shortTime(startTime, timezone)} - ${shortTime(endTime, timezone)}`;
+export const activityDurationString = (
+  { startTime, endTime },
+  timezone = 'UTC'
+) => `${shortTime(startTime, timezone)} - ${shortTime(endTime, timezone)}`;
 
 export const activitiesOverlap = (first, second) =>
-  new Date(first.startTime) < new Date(second.endTime) && new Date(second.startTime) < new Date(first.endTime);
+  new Date(first.startTime) < new Date(second.endTime) &&
+  new Date(second.startTime) < new Date(first.endTime);
 
 export const activitiesIntersection = (first, second) => {
   if (!activitiesOverlap(first, second)) return 0;
-  const [, middleStart, middleEnd] = [first.startTime, first.endTime, second.startTime, second.endTime].sort();
+  const [, middleStart, middleEnd] = [
+    first.startTime,
+    first.endTime,
+    second.startTime,
+    second.endTime,
+  ].sort();
   /* Time distance between the two middle points in time. */
   return new Date(middleEnd) - new Date(middleStart);
 };
@@ -46,12 +76,10 @@ export const rooms = wcif =>
   flatMap(wcif.schedule.venues, venue => venue.rooms);
 
 export const roomByActivity = (wcif, activityId) =>
-  rooms(wcif).find(room =>
-    room.activities.some(({ id }) => id === activityId)
-  );
+  rooms(wcif).find(room => room.activities.some(({ id }) => id === activityId));
 
 export const stationsByActivity = (wcif, activityId) =>
-  getExtensionData('RoomConfig', roomByActivity(wcif, activityId)).stations
+  getExtensionData('RoomConfig', roomByActivity(wcif, activityId)).stations;
 
 const allActivities = wcif => {
   const allChildActivities = ({ childActivities }) =>
@@ -75,11 +103,13 @@ export const activityById = (wcif, activityId) => {
     return activitiesByIdCachedBySchedule.get(wcif.schedule).get(activityId);
   } else {
     const activities = allActivities(wcif);
-    const activitiesById = new Map(activities.map(activity => [activity.id, activity]));
+    const activitiesById = new Map(
+      activities.map(activity => [activity.id, activity])
+    );
     activitiesByIdCachedBySchedule.set(wcif.schedule, activitiesById);
     return activitiesById.get(activityId);
   }
-}
+};
 
 export const updateActivity = (wcif, updatedActivity) =>
   mapIn(wcif, ['schedule', 'venues'], venue =>
@@ -90,26 +120,46 @@ export const updateActivity = (wcif, updatedActivity) =>
     )
   );
 
-export const populateRoundActivitiesConfig = (wcif, expectedCompetitorsByRound, defaults) => {
+export const populateRoundActivitiesConfig = (
+  wcif,
+  expectedCompetitorsByRound,
+  defaults
+) => {
   const activitiesWithConfig = flatMap(wcif.events, event => {
     return flatMap(event.rounds, round => {
       const { roundNumber } = parseActivityCode(round.id);
-      const expectedRoundCompetitors = expectedCompetitorsByRound[round.id].length;
-      const activities = roundActivities(wcif, round.id).filter(shouldHaveGroups);
-      const alreadyHaveConfig = activities.every(activity => getExtensionData('ActivityConfig', activity));
+      const expectedRoundCompetitors =
+        expectedCompetitorsByRound[round.id].length;
+      const activities = roundActivities(wcif, round.id).filter(
+        shouldHaveGroups
+      );
+      const alreadyHaveConfig = activities.every(activity =>
+        getExtensionData('ActivityConfig', activity)
+      );
       if (alreadyHaveConfig) return activities;
-      const capacities = scaleToOne(activities.map(activity =>
-        stationsByActivity(wcif, activity.id) * activityDuration(activity)
-      ));
+      const capacities = scaleToOne(
+        activities.map(
+          activity =>
+            stationsByActivity(wcif, activity.id) * activityDuration(activity)
+        )
+      );
       return zip(activities, capacities).map(([activity, capacity]) => {
         const stations = stationsByActivity(wcif, activity.id);
         const competitors = Math.round(capacity * expectedRoundCompetitors);
         const groups = suggestedGroupCount(competitors, stations, roundNumber);
-        const scramblers = defaults.assignScramblers ? suggestedScramblerCount(competitors / groups, stations) : 0;
-        const runners = defaults.assignRunners ? suggestedRunnerCount(competitors / groups, stations) : 0;
+        const scramblers = defaults.assignScramblers
+          ? suggestedScramblerCount(competitors / groups, stations)
+          : 0;
+        const runners = defaults.assignRunners
+          ? suggestedRunnerCount(competitors / groups, stations)
+          : 0;
         const assignJudges = stations > 0 && defaults.assignJudges;
         return setExtensionData('ActivityConfig', activity, {
-          capacity, groups, scramblers, runners, assignJudges
+          capacity,
+          groups,
+          scramblers,
+          runners,
+          assignJudges,
         });
       });
     });
@@ -118,13 +168,20 @@ export const populateRoundActivitiesConfig = (wcif, expectedCompetitorsByRound, 
 };
 
 export const shouldHaveGroups = activity => {
-  const { eventId, roundNumber, groupNumber, attemptNumber } = parseActivityCode(activity.activityCode);
+  const {
+    eventId,
+    roundNumber,
+    groupNumber,
+    attemptNumber,
+  } = parseActivityCode(activity.activityCode);
   return !!(eventId && roundNumber && !groupNumber && !attemptNumber);
 };
 
 export const anyActivityConfig = wcif =>
   rooms(wcif).some(room =>
-    room.activities.some(activity => getExtensionData('ActivityConfig', activity))
+    room.activities.some(activity =>
+      getExtensionData('ActivityConfig', activity)
+    )
   );
 
 export const activitiesWithUnpopulatedConfig = wcif =>
@@ -149,7 +206,9 @@ export const roomsConfigComplete = wcif =>
 
 export const roundActivities = (wcif, roundId) =>
   flatMap(rooms(wcif), room =>
-    room.activities.filter(({ activityCode }) => activityCode.startsWith(roundId))
+    room.activities.filter(({ activityCode }) =>
+      activityCode.startsWith(roundId)
+    )
   );
 
 export const groupActivitiesByRound = (wcif, roundId) =>
@@ -159,12 +218,14 @@ export const groupActivitiesByRound = (wcif, roundId) =>
 
 export const roomsWithTimezoneAndGroups = (wcif, roundId) =>
   flatMap(wcif.schedule.venues, venue =>
-    venue.rooms.map(room =>
-      [room, venue.timezone, flatMap(
+    venue.rooms.map(room => [
+      room,
+      venue.timezone,
+      flatMap(
         room.activities.filter(activity => activity.activityCode === roundId),
         activity => activity.childActivities
-      )]
-    )
+      ),
+    ])
   );
 
 export const activityAssigned = (wcif, activityId) =>
@@ -178,26 +239,33 @@ export const groupActivitiesAssigned = (wcif, roundId) =>
   );
 
 export const roundsWithoutResults = wcif =>
-  flatMap(wcif.events, event => event.rounds).filter(round =>
-    round.results.length === 0 || round.results.every(result => result.attempts.length === 0)
+  flatMap(wcif.events, event => event.rounds).filter(
+    round =>
+      round.results.length === 0 ||
+      round.results.every(result => result.attempts.length === 0)
   );
 
 /* Round is missing results if it has all results empty
    or it's the first round and has no results at all.
    In other words no one's competed in such round, but we know who should compete in it. */
 const roundsMissingResults = wcif =>
-  wcif.events.map(event =>
-    event.rounds.find(round => {
-      const { roundNumber } = parseActivityCode(round.id);
-      return (round.results.length === 0 && roundNumber === 1)
-          || (round.results.length > 0 && round.results.every(result => result.attempts.length === 0));
-    })
-  )
-  .filter(round => round);
+  wcif.events
+    .map(event =>
+      event.rounds.find(round => {
+        const { roundNumber } = parseActivityCode(round.id);
+        return (
+          (round.results.length === 0 && roundNumber === 1) ||
+          (round.results.length > 0 &&
+            round.results.every(result => result.attempts.length === 0))
+        );
+      })
+    )
+    .filter(round => round);
 
 export const roundsMissingAssignments = wcif =>
-  roundsMissingResults(wcif)
-    .filter(round => !groupActivitiesAssigned(wcif, round.id));
+  roundsMissingResults(wcif).filter(
+    round => !groupActivitiesAssigned(wcif, round.id)
+  );
 
 export const roundsMissingScorecards = wcif =>
   roundsMissingResults(wcif)
@@ -206,14 +274,16 @@ export const roundsMissingScorecards = wcif =>
 
 export const allGroupsCreated = wcif =>
   wcif.events.every(event =>
-    event.rounds.every(round =>
-      groupActivitiesByRound(wcif, round.id).length > 0
+    event.rounds.every(
+      round => groupActivitiesByRound(wcif, round.id).length > 0
     )
   );
 
 export const anyCompetitorAssignment = wcif =>
   wcif.persons.some(person =>
-    person.assignments.some(assignment => assignment.assignmentCode === 'competitor')
+    person.assignments.some(
+      assignment => assignment.assignmentCode === 'competitor'
+    )
   );
 
 export const anyGroupAssignedOrCreated = wcif =>
@@ -243,15 +313,19 @@ export const clearGroupsAndAssignments = wcif => {
     updateIn(person, ['assignments'], assignments =>
       assignments
         .filter(({ activityId }) => !clearableActivityIds.includes(activityId))
-        .filter(({ assignmentCode }) =>
-          !assignmentCode.startsWith('staff-') && assignmentCode !== 'competitor'
+        .filter(
+          ({ assignmentCode }) =>
+            !assignmentCode.startsWith('staff-') &&
+            assignmentCode !== 'competitor'
         )
     )
   );
   const schedule = mapIn(wcif.schedule, ['venues'], venue =>
     mapIn(venue, ['rooms'], room =>
       mapIn(room, ['activities'], activity =>
-        clearableRoundIds.includes(activity.activityCode) ? setIn(activity, ['childActivities'], []) : activity
+        clearableRoundIds.includes(activity.activityCode)
+          ? setIn(activity, ['childActivities'], [])
+          : activity
       )
     )
   );

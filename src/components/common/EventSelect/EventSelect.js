@@ -11,7 +11,10 @@ const EventSelect = ({ events, selected, onChange }) => {
       {events.map(event => (
         <Tooltip key={event.id} title={eventNameById(event.id)} placement="top">
           <IconButton onClick={() => onChange(event.id)}>
-            <CubingIcon eventId={event.id} style={{ opacity: event.id === selected ? 1 : 0.3 }} />
+            <CubingIcon
+              eventId={event.id}
+              style={{ opacity: event.id === selected ? 1 : 0.3 }}
+            />
           </IconButton>
         </Tooltip>
       ))}

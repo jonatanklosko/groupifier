@@ -9,7 +9,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
   title: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   titleLink: {
     color: 'inherit',
@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   titleIcon: {
     fontSize: '1.5em',
     verticalAlign: 'middle',
-    marginRight: theme.spacing(1)
+    marginRight: theme.spacing(1),
   },
 }));
 
@@ -27,7 +27,7 @@ const Header = ({ isSignedIn, onSignIn, onSignOut }) => {
   return (
     <AppBar position="static" color="primary">
       <Toolbar>
-        <Typography variant="h6"className={classes.title}>
+        <Typography variant="h6" className={classes.title}>
           <Link
             to={isSignedIn ? '/competitions' : '/'}
             className={classes.titleLink}
@@ -36,9 +36,15 @@ const Header = ({ isSignedIn, onSignIn, onSignOut }) => {
             Groupifier
           </Link>
         </Typography>
-        {isSignedIn
-          ? <Button color="inherit" onClick={onSignOut}>Sign out</Button>
-          : <Button color="inherit" onClick={onSignIn}>Sign in</Button>}
+        {isSignedIn ? (
+          <Button color="inherit" onClick={onSignOut}>
+            Sign out
+          </Button>
+        ) : (
+          <Button color="inherit" onClick={onSignIn}>
+            Sign in
+          </Button>
+        )}
       </Toolbar>
     </AppBar>
   );

@@ -16,7 +16,11 @@ const PrintingManager = ({ wcif }) => {
     <Grid container spacing={1} justify="flex-end">
       <Grid item xs={12}>
         <AppBar position="static" color="default">
-          <Tabs value={tabValue} onChange={(event, value) => setTabValue(value)} centered>
+          <Tabs
+            value={tabValue}
+            onChange={(event, value) => setTabValue(value)}
+            centered
+          >
             <Tab label="Scorecards" />
             <Tab label="Competitor cards" />
           </Tabs>
@@ -27,7 +31,12 @@ const PrintingManager = ({ wcif }) => {
         {tabValue === 1 && <CompetitorCards wcif={wcif} />}
       </Grid>
       <Grid item>
-        <Button variant="contained" color="primary" component={Link} to={`/competitions/${wcif.id}`}>
+        <Button
+          variant="contained"
+          color="primary"
+          component={Link}
+          to={`/competitions/${wcif.id}`}
+        >
           Done
         </Button>
       </Grid>

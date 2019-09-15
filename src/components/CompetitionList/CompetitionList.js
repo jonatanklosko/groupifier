@@ -31,27 +31,32 @@ const CompetitionList = () => {
   return (
     <Paper>
       <List subheader={<ListSubheader>Your competitions</ListSubheader>}>
-        {error &&
+        {error && (
           <ListItem>
             <ListItemIcon>
               <Icon>error</Icon>
             </ListItemIcon>
             <ListItemText primary={`Couldn't fetch competitions: ${error}`} />
           </ListItem>
-        }
-        {!loading && !error && competitions.length === 0 &&
+        )}
+        {!loading && !error && competitions.length === 0 && (
           <ListItem>
             <ListItemIcon>
               <Icon>sentiment_very_dissatisfied</Icon>
             </ListItemIcon>
             <ListItemText primary="You have no upcoming competitions to manage." />
           </ListItem>
-        }
-        {competitions.map(competition =>
-          <ListItem key={competition.id} button component={Link} to={`/competitions/${competition.id}`}>
+        )}
+        {competitions.map(competition => (
+          <ListItem
+            key={competition.id}
+            button
+            component={Link}
+            to={`/competitions/${competition.id}`}
+          >
             <ListItemText primary={competition.name} />
           </ListItem>
-        )}
+        ))}
       </List>
       {loading && <LinearProgress />}
     </Paper>

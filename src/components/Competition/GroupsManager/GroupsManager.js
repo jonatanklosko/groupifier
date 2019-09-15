@@ -9,16 +9,22 @@ import pink from '@material-ui/core/colors/pink';
 import GroupsNavigation from './GroupsNavigation/GroupsNavigation';
 import SaveWcifButton from '../../common/SaveWcifButton/SaveWcifButton';
 
-import { createGroupActivities, updateScrambleSetCount, assignTasks } from '../../../logic/groups';
-import { allGroupsCreated, roundsMissingAssignments, clearGroupsAndAssignments } from '../../../logic/activities';
+import {
+  createGroupActivities,
+  updateScrambleSetCount,
+  assignTasks,
+} from '../../../logic/groups';
+import {
+  allGroupsCreated,
+  roundsMissingAssignments,
+  clearGroupsAndAssignments,
+} from '../../../logic/activities';
 
 const GroupsManager = ({ wcif, onWcifUpdate }) => {
   const [localWcif, setLocalWcif] = useState(wcif);
 
   const handleCreateGroupActivities = () => {
-    setLocalWcif(
-      updateScrambleSetCount(createGroupActivities(localWcif))
-    );
+    setLocalWcif(updateScrambleSetCount(createGroupActivities(localWcif)));
   };
 
   const handleAssignTasks = () => {
@@ -39,18 +45,26 @@ const GroupsManager = ({ wcif, onWcifUpdate }) => {
             style={{ maxWidth: 'none' }}
             message="To assign tasks you need to create groups first. This will also determine scramble set count for each round."
             action={
-              <Button onClick={handleCreateGroupActivities} style={{ color: pink[500] }} size="small">
+              <Button
+                onClick={handleCreateGroupActivities}
+                style={{ color: pink[500] }}
+                size="small"
+              >
                 Create groups
               </Button>
             }
           />
         )}
-        {(groupsCreated && roundsMissingAssignments(localWcif).length > 0) && (
+        {groupsCreated && roundsMissingAssignments(localWcif).length > 0 && (
           <SnackbarContent
             style={{ maxWidth: 'none' }}
             message="There are rounds with no tasks assigned."
             action={
-              <Button onClick={handleAssignTasks} style={{ color: pink[500] }} size="small">
+              <Button
+                onClick={handleAssignTasks}
+                style={{ color: pink[500] }}
+                size="small"
+              >
                 Assign tasks
               </Button>
             }
@@ -61,19 +75,30 @@ const GroupsManager = ({ wcif, onWcifUpdate }) => {
         <GroupsNavigation wcif={localWcif} />
       </Grid>
       <Grid item>
-        <Button variant="contained" component={Link} to={`/competitions/${localWcif.id}`}>
+        <Button
+          variant="contained"
+          component={Link}
+          to={`/competitions/${localWcif.id}`}
+        >
           Cancel
         </Button>
       </Grid>
       <Grid item>
-        <Tooltip title="This clears groups and assignments only for rounds without results." placement="bottom">
+        <Tooltip
+          title="This clears groups and assignments only for rounds without results."
+          placement="bottom"
+        >
           <Button variant="contained" onClick={handleClearGroups}>
             Clear
           </Button>
         </Tooltip>
       </Grid>
       <Grid item>
-        <SaveWcifButton wcif={wcif} updatedWcif={localWcif} onWcifUpdate={onWcifUpdate} />
+        <SaveWcifButton
+          wcif={wcif}
+          updatedWcif={localWcif}
+          onWcifUpdate={onWcifUpdate}
+        />
       </Grid>
     </Grid>
   );
