@@ -1,33 +1,33 @@
-import React, { PureComponent, Fragment } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Checkbox from '@material-ui/core/Checkbox';
 
 import PositiveIntegerInput from '../PositiveIntegerInput/PositiveIntegerInput';
 
-export default class ZeroablePositiveIntegerInput extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.inputRef = React.createRef();
-  }
+const ZeroablePositiveIntegerInput = React.memo(({ value, disabled, ...props }) => {
+  const inputRef = useRef(null);
+  const shouldFocusRef = useRef(false);
 
-  handleCheckboxChange = event => {
+  const handleCheckboxChange = event => {
     const { checked } = event.target;
-    this.props.onChange(event, checked ? null : 0);
+    props.onChange(event, checked ? null : 0);
+    if (checked) {
+      shouldFocusRef.current = true;
+    }
   };
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.value === 0 && this.props.value !== 0) {
-      this.inputRef.current.focus();
+  useEffect(() => {
+    if (value === null && shouldFocusRef.current) {
+      inputRef.current.focus();
+      shouldFocusRef.current = false;
     }
-  }
+  }, [value]);
 
-  render() {
-    const { value, disabled, ...props } = this.props;
+  return (
+    <div>
+      <PositiveIntegerInput {...props} value={value} disabled={value === 0 || disabled} inputRef={inputRef} />
+      <Checkbox name={props.name} checked={value !== 0} onChange={handleCheckboxChange} disabled={disabled} />
+    </div>
+  );
+});
 
-    return (
-      <Fragment>
-        <PositiveIntegerInput {...props} value={value} disabled={value === 0 || disabled} inputRef={this.inputRef} />
-        <Checkbox name={props.name} checked={value !== 0} onChange={this.handleCheckboxChange} disabled={disabled} />
-      </Fragment>
-    );
-  }
-};
+export default ZeroablePositiveIntegerInput;

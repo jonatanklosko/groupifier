@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
 import Grid from '@material-ui/core/Grid';
@@ -15,89 +15,74 @@ import { downloadGroupOverview } from '../../../../logic/documents/group-overvie
 import { roundsWithoutResults, roundsMissingScorecards, parseActivityCode, activityCodeToName } from '../../../../logic/activities';
 import { difference, sortBy } from '../../../../logic/utils';
 
-export default class Scorecards extends Component {
-  constructor(props) {
-    super(props);
-    const missingScorecards = roundsMissingScorecards(this.props.wcif);
-    const selectedRounds = missingScorecards.every(round => parseActivityCode(round.id).roundNumber === 1) ? missingScorecards : [];
-    this.state = {
-      selectedRounds
-    };
-  }
+const Scorecards = ({ wcif }) => {
+  const missingScorecards = roundsMissingScorecards(wcif);
+  const [selectedRounds, setSelectedRounds] = useState(
+    missingScorecards.every(round => parseActivityCode(round.id).roundNumber === 1) ? missingScorecards : []
+  );
+  const rounds = sortBy(
+    roundsWithoutResults(wcif).filter(round => parseActivityCode(round.id).eventId !== '333fm'),
+    round => parseActivityCode(round.id).roundNumber
+  );
 
-  handleScorecardsDownloadClick = () => {
-    downloadScorecards(this.props.wcif, this.state.selectedRounds);
-  };
-
-  handleGroupOverviewDownloadClick = () => {
-    downloadGroupOverview(this.props.wcif, this.state.selectedRounds);
-  };
-
-  handleBlankScorecardsDownloadClick = () => {
-    downloadBlankScorecards(this.props.wcif);
-  };
-
-  handleRoundClick = round => event => {
-    const { selectedRounds } = this.state;
-    this.setState({
-      selectedRounds: selectedRounds.includes(round)
+  const handleRoundClick = round => {
+    setSelectedRounds(
+      selectedRounds.includes(round)
         ? difference(selectedRounds, [round])
         : [...selectedRounds, round]
-    });
+    );
   };
 
-  render() {
-    const { selectedRounds } = this.state;
-    const { wcif } = this.props;
-    const rounds = sortBy(
-      roundsWithoutResults(wcif).filter(round => parseActivityCode(round.id).eventId !== '333fm'),
-      round => parseActivityCode(round.id).roundNumber
-    );
-    const missingScorecards = roundsMissingScorecards(wcif);
-
-    return (
-      <Paper style={{ padding: 16 }}>
-        <Typography variant="body1">Select rounds</Typography>
-        <List style={{ width: 400 }}>
-          {rounds.map(round => (
-            <ListItem
-              key={round.id}
-              button
-              onClick={this.handleRoundClick(round)}
-              style={missingScorecards.includes(round) ? {} : { opacity: 0.5 }}
-            >
-              <ListItemIcon>
-                <CubingIcon eventId={parseActivityCode(round.id).eventId} />
-              </ListItemIcon>
-              <ListItemText primary={activityCodeToName(round.id)} />
-              <Checkbox
-                checked={selectedRounds.includes(round)}
-                tabIndex={-1}
-                disableRipple
-                style={{ padding: 0 }}
-              />
-            </ListItem>
-          ))}
-        </List>
-        <Grid container spacing={1}>
-          <Grid item>
-            <Button onClick={this.handleScorecardsDownloadClick} disabled={selectedRounds.length === 0}>
-              Scorecards
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button onClick={this.handleGroupOverviewDownloadClick} disabled={selectedRounds.length === 0}>
-              Group overview
-            </Button>
-          </Grid>
-          <Grid item style={{ flexGrow: 1 }} />
-          <Grid item>
-            <Button onClick={this.handleBlankScorecardsDownloadClick}>
-              Blank scorecards
-            </Button>
-          </Grid>
+  return (
+    <Paper style={{ padding: 16 }}>
+      <Typography variant="subtitle1">Select rounds</Typography>
+      <List style={{ width: 400 }}>
+        {rounds.map(round => (
+          <ListItem
+            key={round.id}
+            button
+            onClick={() => handleRoundClick(round)}
+            style={missingScorecards.includes(round) ? {} : { opacity: 0.5 }}
+          >
+            <ListItemIcon>
+              <CubingIcon eventId={parseActivityCode(round.id).eventId} />
+            </ListItemIcon>
+            <ListItemText primary={activityCodeToName(round.id)} />
+            <Checkbox
+              checked={selectedRounds.includes(round)}
+              tabIndex={-1}
+              disableRipple
+              style={{ padding: 0 }}
+            />
+          </ListItem>
+        ))}
+      </List>
+      <Grid container spacing={1}>
+        <Grid item>
+          <Button
+            onClick={() => downloadScorecards(wcif, selectedRounds)}
+            disabled={selectedRounds.length === 0}
+          >
+            Scorecards
+          </Button>
         </Grid>
-      </Paper>
-    );
-  }
-}
+        <Grid item>
+          <Button
+            onClick={() => downloadGroupOverview(wcif, selectedRounds)}
+            disabled={selectedRounds.length === 0}
+          >
+            Group overview
+          </Button>
+        </Grid>
+        <Grid item style={{ flexGrow: 1 }} />
+        <Grid item>
+          <Button onClick={() => downloadBlankScorecards(wcif)}>
+            Blank scorecards
+          </Button>
+        </Grid>
+      </Grid>
+    </Paper>
+  );
+};
+
+export default Scorecards;

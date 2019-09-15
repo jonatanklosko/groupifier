@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 
@@ -6,9 +6,8 @@ import RoomConfig from '../RoomConfig/RoomConfig';
 import { mapIn } from '../../../../logic/utils';
 import { anyActivityConfig, rooms } from '../../../../logic/activities';
 
-export default class RoomsConfig extends Component {
-  handleRoomChange = updatedRoom => {
-    const { wcif, onWcifChange } = this.props;
+const RoomsConfig = ({ wcif, onWcifChange }) => {
+  const handleRoomChange = updatedRoom => {
     onWcifChange(
       mapIn(wcif, ['schedule', 'venues'], venue =>
         mapIn(venue, ['rooms'], room =>
@@ -18,21 +17,20 @@ export default class RoomsConfig extends Component {
     );
   };
 
-  render() {
-    const { wcif } = this.props;
-    /* Disable rooms configuration once activities config has been populated. */
-    const disabled = anyActivityConfig(wcif);
+  /* Disable rooms configuration once activities config has been populated. */
+  const disabled = anyActivityConfig(wcif);
 
-    return (
-      <Paper style={{ padding: 16 }}>
-        <Grid container spacing={1}>
-          {rooms(wcif).map(room =>
-            <Grid item lg key={room.id}>
-              <RoomConfig room={room} onChange={this.handleRoomChange} disabled={disabled} />
-            </Grid>
-          )}
-        </Grid>
-      </Paper>
-    );
-  }
-}
+  return (
+    <Paper style={{ padding: 16 }}>
+      <Grid container spacing={2}>
+        {rooms(wcif).map(room =>
+          <Grid item key={room.id}>
+            <RoomConfig room={room} onChange={handleRoomChange} disabled={disabled} />
+          </Grid>
+        )}
+      </Grid>
+    </Paper>
+  );
+};
+
+export default RoomsConfig;

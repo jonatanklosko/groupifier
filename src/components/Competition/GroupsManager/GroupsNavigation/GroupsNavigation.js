@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Fragment, useState, useCallback } from 'react';
 import Grid from '@material-ui/core/Grid';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -9,62 +9,44 @@ import RoomName from '../../../common/RoomName/RoomName';
 import GroupDialog from '../GroupDialog/GroupDialog';
 import { activityDurationString, parseActivityCode, hasDistributedAttempts, roomsWithTimezoneAndGroups } from '../../../../logic/activities';
 
-export default class RoundWithGroups extends Component {
-  state = {
-    openedGroupActivity: null
-  };
+const GroupsNavigation = ({ wcif }) => {
+  const [openedGroupActivity, setOpenGroupActivity] = useState(null);
+  const events = wcif.events.filter(event => !hasDistributedAttempts(event.id));
 
-  handleGroupClick = groupActivity => {
-    this.setState({ openedGroupActivity: groupActivity });
-  };
+  const renderRound = useCallback(roundId => (
+    <Grid container>
+      {roomsWithTimezoneAndGroups(wcif, roundId).map(([room, timezone, groupActivities]) => (
+        groupActivities.length > 0 && (
+          <Grid item xs={12} sm key={room.id}>
+            <RoomName room={room} />
+            <List>
+              {groupActivities.map(groupActivity => (
+                <ListItem key={groupActivity.id} button onClick={() => setOpenGroupActivity(groupActivity)}>
+                  <ListItemText
+                    primary={`Group ${parseActivityCode(groupActivity.activityCode).groupNumber}`}
+                    secondary={activityDurationString(groupActivity, timezone)}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Grid>
+        )
+      ))}
+    </Grid>
+  ), [wcif]);
 
-  handleDialogClose = () => {
-    this.setState({ openedGroupActivity: null });
-  };
+  return (
+    <Fragment>
+      <RoundsNavigation events={events} render={renderRound} />
+      {openedGroupActivity && (
+        <GroupDialog
+          groupActivity={openedGroupActivity}
+          wcif={wcif}
+          onClose={() => setOpenGroupActivity(null)}
+        />
+      )}
+    </Fragment>
+  );
+};
 
-  render() {
-    const { openedGroupActivity } = this.state;
-    const { wcif } = this.props;
-    const events = wcif.events.filter(event => !hasDistributedAttempts(event.id));
-
-    return (
-      <React.Fragment>
-        <RoundsNavigation events={events} render={this.renderRound} />
-        {openedGroupActivity && (
-          <GroupDialog
-            open={true}
-            groupActivity={openedGroupActivity}
-            wcif={wcif}
-            onClose={this.handleDialogClose}
-          />
-        )}
-      </React.Fragment>
-    );
-  }
-
-  renderRound = roundId => {
-    const { wcif } = this.props;
-
-    return (
-      <Grid container>
-        {roomsWithTimezoneAndGroups(wcif, roundId).map(([room, timezone, groupActivities]) => (
-          groupActivities.length > 0 && (
-            <Grid item xs={12} sm key={room.id}>
-              <RoomName room={room} />
-              <List>
-                {groupActivities.map(groupActivity => (
-                  <ListItem key={groupActivity.id} button onClick={() => this.handleGroupClick(groupActivity)}>
-                    <ListItemText
-                      primary={`Group ${parseActivityCode(groupActivity.activityCode).groupNumber}`}
-                      secondary={activityDurationString(groupActivity, timezone)}
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            </Grid>
-          )
-        ))}
-      </Grid>
-    );
-  };
-}
+export default GroupsNavigation;

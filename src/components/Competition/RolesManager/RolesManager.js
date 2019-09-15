@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -27,149 +27,134 @@ const roles = [
   { id: 'staff-dataentry', name: 'Data entry' },
 ];
 
-export default class RolesManager extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      localWcif: props.wcif,
-      page: 0,
-      searchString: ''
-    }
-  }
+const rowsPerPage = 5;
+const rowsPerPageOptions = [5];
 
-  handleSearchChange = event => {
-    this.setState({ searchString: event.target.value });
-  };
+const RolesManager = ({ wcif, onWcifUpdate }) => {
+  const [localWcif, setLocalWcif] = useState(wcif);
+  const [page, setPage] = useState(0);
+  const [searchString, setSearchString] = useState('');
 
-  handleChangePage = (event, page) => {
-    this.setState({ page });
-  };
+  const allSortedPeople = sortBy(acceptedPeople(localWcif), person => person.name);
+  const people = !searchString ? allSortedPeople : allSortedPeople.filter(person =>
+    searchString.split(/\s*,\s*/).some(searchPart =>
+      searchPart && person.name.match(new RegExp(searchPart, 'i'))
+    )
+  );
 
-  handleRoleChange(roleId, personWcaUserId, event) {
-    const { localWcif } = this.state;
+  const handleRoleChange = (roleId, personWcaUserId, event) => {
     const { checked } = event.target;
-
-    this.setState({
-      localWcif: {
-        ...localWcif,
-        persons: localWcif.persons.map(person =>
-          person.wcaUserId === personWcaUserId
-            ? { ...person, roles: checked ? [...person.roles, roleId] : difference(person.roles, [roleId]) }
-            : person
-        )
-      }
+    setLocalWcif({
+      ...localWcif,
+      persons: localWcif.persons.map(person =>
+        person.wcaUserId === personWcaUserId
+          ? { ...person, roles: checked ? [...person.roles, roleId] : difference(person.roles, [roleId]) }
+          : person
+      )
     });
   }
 
-  clearRoles = () => {
-    const { localWcif } = this.state;
+  const clearRoles = () => {
     const roleIds = roles.map(role => role.id);
-    this.setState({
-      localWcif: {
-        ...localWcif,
-        persons: localWcif.persons.map(person =>
-          ({ ...person, roles: difference(person.roles, roleIds)})
-        )
-      }
+    setLocalWcif({
+      ...localWcif,
+      persons: localWcif.persons.map(person =>
+        ({ ...person, roles: difference(person.roles, roleIds)})
+      )
     });
   };
 
-  render() {
-    const { page, searchString, localWcif } = this.state;
-    const { wcif, onWcifUpdate, history } = this.props;
-    const rowsPerPage = 5;
-    const rowsPerPageOptions = [5];
-
-    const allSortedPeople = sortBy(acceptedPeople(localWcif), person => person.name);
-    const people = !searchString ? allSortedPeople : allSortedPeople.filter(person =>
-      searchString.split(/\s*,\s*/).some(searchPart =>
-        searchPart && person.name.match(new RegExp(searchPart, 'i'))
-      )
-    );
-
-    return (
-      <Grid container spacing={1} justify="flex-end">
-        <Grid item xs={12}>
-          <Paper>
-            <Toolbar>
-              <Grid container spacing={1} alignItems="flex-end">
-                <Grid item>
-                  <TextField label="Search" value={searchString} onChange={this.handleSearchChange} />
-                </Grid>
-                <Grid item>
-                  <Tooltip title="If you separate search phrases with a comma, anyone matching either of them will show up." placement="right">
-                    <Icon>info</Icon>
-                  </Tooltip>
-                </Grid>
+  return (
+    <Grid container spacing={1} justify="flex-end">
+      <Grid item xs={12}>
+        <Paper>
+          <Toolbar>
+            <Grid container spacing={1} alignItems="flex-end">
+              <Grid item>
+                <TextField
+                  label="Search"
+                  value={searchString}
+                  onChange={event => setSearchString(event.target.value)}
+                />
               </Grid>
-            </Toolbar>
-            <div style={{ overflowX: 'auto' }}>
-              <Table>
-                <TableHead>
-                  <TableRow style={{ whiteSpace: 'nowrap' }}>
-                    <TableCell>Person</TableCell>
+              <Grid item>
+                <Tooltip
+                  title="If you separate search phrases with a comma, anyone matching either of them will show up."
+                  placement="right"
+                >
+                  <Icon color="action">info</Icon>
+                </Tooltip>
+              </Grid>
+            </Grid>
+          </Toolbar>
+          <div style={{ overflowX: 'auto' }}>
+            <Table>
+              <TableHead>
+                <TableRow style={{ whiteSpace: 'nowrap' }}>
+                  <TableCell>Person</TableCell>
+                  {roles.map(role =>
+                    <TableCell
+                      key={role.id}
+                      padding="none"
+                      align="center"
+                      style={{ minWidth: 100 }}
+                    >
+                      {role.name}
+                    </TableCell>
+                  )}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {people.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(person =>
+                  <TableRow key={person.wcaUserId} hover>
+                    <TableCell>{person.name}</TableCell>
                     {roles.map(role =>
-                      <TableCell
-                        key={role.id}
-                        padding="none"
-                        align="center"
-                        style={{ minWidth: 100 }}
-                      >
-                        {role.name}
+                      <TableCell key={role.id} padding="checkbox" align="center">
+                        <Checkbox
+                          checked={person.roles.includes(role.id)}
+                          onChange={handleRoleChange.bind(this, role.id, person.wcaUserId)}
+                        />
                       </TableCell>
                     )}
                   </TableRow>
-                </TableHead>
-                <TableBody>
-                  {people.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(person =>
-                    <TableRow key={person.wcaUserId} hover>
-                      <TableCell>{person.name}</TableCell>
-                      {roles.map(role =>
-                        <TableCell key={role.id} padding="checkbox" align="center">
-                          <Checkbox
-                            checked={person.roles.includes(role.id)}
-                            onChange={this.handleRoleChange.bind(this, role.id, person.wcaUserId)}
-                          />
-                        </TableCell>
-                      )}
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-            <TablePagination
-              component="div"
-              count={people.length}
-              rowsPerPage={rowsPerPage}
-              rowsPerPageOptions={rowsPerPageOptions}
-              page={page}
-              onChangePage={this.handleChangePage}
-            />
-          </Paper>
-        </Grid>
-        <Grid item xs={12}>
-          <Typography variant="caption" component="div">
-            {`Use this section only if you have a group of staff among competitors.
-              People with the given role will be prioritized during task assignment.`}
-          </Typography>
-          <Typography variant="caption">
-            {`Note: if you don't set any roles, people will still be assigned tasks if configured to.`}
-          </Typography>
-        </Grid>
-        <Grid item>
-          <Button variant="contained" component={Link} to={`/competitions/${localWcif.id}`}>
-            Cancel
-          </Button>
-        </Grid>
-        <Grid item>
-          <Button variant="contained" onClick={this.clearRoles}>
-            Clear
-          </Button>
-        </Grid>
-        <Grid item>
-          <SaveWcifButton wcif={wcif} updatedWcif={localWcif} onWcifUpdate={onWcifUpdate} history={history} />
-        </Grid>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+          <TablePagination
+            component="div"
+            count={people.length}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={rowsPerPageOptions}
+            page={page}
+            onChangePage={(event, page) => setPage(page)}
+          />
+        </Paper>
       </Grid>
-    );
-  }
-}
+      <Grid item xs={12}>
+        <Typography variant="caption" component="div">
+          {`Use this section only if you have a group of staff among competitors.
+            People with the given role will be prioritized during task assignment.`}
+        </Typography>
+        <Typography variant="caption">
+          {`Note: if you don't set any roles, people will still be assigned tasks if configured to.`}
+        </Typography>
+      </Grid>
+      <Grid item>
+        <Button variant="contained" component={Link} to={`/competitions/${localWcif.id}`}>
+          Cancel
+        </Button>
+      </Grid>
+      <Grid item>
+        <Button variant="contained" onClick={clearRoles}>
+          Clear
+        </Button>
+      </Grid>
+      <Grid item>
+        <SaveWcifButton wcif={wcif} updatedWcif={localWcif} onWcifUpdate={onWcifUpdate} />
+      </Grid>
+    </Grid>
+  );
+};
+
+export default RolesManager;
