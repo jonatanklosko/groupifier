@@ -27,17 +27,16 @@
     "@material-ui/styles": "^4.3.0",
     "core-js": "^3.0.0-beta.14",
     "pdfmake": "^0.1.54",
-    "react": "^16.8.1",
-    "react-dom": "^16.8.1",
-    "react-router-dom": "^4.3.1",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "react-router-dom": "^5.0.1",
     "react-scripts": "^3.1.1",
     "smoothscroll-polyfill": "^0.4.3"
   },
   "devDependencies": {
-    "enzyme": "^3.8.0",
-    "enzyme-adapter-react-16": "^1.9.1",
-    "gh-pages": "^2.0.1",
-    "react-test-renderer": "^16.8.1"
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.14.0",
+    "react-test-renderer": "^16.9.0"
   },
   "browserslist": [
     ">0.2%",
