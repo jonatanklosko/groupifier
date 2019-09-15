@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
@@ -6,6 +6,7 @@ import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 import blueGrey from '@material-ui/core/colors/blueGrey';
 import blue from '@material-ui/core/colors/blue';
+import { makeStyles } from '@material-ui/core/styles';
 
 import history from '../../logic/history';
 import Competition from '../Competition/Competition';
@@ -25,55 +26,64 @@ const theme = createMuiTheme({
   },
 });
 
-export default class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isSignedIn: isSignedIn()
-    };
-  }
+const useStyles = makeStyles(theme => ({
+  root: {
+    display: 'flex',
+    minHeight: '100vh',
+    flexDirection: 'column',
+  },
+  grow: {
+    flexGrow: 1,
+  },
+  main: {
+    padding: theme.spacing(2),
+  },
+}));
 
-  handleSignIn = () => {
+const App = () => {
+  const classes = useStyles();
+  const [signedIn, setSignedIn] = useState(isSignedIn());
+
+  const handleSignIn = () => {
     signIn();
   };
 
-  handleSignOut = () => {
+  const handleSignOut = () => {
     signOut();
-    this.setState({ isSignedIn: false })
+    setSignedIn(false);
   };
 
-  render() {
-    const { isSignedIn } = this.state;
-    return (
-      <Router history={history}>
-        <ThemeProvider theme={theme}>
-          <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
-            <CssBaseline />
-            <Header
-              isSignedIn={isSignedIn}
-              onSignIn={this.handleSignIn}
-              onSignOut={this.handleSignOut}
-            />
-            <Grid container justify="center" style={{ flexGrow: 1 }}>
-              <Grid item xs={12} md={8} style={{ padding: 16 }}>
-                {isSignedIn ? (
-                  <Switch>
-                    <Route path="/competitions/:competitionId" component={Competition} />
-                    <Route path="/competitions" component={CompetitionList} />
-                    <Redirect to="/competitions" />
-                  </Switch>
-                ) : (
-                  <Switch>
-                    <Route exact path="/" component={Home} />
-                    <Redirect to="/" />
-                  </Switch>
-                )}
-              </Grid>
+  return (
+    <Router history={history}>
+      <ThemeProvider theme={theme}>
+        <div className={classes.root}>
+          <CssBaseline />
+          <Header
+            isSignedIn={signedIn}
+            onSignIn={handleSignIn}
+            onSignOut={handleSignOut}
+          />
+          <Grid container justify="center" className={classes.grow}>
+            <Grid item xs={12} md={8} xl={6} className={classes.main}>
+              {signedIn ? (
+                <Switch>
+                  <Route path="/competitions/:competitionId" component={Competition} />
+                  <Route path="/competitions" component={CompetitionList} />
+                  <Redirect to="/competitions" />
+                </Switch>
+              ) : (
+                <Switch>
+                  <Route exact path="/" component={Home} />
+                  <Redirect to="/" />
+                </Switch>
+              )}
             </Grid>
-            <Footer />
-          </div>
-        </ThemeProvider>
-      </Router>
-    );
-  }
-}
+          </Grid>
+          <Footer />
+        </div>
+      </ThemeProvider>
+    </Router>
+  );
+};
+
+export default App;

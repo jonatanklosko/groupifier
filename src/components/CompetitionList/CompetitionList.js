@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import List from '@material-ui/core/List';
@@ -12,59 +12,50 @@ import Icon from '@material-ui/core/Icon';
 import { getUpcomingManageableCompetitions } from '../../logic/wca-api';
 import { sortBy } from '../../logic/utils';
 
-export default class CompetitionList extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      competitions: [],
-      loading: true,
-      error: null
-    }
-  }
+const CompetitionList = () => {
+  const [competitions, setCompetitions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  componentDidMount() {
+  useEffect(() => {
     getUpcomingManageableCompetitions()
-      .then(competitions =>
-        this.setState({
-          competitions: sortBy(competitions, competition => competition['start_date']),
-          loading: false
-        })
-      )
-      .catch(error => this.setState({ error: error.message, loading: false }));
-  }
+      .then(competitions => {
+        setCompetitions(
+          sortBy(competitions, competition => competition['start_date'])
+        );
+      })
+      .catch(error => setError(error.message))
+      .finally(() => setLoading(false));
+  }, []);
 
-  render() {
-    const { competitions, loading, error } = this.state;
+  return (
+    <Paper>
+      <List subheader={<ListSubheader>Your competitions</ListSubheader>}>
+        {error &&
+          <ListItem>
+            <ListItemIcon>
+              <Icon>error</Icon>
+            </ListItemIcon>
+            <ListItemText primary={`Couldn't fetch competitions: ${error}`} />
+          </ListItem>
+        }
+        {!loading && !error && competitions.length === 0 &&
+          <ListItem>
+            <ListItemIcon>
+              <Icon>sentiment_very_dissatisfied</Icon>
+            </ListItemIcon>
+            <ListItemText primary="You have no upcoming competitions to manage." />
+          </ListItem>
+        }
+        {competitions.map(competition =>
+          <ListItem key={competition.id} button component={Link} to={`/competitions/${competition.id}`}>
+            <ListItemText primary={competition.name} />
+          </ListItem>
+        )}
+      </List>
+      {loading && <LinearProgress />}
+    </Paper>
+  );
+};
 
-    return (
-      <div>
-        <Paper>
-          <List subheader={<ListSubheader>Your competitions</ListSubheader>}>
-            {error &&
-              <ListItem>
-                <ListItemIcon>
-                  <Icon>error</Icon>
-                </ListItemIcon>
-                <ListItemText primary={`Couldn't fetch competitions: ${error}`} />
-              </ListItem>
-            }
-            {!loading && !error && competitions.length === 0 &&
-              <ListItem>
-                <ListItemIcon>
-                  <Icon>sentiment_very_dissatisfied</Icon>
-                </ListItemIcon>
-                <ListItemText primary="You have no upcoming competitions to manage." />
-              </ListItem>
-            }
-            {competitions.map(competition =>
-              <ListItem key={competition.id} button component={Link} to={`/competitions/${competition.id}`}>
-                <ListItemText primary={competition.name} />
-              </ListItem>
-            )}
-          </List>
-          {loading && <LinearProgress />}
-        </Paper>
-      </div>
-    );
-  }
-}
+export default CompetitionList;
