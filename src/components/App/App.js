@@ -4,8 +4,8 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
-import indigo from '@material-ui/core/colors/indigo';
-import grey from '@material-ui/core/colors/grey';
+import blueGrey from '@material-ui/core/colors/blueGrey';
+import blue from '@material-ui/core/colors/blue';
 
 import history from '../../logic/history';
 import Competition from '../Competition/Competition';
@@ -18,8 +18,10 @@ import { isSignedIn, signIn, signOut } from '../../logic/auth';
 
 const theme = createMuiTheme({
   palette: {
-    primary: indigo,
-    secondary: grey
+    primary: {
+      main: blueGrey[900],
+    },
+    secondary: blue,
   },
 });
 
