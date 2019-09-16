@@ -1,11 +1,12 @@
 import React from 'react';
-import Icon from '@material-ui/core/Icon';
 import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
 import red from '@material-ui/core/colors/red';
 import grey from '@material-ui/core/colors/grey';
 import { makeStyles } from '@material-ui/core/styles';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+
 import { version } from '../../../package.json';
 
 const useStyles = makeStyles(theme => ({
@@ -50,7 +51,7 @@ const Footer = () => {
     <Grid container className={classes.root}>
       <Grid item>
         <Typography variant="body2">
-          Made with <Icon className={classes.icon}>favorite</Icon> by{' '}
+          Made with <FavoriteIcon className={classes.icon} /> by{' '}
           <Link
             className={classes.link}
             href="https://github.com/jonatanklosko"

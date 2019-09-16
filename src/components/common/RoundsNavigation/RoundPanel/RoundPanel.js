@@ -2,7 +2,7 @@ import React from 'react';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import Icon from '@material-ui/core/Icon';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Typography from '@material-ui/core/Typography';
 
 import { activityCodeToName } from '../../../../logic/activities';
@@ -22,7 +22,7 @@ const RoundPanel = ({ expanded, onChange, roundId, render }) => {
       expanded={expanded}
       TransitionProps={{ onEntered: scrollToElement }}
     >
-      <ExpansionPanelSummary expandIcon={<Icon>expand_more</Icon>}>
+      <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
         <Typography variant="subtitle1">
           {activityCodeToName(roundId)}
         </Typography>

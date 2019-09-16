@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
 import Grid from '@material-ui/core/Grid';
-import Icon from '@material-ui/core/Icon';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -15,6 +14,7 @@ import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
+import InfoIcon from '@material-ui/icons/Info';
 
 import SaveWcifButton from '../../common/SaveWcifButton/SaveWcifButton';
 import { acceptedPeople } from '../../../logic/competitors';
@@ -96,7 +96,7 @@ const RolesManager = ({ wcif, onWcifUpdate }) => {
                   title="If you separate search phrases with a comma, anyone matching either of them will show up."
                   placement="right"
                 >
-                  <Icon color="action">info</Icon>
+                  <InfoIcon color="action" />
                 </Tooltip>
               </Grid>
             </Grid>

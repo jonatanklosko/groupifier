@@ -2,10 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
-import Icon from '@material-ui/core/Icon';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
+import PeopleIcon from '@material-ui/icons/People';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -32,7 +32,7 @@ const Header = ({ isSignedIn, onSignIn, onSignOut }) => {
             to={isSignedIn ? '/competitions' : '/'}
             className={classes.titleLink}
           >
-            <Icon className={classes.titleIcon}>people</Icon>
+            <PeopleIcon className={classes.titleIcon} />
             Groupifier
           </Link>
         </Typography>

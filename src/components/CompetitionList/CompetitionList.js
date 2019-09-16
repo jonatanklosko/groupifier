@@ -7,7 +7,8 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import Paper from '@material-ui/core/Paper';
-import Icon from '@material-ui/core/Icon';
+import ErrorIcon from '@material-ui/icons/Error';
+import SentimentVeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissatisfied';
 
 import { getUpcomingManageableCompetitions } from '../../logic/wca-api';
 import { sortBy } from '../../logic/utils';
@@ -34,7 +35,7 @@ const CompetitionList = () => {
         {error && (
           <ListItem>
             <ListItemIcon>
-              <Icon>error</Icon>
+              <ErrorIcon />
             </ListItemIcon>
             <ListItemText primary={`Couldn't fetch competitions: ${error}`} />
           </ListItem>
@@ -42,7 +43,7 @@ const CompetitionList = () => {
         {!loading && !error && competitions.length === 0 && (
           <ListItem>
             <ListItemIcon>
-              <Icon>sentiment_very_dissatisfied</Icon>
+              <SentimentVeryDissatisfiedIcon />
             </ListItemIcon>
             <ListItemText primary="You have no upcoming competitions to manage." />
           </ListItem>

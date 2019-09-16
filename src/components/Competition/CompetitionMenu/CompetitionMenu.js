@@ -1,11 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Icon from '@material-ui/core/Icon';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Paper from '@material-ui/core/Paper';
+import PeopleIcon from '@material-ui/icons/People';
+import PermContactCalendarIcon from '@material-ui/icons/PermContactCalendar';
+import PrintIcon from '@material-ui/icons/Print';
+import SettingsIcon from '@material-ui/icons/Settings';
 
 import {
   roomsConfigComplete,
@@ -17,26 +20,26 @@ const menuItems = [
   {
     path: '/roles',
     text: 'Edit roles',
-    icon: 'perm_contact_calendar',
+    icon: PermContactCalendarIcon,
     enabled: wcif => true,
   },
   {
     path: '/config',
     text: 'Configure',
-    icon: 'settings',
+    icon: SettingsIcon,
     enabled: wcif => true,
   },
   {
     path: '/groups',
     text: 'Manage groups',
-    icon: 'people',
+    icon: PeopleIcon,
     enabled: wcif =>
       roomsConfigComplete(wcif) && activitiesConfigComplete(wcif),
   },
   {
     path: '/printing',
     text: 'Print documents',
-    icon: 'print',
+    icon: PrintIcon,
     enabled: wcif => anyCompetitorAssignment(wcif),
   },
 ];
@@ -53,7 +56,7 @@ const CompetitionMenu = ({ wcif, baseUrl }) => (
           disabled={!menuItem.enabled(wcif)}
         >
           <ListItemIcon>
-            <Icon>{menuItem.icon}</Icon>
+            <menuItem.icon />
           </ListItemIcon>
           <ListItemText primary={menuItem.text} />
         </ListItem>
