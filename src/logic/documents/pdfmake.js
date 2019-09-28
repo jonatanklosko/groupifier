@@ -1,7 +1,7 @@
 import pdfMake from 'pdfmake/build/pdfmake';
 
 /* Asynchronously download fonts bundle for PDF Make. */
-fetch('/vfs-fonts.bundle.v2.json')
+fetch('/vfs-fonts.bundle.v2.json', { mode: 'same-origin' })
   .then(response => response.json())
   .then(vfsFonts => (pdfMake.vfs = vfsFonts));
 
