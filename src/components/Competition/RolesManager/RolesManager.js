@@ -50,6 +50,11 @@ const RolesManager = ({ wcif, onWcifUpdate }) => {
           )
       );
 
+  const handleSearchStringChange = value => {
+    setSearchString(value);
+    setPage(0);
+  };
+
   const handleRoleChange = (roleId, personWcaUserId, event) => {
     const { checked } = event.target;
     setLocalWcif({
@@ -88,7 +93,7 @@ const RolesManager = ({ wcif, onWcifUpdate }) => {
                 <TextField
                   label="Search"
                   value={searchString}
-                  onChange={event => setSearchString(event.target.value)}
+                  onChange={event => handleSearchStringChange(event.target.value)}
                 />
               </Grid>
               <Grid item>
