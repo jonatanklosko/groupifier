@@ -1,5 +1,5 @@
 {
-  "$id": "https://jonatanklosko.github.io/groupifier-next/wcif-extensions/CompetitionConfig.json",
+  "$id": "https://groupifier.jonatanklosko.com/wcif-extensions/CompetitionConfig.json",
   "title": "CompetitionConfig",
   "description": "WCIF extension with additional competition configuration.",
   "type": "object",

@@ -1,5 +1,5 @@
 {
-  "$id": "https://jonatanklosko.github.io/groupifier-next/wcif-extensions/RoomConfig.json",
+  "$id": "https://groupifier.jonatanklosko.com/wcif-extensions/RoomConfig.json",
   "title": "RoomConfig",
   "description": "WCIF extension with additional room configuration.",
   "type": "object",

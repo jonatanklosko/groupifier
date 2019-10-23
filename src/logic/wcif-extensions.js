@@ -2,7 +2,7 @@ const groupifierExtensionId = extensionName => `groupifier.${extensionName}`;
 
 const buildGroupifierExtension = (extensionName, data) => ({
   id: groupifierExtensionId(extensionName),
-  specUrl: `https://jonatanklosko.github.io/groupifier-next/wcif-extensions/${extensionName}.json`,
+  specUrl: `https://groupifier.jonatanklosko.com/wcif-extensions/${extensionName}.json`,
   data,
 });
 

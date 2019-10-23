@@ -1,5 +1,5 @@
 {
-  "$id": "https://jonatanklosko.github.io/groupifier-next/wcif-extensions/ActivityConfig.json",
+  "$id": "https://groupifier.jonatanklosko.com/wcif-extensions/ActivityConfig.json",
   "title": "ActivityConfig",
   "description": "WCIF extension with additional round activity configuration.",
   "type": "object",

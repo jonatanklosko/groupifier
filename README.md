@@ -2,7 +2,7 @@
 
 Task and group management tool for WCA competition organizers.
 It's designed to be highly customizable and work well with complex schedules.
-Check out [the website](https://jonatanklosko.github.io/groupifier-next) to find out more.
+Check out [the website](https://groupifier.jonatanklosko.com) to find out more.
 
 ## Development
 
