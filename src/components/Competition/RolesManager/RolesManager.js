@@ -50,8 +50,8 @@ const RolesManager = ({ wcif, onWcifUpdate }) => {
           )
       );
 
-  const handleSearchStringChange = value => {
-    setSearchString(value);
+  const handleSearchStringChange = event => {
+    setSearchString(event.target.value);
     setPage(0);
   };
 
@@ -93,7 +93,7 @@ const RolesManager = ({ wcif, onWcifUpdate }) => {
                 <TextField
                   label="Search"
                   value={searchString}
-                  onChange={event => handleSearchStringChange(event.target.value)}
+                  onChange={event => handleSearchStringChange(event)}
                 />
               </Grid>
               <Grid item>
