@@ -9,13 +9,11 @@ import { activityCodeToName } from '../../../../logic/activities';
 
 const RoundPanel = ({ expanded, onChange, roundId, render }) => {
   const scrollToElement = node => {
-    if (window.scrollTo) {
-      /* Node is the panel content, so the panel is its parent. */
-      window.scrollTo({
-        top: node.parentNode.getBoundingClientRect().top - 8,
-        behavior: 'smooth',
-      });
-    }
+    /* Node is the panel content, so the panel is its parent. */
+    window.scrollTo({
+      top: node.parentNode.getBoundingClientRect().top - 8,
+      behavior: 'smooth',
+    });
   };
 
   return (
