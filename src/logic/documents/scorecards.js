@@ -145,7 +145,12 @@ const groupActivitiesWithCompetitors = (wcif, roundId) => {
   const sortedCompetitors = competitorsForRound(wcif, roundId);
   if (sortedCompetitors) {
     const sortedGroupActivities = hasDistributedAttempts(roundId)
-      ? groupActivitiesByRound(wcif, roundId).slice(0, 1)
+      ? groupActivitiesByRound(wcif, roundId)
+          /* Don't duplicate scorecards for each attempt.  */
+          .filter(
+            ({ activityCode }) =>
+              parseActivityCode(activityCode).attemptNumber === 1
+          )
       : sortBy(
           groupActivitiesByRound(wcif, roundId),
           ({ activityCode }) => parseActivityCode(activityCode).groupNumber
