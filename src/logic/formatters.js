@@ -3,11 +3,11 @@ import { shortEventNameById } from './events';
 
 export const cutoffToString = (cutoff, eventId) => {
   if (eventId === '333mbf') {
-    return `${multibldAttemptResultToPoints(cutoff.attemptResult)} points`;
+    return `> ${multibldAttemptResultToPoints(cutoff.attemptResult)} points`;
   } else if (eventId === '333fm') {
-    return `${cutoff.attemptResult} moves`;
+    return `< ${cutoff.attemptResult} moves`;
   } else {
-    return centisecondsToClockFormat(cutoff.attemptResult);
+    return `< ${centisecondsToClockFormat(cutoff.attemptResult)}`;
   }
 };
 
