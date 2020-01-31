@@ -4,9 +4,11 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 
 import CompetitionMenu from './CompetitionMenu/CompetitionMenu';
+import NewAssignableRoundNotification from './NewAssignableRoundNotification/NewAssignableRoundNotification';
 import ConfigManager from './ConfigManager/ConfigManager';
 import GroupsManager from './GroupsManager/GroupsManager';
 import PrintingManager from './PrintingManager/PrintingManager';
@@ -40,7 +42,7 @@ const Competition = ({ match }) => {
     <div>
       {errors.length === 0 ? (
         <Fragment>
-          <Typography variant="h5" style={{ marginBottom: 16 }}>
+          <Typography variant="h5" gutterBottom>
             {wcif.name}
           </Typography>
           <Switch>
@@ -48,7 +50,21 @@ const Competition = ({ match }) => {
               exact
               path={match.url}
               render={props => (
-                <CompetitionMenu {...props} wcif={wcif} baseUrl={match.url} />
+                <Grid container spacing={2} direction="column">
+                  <Grid item>
+                    <CompetitionMenu
+                      {...props}
+                      wcif={wcif}
+                      baseUrl={match.url}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <NewAssignableRoundNotification
+                      wcif={wcif}
+                      onWcifUpdate={setWcif}
+                    />
+                  </Grid>
+                </Grid>
               )}
             />
             <Route
