@@ -7,7 +7,7 @@ Check out [the website](https://groupifier.jonatanklosko.com) to find out more.
 ## Development
 
 ```bash
-git clone https://github.com/jonatanklosko/groupifier-next.git && cd groupifier-next
+git clone https://github.com/jonatanklosko/groupifier.git && cd groupifier
 npm install
 npm start
 ```
@@ -19,5 +19,5 @@ Run `npm test`.
 ## Documentation
 
 Some implementation details are documented under the [`docs`](docs) directory.
-Also the [wiki](https://github.com/jonatanklosko/groupifier-next/wiki)
+Also the [wiki](https://github.com/jonatanklosko/groupifier/wiki)
 describes some usage related aspects.

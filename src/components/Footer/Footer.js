@@ -35,13 +35,13 @@ const links = [
   { text: 'Donate', url: 'https://ko-fi.com/jonatanklosko' },
   {
     text: 'Guide',
-    url: 'https://github.com/jonatanklosko/groupifier-next/wiki/Guide',
+    url: 'https://github.com/jonatanklosko/groupifier/wiki/Guide',
   },
-  { text: 'GitHub', url: 'https://github.com/jonatanklosko/groupifier-next' },
+  { text: 'GitHub', url: 'https://github.com/jonatanklosko/groupifier' },
   { text: 'Contact', url: 'mailto:jonatanklosko@gmail.com' },
   {
     text: `v${version}`,
-    url: 'https://github.com/jonatanklosko/groupifier-next',
+    url: 'https://github.com/jonatanklosko/groupifier',
   },
 ];
 
