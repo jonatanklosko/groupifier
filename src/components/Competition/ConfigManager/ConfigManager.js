@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Tab from '@material-ui/core/Tab';
@@ -53,17 +52,11 @@ const ConfigManager = ({ wcif, onWcifUpdate }) => {
   return (
     <Grid container spacing={1} justify="flex-end">
       <Grid item xs={12}>
-        <AppBar position="static" color="default">
-          <Tabs
-            value={tabValue}
-            onChange={(event, value) => setTabValue(value)}
-            centered
-          >
-            <Tab label="Rooms" />
-            <Tab label="Rounds" disabled={!roomsConfigComplete(localWcif)} />
-            <Tab label="General" />
-          </Tabs>
-        </AppBar>
+        <Tabs value={tabValue} onChange={(event, value) => setTabValue(value)}>
+          <Tab label="Rooms" />
+          <Tab label="Rounds" disabled={!roomsConfigComplete(localWcif)} />
+          <Tab label="General" />
+        </Tabs>
       </Grid>
       <Grid item xs={12}>
         {tabValue === 0 && (

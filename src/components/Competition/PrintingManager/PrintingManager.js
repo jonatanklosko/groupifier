@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
@@ -47,16 +46,10 @@ const PrintingManager = ({ wcif }) => {
         )}
       </Grid>
       <Grid item xs={12}>
-        <AppBar position="static" color="default">
-          <Tabs
-            value={tabValue}
-            onChange={(event, value) => setTabValue(value)}
-            centered
-          >
-            <Tab label="Scorecards" />
-            <Tab label="Competitor cards" />
-          </Tabs>
-        </AppBar>
+        <Tabs value={tabValue} onChange={(event, value) => setTabValue(value)}>
+          <Tab label="Scorecards" />
+          <Tab label="Competitor cards" />
+        </Tabs>
       </Grid>
       <Grid item xs={12}>
         {tabValue === 0 && <Scorecards wcif={wcif} />}

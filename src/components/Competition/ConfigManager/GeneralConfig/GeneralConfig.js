@@ -74,34 +74,38 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
 
   return (
     <Paper style={{ padding: 16 }}>
-      <Grid container direction="column" spacing={1}>
+      <Grid container direction="column" spacing={2}>
         <Grid item>
-          <Typography variant="h5">Assignments</Typography>
-          <FormControl fullWidth>
-            <InputLabel htmlFor="competitors-sorting-rule">
-              Competitors sorting rule
-            </InputLabel>
-            <Select
-              value={competitorsSortingRule}
-              onChange={handleTextFieldChange}
-              inputProps={{
-                name: 'competitorsSortingRule',
-                id: 'competitors-sorting-rule',
-              }}
-            >
-              {competitorsSortingRules.map(({ id, name }) => (
-                <MenuItem value={id} key={id}>
-                  {name}
-                </MenuItem>
-              ))}
-            </Select>
-            <FormHelperText>
-              {competitorsSortingRules.find(
-                ({ id }) => id === competitorsSortingRule
-              ).description + ' Note: this applies to first rounds only.'}
-            </FormHelperText>
-          </FormControl>
-          <Grid container direction="column">
+          <Typography variant="h5" gutterBottom>
+            Assignments
+          </Typography>
+          <Grid container direction="column" spacing={1}>
+            <Grid item>
+              <FormControl fullWidth>
+                <InputLabel htmlFor="competitors-sorting-rule">
+                  Competitors sorting rule
+                </InputLabel>
+                <Select
+                  value={competitorsSortingRule}
+                  onChange={handleTextFieldChange}
+                  inputProps={{
+                    name: 'competitorsSortingRule',
+                    id: 'competitors-sorting-rule',
+                  }}
+                >
+                  {competitorsSortingRules.map(({ id, name }) => (
+                    <MenuItem value={id} key={id}>
+                      {name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>
+                  {competitorsSortingRules.find(
+                    ({ id }) => id === competitorsSortingRule
+                  ).description + ' Note: this applies to first rounds only.'}
+                </FormHelperText>
+              </FormControl>
+            </Grid>
             <Grid item>
               <FormControlLabel
                 control={
@@ -129,7 +133,9 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
           </Grid>
         </Grid>
         <Grid item>
-          <Typography variant="h5">Printing</Typography>
+          <Typography variant="h5" gutterBottom>
+            Printing
+          </Typography>
           <FormControlLabel
             control={
               <Checkbox
@@ -141,11 +147,12 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
             label="Swap latin names with local ones"
           />
           <TextField
+            fullWidth
             label="Scorecards background image URL"
             name="scorecardsBackgroundUrl"
             value={scorecardsBackgroundUrl}
             onChange={handleTextFieldChange}
-            fullWidth
+            helperText="The image is placed at the center of each scorecard."
           />
         </Grid>
       </Grid>
