@@ -45,6 +45,24 @@ export const activityCodeToName = activityCode => {
     .join(', ');
 };
 
+export const activityCodeToGroupName = activityCode => {
+  const { groupNumber } = parseActivityCode(activityCode);
+  return groupNumber ? `Group ${groupNumber}` : '';
+};
+
+export const sameRoundActivityCode = (activityCode1, activityCode2) => {
+  const code1 = parseActivityCode(activityCode1);
+  const code2 = parseActivityCode(activityCode2);
+  return (
+    code1.eventId &&
+    code2.eventId &&
+    code1.eventId === code2.eventId &&
+    code1.roundNumber &&
+    code2.roundNumber &&
+    code1.roundNumber === code2.roundNumber
+  );
+};
+
 export const hasDistributedAttempts = activityCode =>
   ['333fm', '333mbf'].includes(parseActivityCode(activityCode).eventId);
 

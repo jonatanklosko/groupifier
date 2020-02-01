@@ -193,3 +193,5 @@ export const shortTime = (isoString, timeZone = 'UTC') =>
     hour: 'numeric',
     minute: 'numeric',
   });
+
+export const toInt = string => parseInt(string, 10);

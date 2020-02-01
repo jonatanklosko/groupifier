@@ -30,7 +30,7 @@ export const timeLimitToString = timeLimit => {
 const multibldAttemptResultToPoints = attemptResult =>
   99 - (Math.floor(attemptResult / 10000000) % 100);
 
-const centisecondsToClockFormat = centiseconds => {
+export const centisecondsToClockFormat = centiseconds => {
   const date = new Date(null);
   date.setUTCMilliseconds(centiseconds * 10);
   return date

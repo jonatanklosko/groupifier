@@ -2,6 +2,9 @@ import {
   parseActivityCode,
   activityCodeToName,
   activityById,
+  activityCodeToGroupName,
+  activitiesOverlap,
+  sameRoundActivityCode,
 } from './activities';
 import { personById, roundById, previousRound } from './wcif';
 import { sortBy, sortByArray } from './utils';
@@ -89,9 +92,10 @@ export const competitorsForRound = (wcif, roundId) => {
       competitorsInRound.length > 0
         ? competitorsInRound
         : acceptedPeopleRegisteredForEvent(wcif, eventId);
-    return sortByArray(competitors, competitor =>
-      bestAverageAndSingle(competitor, eventId).map(result => -result)
-    );
+    return sortByArray(competitors, competitor => [
+      ...bestAverageAndSingle(competitor, eventId).map(result => -result),
+      competitor.name,
+    ]);
   } else if (competitorsInRound.length > 0) {
     const previous = previousRound(wcif, roundId);
     return sortBy(competitorsInRound, person => {
@@ -138,3 +142,47 @@ export const hasAssignment = (person, activityId, assignmentCode) =>
       assignment.activityId === activityId &&
       assignment.assignmentCode === assignmentCode
   );
+
+export const updateAssignments = (wcif, personId, updateFn) => {
+  return {
+    ...wcif,
+    persons: wcif.persons.map(person =>
+      person.registrantId === personId
+        ? {
+            ...person,
+            assignments: updateFn(person.assignments),
+          }
+        : person
+    ),
+  };
+};
+
+export const newAssignmentError = (wcif, assignments, newAssignment) => {
+  const newActivity = activityById(wcif, newAssignment.activityId);
+  const overlappingActivity = assignments
+    .map(assignment => activityById(wcif, assignment.activityId))
+    .find(assignedActivity => activitiesOverlap(assignedActivity, newActivity));
+  if (overlappingActivity) {
+    return `Has an overlapping assignment for
+      ${activityCodeToGroupName(overlappingActivity.activityCode)}
+      during that time.
+    `;
+  }
+  if (newAssignment.assignmentCode === 'competitor') {
+    const activityWhereCompetes = assignments
+      .filter(assignment => assignment.assignmentCode === 'competitor')
+      .map(assignment => activityById(wcif, assignment.activityId))
+      .find(assignedActivity =>
+        sameRoundActivityCode(
+          assignedActivity.activityCode,
+          newActivity.activityCode
+        )
+      );
+    if (activityWhereCompetes) {
+      return `Already has competitor assignment for
+        ${activityCodeToGroupName(activityWhereCompetes.activityCode)}.
+      `;
+    }
+  }
+  return null;
+};

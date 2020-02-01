@@ -72,7 +72,7 @@ const GroupsManager = ({ wcif, onWcifUpdate }) => {
         )}
       </Grid>
       <Grid item xs={12}>
-        <GroupsNavigation wcif={localWcif} />
+        <GroupsNavigation wcif={localWcif} onWcifChange={setLocalWcif} />
       </Grid>
       <Grid item>
         <Button

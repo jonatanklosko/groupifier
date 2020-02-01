@@ -4,7 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import EventSelect from '../../common/EventSelect/EventSelect';
 import RoundPanel from './RoundPanel/RoundPanel';
 
-const RoundsNavigation = ({ events, render }) => {
+const RoundsNavigation = ({ events, render, renderActions = null }) => {
   const [selectedEventId, setSelectedEventId] = useState(events[0].id);
   const [expandedRoundId, setExpandedRoundId] = useState(null);
 
@@ -26,6 +26,7 @@ const RoundsNavigation = ({ events, render }) => {
             expanded={round.id === expandedRoundId}
             roundId={round.id}
             render={render}
+            renderActions={renderActions}
             onChange={setExpandedRoundId}
           />
         ))}

@@ -13,13 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import { activityCodeToName } from '../../../../logic/activities';
 import { hasAssignment } from '../../../../logic/competitors';
 import { sortBy } from '../../../../logic/utils';
-
-const roles = [
-  { id: 'competitor', label: 'Competitors' },
-  { id: 'staff-scrambler', label: 'Scramblers' },
-  { id: 'staff-runner', label: 'Runners' },
-  { id: 'staff-judge', label: 'Judges' },
-];
+import { roles } from '../../../../logic/roles';
 
 const GroupDialog = ({ groupActivity, wcif, onClose }) => {
   const rolesWithPeople = roles
