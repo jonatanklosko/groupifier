@@ -10,6 +10,7 @@ import {
 } from '../../../../../logic/activities';
 import { partition } from '../../../../../logic/utils';
 import { competitorsForRound } from '../../../../../logic/competitors';
+import { COMPETITOR_ASSIGNMENT_CODE } from '../../../../../logic/assignments';
 
 const useStyles = makeStyles(theme => ({
   withGroup: {
@@ -40,7 +41,7 @@ const AllDraggableCompetitors = React.memo(({ wcif, roundId, search }) => {
     return partition(competitors, competitor =>
       competitor.assignments.some(
         assignment =>
-          assignment.assignmentCode === 'competitor' &&
+          assignment.assignmentCode === COMPETITOR_ASSIGNMENT_CODE &&
           groupActivityIds.includes(assignment.activityId)
       )
     );

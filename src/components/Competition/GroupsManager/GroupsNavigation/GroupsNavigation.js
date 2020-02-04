@@ -11,7 +11,7 @@ import GroupDialog from '../GroupDialog/GroupDialog';
 import GroupsEditor from '../GroupsEditor/GroupsEditor';
 import {
   activityDurationString,
-  parseActivityCode,
+  activityCodeToGroupName,
   hasDistributedAttempts,
   roomsWithTimezoneAndGroups,
 } from '../../../../logic/activities';
@@ -37,10 +37,9 @@ const GroupsNavigation = ({ wcif, onWcifChange }) => {
                       onClick={() => setOpenGroupActivity(groupActivity)}
                     >
                       <ListItemText
-                        primary={`Group ${
-                          parseActivityCode(groupActivity.activityCode)
-                            .groupNumber
-                        }`}
+                        primary={activityCodeToGroupName(
+                          groupActivity.activityCode
+                        )}
                         secondary={activityDurationString(
                           groupActivity,
                           timezone

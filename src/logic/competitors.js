@@ -8,6 +8,7 @@ import {
 } from './activities';
 import { personById, roundById, previousRound } from './wcif';
 import { sortBy, sortByArray } from './utils';
+import { COMPETITOR_ASSIGNMENT_CODE } from './assignments';
 
 export const best = (person, eventId, type) => {
   if (!['single', 'average'].includes(type)) {
@@ -168,9 +169,11 @@ export const newAssignmentError = (wcif, assignments, newAssignment) => {
       during that time.
     `;
   }
-  if (newAssignment.assignmentCode === 'competitor') {
+  if (newAssignment.assignmentCode === COMPETITOR_ASSIGNMENT_CODE) {
     const activityWhereCompetes = assignments
-      .filter(assignment => assignment.assignmentCode === 'competitor')
+      .filter(
+        assignment => assignment.assignmentCode === COMPETITOR_ASSIGNMENT_CODE
+      )
       .map(assignment => activityById(wcif, assignment.activityId))
       .find(assignedActivity =>
         sameRoundActivityCode(

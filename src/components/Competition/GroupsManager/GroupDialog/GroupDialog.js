@@ -13,17 +13,17 @@ import Typography from '@material-ui/core/Typography';
 import { activityCodeToName } from '../../../../logic/activities';
 import { hasAssignment } from '../../../../logic/competitors';
 import { sortBy } from '../../../../logic/utils';
-import { roles } from '../../../../logic/roles';
+import { assignmentCodes, assignmentName } from '../../../../logic/assignments';
 
 const GroupDialog = ({ groupActivity, wcif, onClose }) => {
-  const rolesWithPeople = roles
-    .map(role => [
-      role,
+  const assignmentCodesWithPeople = assignmentCodes
+    .map(assignmentCode => [
+      assignmentCode,
       wcif.persons.filter(person =>
-        hasAssignment(person, groupActivity.id, role.id)
+        hasAssignment(person, groupActivity.id, assignmentCode)
       ),
     ])
-    .filter(([role, people]) => people.length > 0);
+    .filter(([assignmentCode, people]) => people.length > 0);
 
   return (
     <Dialog open={true} onClose={onClose} maxWidth={false}>
@@ -32,9 +32,11 @@ const GroupDialog = ({ groupActivity, wcif, onClose }) => {
       </DialogTitle>
       <DialogContent>
         <Grid container spacing={1}>
-          {rolesWithPeople.map(([role, people]) => (
-            <Grid item xs={12} sm={6} md key={role.id}>
-              <Typography variant="subtitle2">{role.label}</Typography>
+          {assignmentCodesWithPeople.map(([assignmentCode, people]) => (
+            <Grid item xs={12} sm={6} md key={assignmentCode}>
+              <Typography variant="subtitle2">
+                {assignmentName(assignmentCode)}s
+              </Typography>
               <List dense={true} style={{ overflowY: 'auto', maxHeight: 300 }}>
                 {sortBy(people, person => person.name).map(person => (
                   <ListItem key={person.wcaUserId}>
@@ -44,7 +46,7 @@ const GroupDialog = ({ groupActivity, wcif, onClose }) => {
               </List>
             </Grid>
           ))}
-          {rolesWithPeople.length === 0 && (
+          {assignmentCodesWithPeople.length === 0 && (
             <Grid item>
               <Typography variant="body2">
                 No assignments for this round.

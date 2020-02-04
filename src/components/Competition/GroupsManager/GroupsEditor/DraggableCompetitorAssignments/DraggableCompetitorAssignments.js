@@ -6,7 +6,7 @@ import { bestAverageAndSingle } from '../../../../../logic/competitors';
 import { sortByArray } from '../../../../../logic/utils';
 
 const DraggableCompetitorAssignments = React.memo(
-  ({ people, role, groupActivity }) => {
+  ({ people, assignmentCode, groupActivity }) => {
     const { eventId } = parseActivityCode(groupActivity.activityCode);
 
     const sortedPeople = sortByArray(people, person => [
@@ -18,7 +18,7 @@ const DraggableCompetitorAssignments = React.memo(
       const assignmentIndex = person.assignments.findIndex(
         assignment =>
           assignment.activityId === groupActivity.id &&
-          assignment.assignmentCode === role.id
+          assignment.assignmentCode === assignmentCode
       );
       return (
         <DraggableCompetitor

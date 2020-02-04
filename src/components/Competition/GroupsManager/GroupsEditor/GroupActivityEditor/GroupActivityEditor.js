@@ -9,14 +9,18 @@ import DraggableCompetitorAssignments from '../DraggableCompetitorAssignments/Dr
 
 import { activityCodeToGroupName } from '../../../../../logic/activities';
 import { hasAssignment } from '../../../../../logic/competitors';
-import { roles } from '../../../../../logic/roles';
+import {
+  assignmentCodes,
+  COMPETITOR_ASSIGNMENT_CODE,
+  assignmentName,
+} from '../../../../../logic/assignments';
 
 const GroupActivityEditor = React.memo(
   ({ groupActivity, wcif, size }) => {
-    const rolesWithPeople = roles.map(role => [
-      role,
+    const assignmentCodesWithPeople = assignmentCodes.map(assignmentCode => [
+      assignmentCode,
       wcif.persons.filter(person =>
-        hasAssignment(person, groupActivity.id, role.id)
+        hasAssignment(person, groupActivity.id, assignmentCode)
       ),
     ]);
 
@@ -26,9 +30,9 @@ const GroupActivityEditor = React.memo(
           {activityCodeToGroupName(groupActivity.activityCode)}
         </Typography>
         <Grid container spacing={1}>
-          {rolesWithPeople.map(([role, people]) => (
-            <Grid item xs={12} sm={6} md key={role.id}>
-              <Droppable droppableId={`${groupActivity.id}:${role.id}`}>
+          {assignmentCodesWithPeople.map(([assignmentCode, people]) => (
+            <Grid item xs={12} sm={6} md key={assignmentCode}>
+              <Droppable droppableId={`${groupActivity.id}:${assignmentCode}`}>
                 {provided => (
                   <List
                     ref={provided.innerRef}
@@ -36,15 +40,19 @@ const GroupActivityEditor = React.memo(
                     dense={true}
                     subheader={
                       <ListSubheader disableSticky>
-                        {role.id === 'competitor'
-                          ? `${role.label} (${people.length} of ${size})`
-                          : `${role.label} (${people.length})`}
+                        {assignmentCode === COMPETITOR_ASSIGNMENT_CODE
+                          ? `${assignmentName(assignmentCode)}s (${
+                              people.length
+                            } of ${size})`
+                          : `${assignmentName(assignmentCode)}s (${
+                              people.length
+                            })`}
                       </ListSubheader>
                     }
                   >
                     <DraggableCompetitorAssignments
                       people={people}
-                      role={role}
+                      assignmentCode={assignmentCode}
                       groupActivity={groupActivity}
                     />
                     {provided.placeholder}
@@ -58,15 +66,15 @@ const GroupActivityEditor = React.memo(
     );
   },
   (prevProps, nextProps) => {
-    /* Consider props equal if the number of competitors with each role is the same.
+    /* Consider props equal if the number of competitors with each assignment type is the same.
        That's a heuristic preventing from re-rendering on unrelated wcif changes. */
-    return roles.every(
-      role =>
+    return assignmentCodes.every(
+      assignmentCode =>
         prevProps.wcif.persons.filter(person =>
-          hasAssignment(person, prevProps.groupActivity.id, role.id)
+          hasAssignment(person, prevProps.groupActivity.id, assignmentCode)
         ).length ===
         nextProps.wcif.persons.filter(person =>
-          hasAssignment(person, nextProps.groupActivity.id, role.id)
+          hasAssignment(person, nextProps.groupActivity.id, assignmentCode)
         ).length
     );
   }
