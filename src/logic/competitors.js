@@ -1,14 +1,6 @@
-import {
-  parseActivityCode,
-  activityCodeToName,
-  activityById,
-  activityCodeToGroupName,
-  activitiesOverlap,
-  sameRoundActivityCode,
-} from './activities';
+import { parseActivityCode, activityCodeToName } from './activities';
 import { personById, roundById, previousRound } from './wcif';
 import { sortBy, sortByArray } from './utils';
-import { COMPETITOR_ASSIGNMENT_CODE } from './assignments';
 
 export const best = (person, eventId, type) => {
   if (!['single', 'average'].includes(type)) {
@@ -115,18 +107,6 @@ export const age = person => {
   return Math.floor(diffMs / (1000 * 60 * 60 * 24 * 365.2425));
 };
 
-export const staffAssignments = person =>
-  person.assignments.filter(({ assignmentCode }) =>
-    assignmentCode.startsWith('staff-')
-  );
-
-export const staffAssignmentsForEvent = (wcif, person, eventId) =>
-  staffAssignments(person).filter(
-    ({ activityId }) =>
-      parseActivityCode(activityById(wcif, activityId).activityCode).eventId ===
-      eventId
-  );
-
 export const acceptedPeople = wcif =>
   wcif.persons.filter(
     person => person.registration && person.registration.status === 'accepted'
@@ -136,56 +116,3 @@ const acceptedPeopleRegisteredForEvent = (wcif, eventId) =>
   acceptedPeople(wcif).filter(({ registration }) =>
     registration.eventIds.includes(eventId)
   );
-
-export const hasAssignment = (person, activityId, assignmentCode) =>
-  person.assignments.some(
-    assignment =>
-      assignment.activityId === activityId &&
-      assignment.assignmentCode === assignmentCode
-  );
-
-export const updateAssignments = (wcif, personId, updateFn) => {
-  return {
-    ...wcif,
-    persons: wcif.persons.map(person =>
-      person.registrantId === personId
-        ? {
-            ...person,
-            assignments: updateFn(person.assignments),
-          }
-        : person
-    ),
-  };
-};
-
-export const newAssignmentError = (wcif, assignments, newAssignment) => {
-  const newActivity = activityById(wcif, newAssignment.activityId);
-  const overlappingActivity = assignments
-    .map(assignment => activityById(wcif, assignment.activityId))
-    .find(assignedActivity => activitiesOverlap(assignedActivity, newActivity));
-  if (overlappingActivity) {
-    return `Has an overlapping assignment for
-      ${activityCodeToGroupName(overlappingActivity.activityCode)}
-      during that time.
-    `;
-  }
-  if (newAssignment.assignmentCode === COMPETITOR_ASSIGNMENT_CODE) {
-    const activityWhereCompetes = assignments
-      .filter(
-        assignment => assignment.assignmentCode === COMPETITOR_ASSIGNMENT_CODE
-      )
-      .map(assignment => activityById(wcif, assignment.activityId))
-      .find(assignedActivity =>
-        sameRoundActivityCode(
-          assignedActivity.activityCode,
-          newActivity.activityCode
-        )
-      );
-    if (activityWhereCompetes) {
-      return `Already has competitor assignment for
-        ${activityCodeToGroupName(activityWhereCompetes.activityCode)}.
-      `;
-    }
-  }
-  return null;
-};

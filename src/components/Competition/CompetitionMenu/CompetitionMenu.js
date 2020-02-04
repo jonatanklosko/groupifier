@@ -13,8 +13,8 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import {
   roomsConfigComplete,
   activitiesConfigComplete,
-  anyCompetitorAssignment,
 } from '../../../logic/activities';
+import { anyCompetitorAssignment } from '../../../logic/assignments';
 
 const menuItems = [
   {

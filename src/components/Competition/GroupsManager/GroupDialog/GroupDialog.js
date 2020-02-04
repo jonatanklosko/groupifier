@@ -11,9 +11,12 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
 
 import { activityCodeToName } from '../../../../logic/activities';
-import { hasAssignment } from '../../../../logic/competitors';
 import { sortBy } from '../../../../logic/utils';
-import { assignmentCodes, assignmentName } from '../../../../logic/assignments';
+import {
+  assignmentCodes,
+  assignmentName,
+  hasAssignment,
+} from '../../../../logic/assignments';
 
 const GroupDialog = ({ groupActivity, wcif, onClose }) => {
   const assignmentCodesWithPeople = assignmentCodes

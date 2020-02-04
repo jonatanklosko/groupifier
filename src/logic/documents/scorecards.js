@@ -10,11 +10,11 @@ import { cutoffToString, timeLimitToString } from '../formatters';
 import {
   getExpectedCompetitorsByRound,
   competitorsForRound,
-  hasAssignment,
 } from '../competitors';
 import { getExtensionData } from '../wcif-extensions';
 import { pdfName, getImageDataUrl } from './pdf-utils';
 import { sortedGroupActivitiesWithSize } from '../groups';
+import { hasAssignment } from '../assignments';
 
 /* See: https://github.com/bpampuch/pdfmake/blob/3da11bd8148b190808b06f7bc27883102bf82917/src/standardPageSizes.js#L10 */
 const pageWidth = 595.28;

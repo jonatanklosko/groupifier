@@ -6,8 +6,8 @@ import pink from '@material-ui/core/colors/pink';
 import {
   roundsMissingAssignments,
   activityCodeToName,
-  anyCompetitorAssignment,
 } from '../../../logic/activities';
+import { anyCompetitorAssignment } from '../../../logic/assignments';
 import { assignTasks } from '../../../logic/groups';
 import { downloadScorecards } from '../../../logic/documents/scorecards';
 import { saveWcifChanges } from '../../../logic/wca-api';

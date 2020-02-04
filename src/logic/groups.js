@@ -40,10 +40,12 @@ import {
   age,
   bestAverageAndSingle,
   competitorsForRound,
+} from './competitors';
+import {
   hasAssignment,
   staffAssignments,
   staffAssignmentsForEvent,
-} from './competitors';
+} from './assignments';
 
 export const createGroupActivities = wcif => {
   const rounds = flatMap(wcif.events, event => event.rounds);

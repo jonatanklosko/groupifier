@@ -17,11 +17,11 @@ import GroupActivityEditor from './GroupActivityEditor/GroupActivityEditor';
 
 import { activityCodeToName } from '../../../../logic/activities';
 import { toInt } from '../../../../logic/utils';
+import { competitorsForRound } from '../../../../logic/competitors';
 import {
-  competitorsForRound,
-  updateAssignments,
   newAssignmentError,
-} from '../../../../logic/competitors';
+  updateAssignments,
+} from '../../../../logic/assignments';
 import { sortedGroupActivitiesWithSize } from '../../../../logic/groups';
 
 const useStyles = makeStyles(theme => ({

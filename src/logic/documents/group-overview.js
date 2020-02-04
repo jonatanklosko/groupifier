@@ -6,7 +6,7 @@ import {
   parseActivityCode,
   roomsWithTimezoneAndGroups,
 } from '../activities';
-import { hasAssignment } from '../competitors';
+import { hasAssignment } from '../assignments';
 import { pdfName } from './pdf-utils';
 
 export const downloadGroupOverview = (wcif, rounds) => {

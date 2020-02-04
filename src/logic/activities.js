@@ -297,13 +297,6 @@ export const allGroupsCreated = wcif =>
     )
   );
 
-export const anyCompetitorAssignment = wcif =>
-  wcif.persons.some(person =>
-    person.assignments.some(
-      assignment => assignment.assignmentCode === 'competitor'
-    )
-  );
-
 export const anyGroupAssignedOrCreated = wcif =>
   wcif.events.some(event =>
     event.rounds.some(round =>

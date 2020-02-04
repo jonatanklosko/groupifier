@@ -8,11 +8,11 @@ import { Droppable } from 'react-beautiful-dnd';
 import DraggableCompetitorAssignments from '../DraggableCompetitorAssignments/DraggableCompetitorAssignments';
 
 import { activityCodeToGroupName } from '../../../../../logic/activities';
-import { hasAssignment } from '../../../../../logic/competitors';
 import {
   assignmentCodes,
   COMPETITOR_ASSIGNMENT_CODE,
   assignmentName,
+  hasAssignment,
 } from '../../../../../logic/assignments';
 
 const GroupActivityEditor = React.memo(
