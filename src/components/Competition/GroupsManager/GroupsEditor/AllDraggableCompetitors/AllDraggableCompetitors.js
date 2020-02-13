@@ -9,11 +9,14 @@ import {
   groupActivitiesByRound,
 } from '../../../../../logic/activities';
 import { partition } from '../../../../../logic/utils';
-import { competitorsForRound } from '../../../../../logic/competitors';
+import {
+  competitorsForRound,
+  acceptedPeople,
+} from '../../../../../logic/competitors';
 import { COMPETITOR_ASSIGNMENT_CODE } from '../../../../../logic/assignments';
 
 const useStyles = makeStyles(theme => ({
-  withGroup: {
+  opacity: {
     opacity: 0.5,
   },
   listSubheader: {
@@ -33,18 +36,22 @@ const searchPeople = (people, search) => {
 const AllDraggableCompetitors = React.memo(({ wcif, roundId, search }) => {
   const classes = useStyles();
   const { eventId } = parseActivityCode(roundId);
-  const [withGroup, withoutGroup] = useMemo(() => {
+  const [withGroup, withoutGroup, otherPeople] = useMemo(() => {
     const groupActivityIds = groupActivitiesByRound(wcif, roundId).map(
       activity => activity.id
     );
     const competitors = competitorsForRound(wcif, roundId) || [];
-    return partition(competitors, competitor =>
+    const [withGroup, withoutGroup] = partition(competitors, competitor =>
       competitor.assignments.some(
         assignment =>
           assignment.assignmentCode === COMPETITOR_ASSIGNMENT_CODE &&
           groupActivityIds.includes(assignment.activityId)
       )
     );
+    const otherPeople = acceptedPeople(wcif).filter(
+      person => !competitors.includes(person)
+    );
+    return [withGroup, withoutGroup, otherPeople];
   }, [wcif, roundId]);
 
   const withoutGroupItems = searchPeople(withoutGroup, search).map(
@@ -67,7 +74,20 @@ const AllDraggableCompetitors = React.memo(({ wcif, roundId, search }) => {
         draggableId={`${person.registrantId}:${person.assignments.length}`}
         index={withoutGroup.length + index}
         averageLabelEventId={eventId}
-        className={classes.withGroup}
+        className={classes.opacity}
+      />
+    )
+  );
+
+  const otherPeopleItems = searchPeople(otherPeople, search).map(
+    (person, index) => (
+      <DraggableCompetitor
+        key={person.wcaUserId}
+        person={person}
+        draggableId={`${person.registrantId}:${person.assignments.length}`}
+        index={withoutGroup.length + withGroup.length + index}
+        averageLabelEventId={eventId}
+        className={classes.opacity}
       />
     )
   );
@@ -82,6 +102,10 @@ const AllDraggableCompetitors = React.memo(({ wcif, roundId, search }) => {
         With group
       </ListSubheader>
       {withGroupItems}
+      <ListSubheader className={classes.listSubheader}>
+        Other people
+      </ListSubheader>
+      {otherPeopleItems}
     </Fragment>
   );
 });
