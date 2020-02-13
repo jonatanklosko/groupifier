@@ -8,10 +8,11 @@ import {
   parseActivityCode,
   groupActivitiesByRound,
 } from '../../../../../logic/activities';
-import { partition } from '../../../../../logic/utils';
+import { partition, sortByArray } from '../../../../../logic/utils';
 import {
   competitorsForRound,
   acceptedPeople,
+  bestAverageAndSingle,
 } from '../../../../../logic/competitors';
 import { COMPETITOR_ASSIGNMENT_CODE } from '../../../../../logic/assignments';
 
@@ -51,8 +52,12 @@ const AllDraggableCompetitors = React.memo(({ wcif, roundId, search }) => {
     const otherPeople = acceptedPeople(wcif).filter(
       person => !competitors.includes(person)
     );
-    return [withGroup, withoutGroup, otherPeople];
-  }, [wcif, roundId]);
+    const sortedOtherPeople = sortByArray(otherPeople, person => [
+      ...bestAverageAndSingle(person, eventId).map(result => -result),
+      person.name,
+    ]);
+    return [withGroup, withoutGroup, sortedOtherPeople];
+  }, [wcif, roundId, eventId]);
 
   const withoutGroupItems = searchPeople(withoutGroup, search).map(
     (person, index) => (
