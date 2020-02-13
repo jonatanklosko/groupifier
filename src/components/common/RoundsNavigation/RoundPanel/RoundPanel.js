@@ -24,6 +24,8 @@ const RoundPanel = ({
     });
   };
 
+  const actions = renderActions && renderActions(roundId);
+
   return (
     <ExpansionPanel
       onChange={(event, expanded) => onChange(expanded ? roundId : null)}
@@ -38,12 +40,10 @@ const RoundPanel = ({
       <ExpansionPanelDetails>
         {expanded && render(roundId)}
       </ExpansionPanelDetails>
-      {renderActions && (
+      {actions && (
         <Fragment>
           <Divider />
-          <ExpansionPanelActions>
-            {renderActions(roundId)}
-          </ExpansionPanelActions>
+          <ExpansionPanelActions>{actions}</ExpansionPanelActions>
         </Fragment>
       )}
     </ExpansionPanel>
