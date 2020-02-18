@@ -32,6 +32,9 @@ const useStyles = makeStyles(theme => ({
     height: 'calc(100vh - 64px)',
     overflowY: 'auto',
   },
+  leftArea: {
+    maxWidth: 250,
+  },
   rightArea: {
     flexGrow: 1,
     padding: theme.spacing(3),
@@ -131,8 +134,14 @@ const GroupsEditor = ({ roundId, wcif, onClose }) => {
         </Toolbar>
       </AppBar>
       <DragDropContext onDragEnd={handleDragEnd}>
-        <Grid container>
-          <Grid item className={classes.fullHeightScrollable}>
+        <Grid container wrap="nowrap">
+          <Grid
+            item
+            className={classNames(
+              classes.fullHeightScrollable,
+              classes.leftArea
+            )}
+          >
             <CompetitorsPanel wcif={localWcif} roundId={roundId} />
           </Grid>
           <Grid
