@@ -486,7 +486,8 @@ const assignRunning = (wcif, roundsToAssign) => {
         const sortedAvailableStaff = sortByArray(
           available(staffRunners),
           competitor => [
-            Math.floor(staffAssignments(competitor).length / 3),
+            /* Equally distribute tasks. */
+            staffAssignments(competitor).length,
             competesIn15Minutes(wcif, competitor, groupActivity.endTime)
               ? 1
               : -1,
@@ -510,7 +511,8 @@ const assignRunning = (wcif, roundsToAssign) => {
                   ? 1
                   : -1,
                 -presenceRate(wcif, competitor, groupActivity.startTime),
-                Math.floor(staffAssignments(competitor).length / 6),
+                /* Equally distribute tasks. */
+                staffAssignments(competitor).length,
                 competesIn15Minutes(wcif, competitor, groupActivity.endTime)
                   ? 1
                   : -1,
