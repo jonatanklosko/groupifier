@@ -1,4 +1,4 @@
-# Groupifier [![Build Status](https://travis-ci.com/jonatanklosko/groupifier.svg?branch=master)](https://travis-ci.com/jonatanklosko/groupifier)
+# Groupifier [![Actions Status](https://github.com/jonatanklosko/groupifier/workflows/Test/badge.svg)](https://github.com/jonatanklosko/groupifier/actions)
 
 Task and group management tool for WCA competition organizers.
 It's designed to be highly customizable and work well with complex schedules.
