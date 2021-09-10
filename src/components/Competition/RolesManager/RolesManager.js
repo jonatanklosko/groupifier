@@ -25,6 +25,9 @@ const roles = [
   { id: 'staff-judge', name: 'Judge' },
   { id: 'staff-runner', name: 'Runner' },
   { id: 'staff-dataentry', name: 'Data entry' },
+  // Someone with any other role that should be skipped during
+  // task assignment whenever possible
+  { id: 'staff-other', name: 'Other stuff' },
 ];
 
 const rowsPerPage = 5;
