@@ -1,15 +1,17 @@
 #!/bin/bash
 
+set -e
+
 font_files=(
-  https://github.com/google/fonts/raw/master/apache/roboto/Roboto-Regular.ttf
-  https://github.com/google/fonts/raw/master/apache/roboto/Roboto-Medium.ttf
-  https://github.com/google/fonts/raw/master/apache/roboto/Roboto-Italic.ttf
-  https://github.com/google/fonts/raw/master/apache/roboto/Roboto-MediumItalic.ttf
-  https://github.com/layerssss/wqy/raw/gh-pages/fonts/WenQuanYiZenHei.ttf
-  https://github.com/googlei18n/noto-fonts/raw/master/hinted/NotoSansThaiUI/NotoSansThaiUI-Regular.ttf
-  https://github.com/googlei18n/noto-fonts/raw/master/hinted/NotoSansArabicUI/NotoSansArabicUI-Regular.ttf
-  https://github.com/googlei18n/noto-fonts/raw/master/hinted/NotoSansGeorgian/NotoSansGeorgian-Regular.ttf
-  https://github.com/googlei18n/noto-fonts/raw/master/hinted/NotoSansArmenian/NotoSansArmenian-Regular.ttf
+  https://github.com/google/fonts/raw/59f86d8fc9353b362d45c981917024bc45a64145/apache/roboto/static/Roboto-Regular.ttf
+  https://github.com/google/fonts/raw/59f86d8fc9353b362d45c981917024bc45a64145/apache/roboto/static/Roboto-Medium.ttf
+  https://github.com/google/fonts/raw/59f86d8fc9353b362d45c981917024bc45a64145/apache/roboto/static/Roboto-Italic.ttf
+  https://github.com/google/fonts/raw/59f86d8fc9353b362d45c981917024bc45a64145/apache/roboto/static/Roboto-MediumItalic.ttf
+  https://github.com/layerssss/wqy/raw/c808324d36e9836bb4c9052e27e7db99633673ff/fonts/WenQuanYiZenHei.ttf
+  https://github.com/googlefonts/noto-fonts/raw/fa6a9f1d0ac6cb67fc70958a2713d4b47c89dcf7/hinted/ttf/NotoSansThaiUI/NotoSansThaiUI-Regular.ttf
+  https://github.com/googlefonts/noto-fonts/raw/fa6a9f1d0ac6cb67fc70958a2713d4b47c89dcf7/hinted/ttf/NotoSansArabicUI/NotoSansArabicUI-Regular.ttf
+  https://github.com/googlefonts/noto-fonts/raw/fa6a9f1d0ac6cb67fc70958a2713d4b47c89dcf7/hinted/ttf/NotoSansGeorgian/NotoSansGeorgian-Regular.ttf
+  https://github.com/googlefonts/noto-fonts/raw/fa6a9f1d0ac6cb67fc70958a2713d4b47c89dcf7/hinted/ttf/NotoSansArmenian/NotoSansArmenian-Regular.ttf
 )
 target="$(pwd)/public/vfs-fonts.bundle.v2.json"
 tmpdir=$(mktemp -d)
