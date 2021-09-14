@@ -27,7 +27,7 @@ const roles = [
   { id: 'staff-dataentry', name: 'Data entry' },
   // Someone with any other role that should be skipped during
   // task assignment whenever possible
-  { id: 'staff-other', name: 'Other stuff' },
+  { id: 'staff-other', name: 'Other staff' },
 ];
 
 const rowsPerPage = 5;
