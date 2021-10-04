@@ -122,9 +122,11 @@ const scorecards = (wcif, rounds) => {
       groupsWithCompetitors.map(([_, competitors]) => competitors.length)
     );
     return flatMap(groupsWithCompetitors, ([groupActivity, competitors]) => {
+      let scorecardInGroupNumber = competitors.length;
       const groupScorecards = competitors.map(competitor =>
         scorecard({
           scorecardNumber: scorecardNumber--,
+          scorecardInGroupNumber: scorecardInGroupNumber--,
           competitionName: wcif.shortName,
           activityCode: groupActivity.activityCode,
           round,
@@ -186,6 +188,7 @@ const blankScorecards = wcif => {
 
 const scorecard = ({
   scorecardNumber,
+  scorecardInGroupNumber,
   competitionName,
   activityCode,
   round,
@@ -199,7 +202,7 @@ const scorecard = ({
   const { cutoff, timeLimit } = round || {};
 
   return [
-    { text: scorecardNumber, fontSize: 10 },
+    { text: `${scorecardNumber}/${scorecardInGroupNumber}`, fontSize: 10 },
     {
       text: competitionName,
       bold: true,
