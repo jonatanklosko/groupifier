@@ -202,7 +202,13 @@ const scorecard = ({
   const { cutoff, timeLimit } = round || {};
 
   return [
-    { text: `${scorecardNumber}/${scorecardInGroupNumber}`, fontSize: 10 },
+    {
+      text:
+        scorecardNumber &&
+        scorecardInGroupNumber &&
+        `${scorecardNumber}/${scorecardInGroupNumber}`,
+      fontSize: 10,
+    },
     {
       text: competitionName,
       bold: true,
