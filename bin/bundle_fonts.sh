@@ -31,7 +31,7 @@ echo '- Creating fonts bundle...'
   echo '{'
 	file_number=1
   for file in *.ttf; do
-    echo -n "  \"$file\": \"$(base64 -b 0 $file)\""
+    echo -n "  \"$file\": \"$(base64 -w 0 $file)\""
     if [ $file_number -ne ${#font_files[@]} ]; then echo ','; else echo ''; fi
     ((file_number++))
   done
