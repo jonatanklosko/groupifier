@@ -221,30 +221,22 @@ const scorecard = ({
     {
       margin: [25, 0, 0, 0, 0],
       table: {
-        widths: assignStations
-          ? ['*', 'auto', 'auto', 'auto']
-          : ['*', 'auto', 'auto'],
+        widths: ['*', 'auto', 'auto', ...(assignStations ? ['auto'] : [])],
         body: [
-          columnLabels(
-            assignStations
-              ? ['Event', 'Round', 'Group', 'Station']
-              : ['Event', 'Round', 'Group']
-          ),
-          assignStations
-            ? [
-                eventId ? eventNameById(eventId) : ' ',
-                { text: roundNumber, alignment: 'center' },
-                { text: groupNumber, alignment: 'center' },
-                {
-                  text: assignStations ? scorecardInGroupNumber : '',
-                  alignment: 'center',
-                },
-              ]
-            : [
-                eventId ? eventNameById(eventId) : ' ',
-                { text: roundNumber, alignment: 'center' },
-                { text: groupNumber, alignment: 'center' },
-              ],
+          columnLabels([
+            'Event',
+            'Round',
+            'Group',
+            ...(assignStations ? ['Station'] : []),
+          ]),
+          [
+            eventId ? eventNameById(eventId) : ' ',
+            { text: roundNumber, alignment: 'center' },
+            { text: groupNumber, alignment: 'center' },
+            ...(assignStations
+              ? [{ text: scorecardInGroupNumber, alignment: 'center' }]
+              : []),
+          ],
         ],
       },
     },
