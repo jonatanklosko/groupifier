@@ -30,6 +30,7 @@ const defaultExtensionData = {
     competitorsSortingRule: 'ranks',
     noTasksForNewcomers: false,
     tasksForOwnEventsOnly: false,
+    printStations: false,
   },
 };
 

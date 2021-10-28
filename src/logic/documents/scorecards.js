@@ -112,7 +112,10 @@ const cutLine = properties => ({
 });
 
 const scorecards = (wcif, rounds) => {
-  const { localNamesFirst } = getExtensionData('CompetitionConfig', wcif);
+  const { localNamesFirst, printStations } = getExtensionData(
+    'CompetitionConfig',
+    wcif
+  );
   return flatMap(rounds, round => {
     const groupsWithCompetitors = groupActivitiesWithCompetitors(
       wcif,
@@ -133,6 +136,7 @@ const scorecards = (wcif, rounds) => {
           attemptCount: maxAttemptCountByFormat[round.format],
           competitor,
           localNamesFirst,
+          printStations,
         })
       );
       const scorecardsOnLastPage = groupScorecards.length % 4;
@@ -195,6 +199,7 @@ const scorecard = ({
   attemptCount = 5,
   competitor = { name: ' ', registrantId: ' ' },
   localNamesFirst = false,
+  printStations,
 }) => {
   const { eventId, roundNumber, groupNumber } = activityCode
     ? parseActivityCode(activityCode)
@@ -203,10 +208,7 @@ const scorecard = ({
 
   return [
     {
-      text:
-        scorecardNumber &&
-        scorecardInGroupNumber &&
-        `${scorecardNumber}/${scorecardInGroupNumber}`,
+      text: scorecardNumber && `${scorecardNumber}`,
       fontSize: 10,
     },
     {
@@ -219,13 +221,21 @@ const scorecard = ({
     {
       margin: [25, 0, 0, 0],
       table: {
-        widths: ['*', 'auto', 'auto'],
+        widths: ['*', 'auto', 'auto', ...(printStations ? ['auto'] : [])],
         body: [
-          columnLabels(['Event', 'Round', 'Group']),
+          columnLabels([
+            'Event',
+            'Round',
+            'Group',
+            ...(printStations ? ['Station'] : []),
+          ]),
           [
             eventId ? eventNameById(eventId) : ' ',
             { text: roundNumber, alignment: 'center' },
             { text: groupNumber, alignment: 'center' },
+            ...(printStations
+              ? [{ text: scorecardInGroupNumber, alignment: 'center' }]
+              : []),
           ],
         ],
       },
