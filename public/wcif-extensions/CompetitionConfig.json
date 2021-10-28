@@ -25,10 +25,10 @@
       "description": "A flag indicating whether competitors should be assigned tasks only in events they registered for.",
       "type": "boolean"
     },
-    "assignStations": {
+    "printStations": {
       "description": "A flag indicating whether competitors should have printed stations on their scorecards in generated PDF documents.",
       "type": "boolean"
     }
   },
-  "required": ["localNamesFirst", "scorecardsBackgroundUrl", "competitorsSortingRule", "noTasksForNewcomers", "tasksForOwnEventsOnly","assignStations"]
+  "required": ["localNamesFirst", "scorecardsBackgroundUrl", "competitorsSortingRule", "noTasksForNewcomers", "tasksForOwnEventsOnly"]
 }

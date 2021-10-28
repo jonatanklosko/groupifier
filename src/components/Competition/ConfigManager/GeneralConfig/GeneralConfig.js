@@ -70,7 +70,7 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
     tasksForOwnEventsOnly,
     localNamesFirst,
     scorecardsBackgroundUrl,
-    assignStations,
+    printStations,
   } = getExtensionData('CompetitionConfig', wcif);
 
   return (
@@ -151,8 +151,8 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
             <FormControlLabel
               control={
                 <Checkbox
-                  name="assignStations"
-                  checked={assignStations}
+                  name="printStations"
+                  checked={printStations}
                   onChange={handleCheckboxChange}
                 />
               }
