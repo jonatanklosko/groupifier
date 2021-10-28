@@ -112,7 +112,10 @@ const cutLine = properties => ({
 });
 
 const scorecards = (wcif, rounds) => {
-  const { localNamesFirst } = getExtensionData('CompetitionConfig', wcif);
+  const { localNamesFirst, assignStations } = getExtensionData(
+    'CompetitionConfig',
+    wcif
+  );
   return flatMap(rounds, round => {
     const groupsWithCompetitors = groupActivitiesWithCompetitors(
       wcif,
@@ -133,6 +136,7 @@ const scorecards = (wcif, rounds) => {
           attemptCount: maxAttemptCountByFormat[round.format],
           competitor,
           localNamesFirst,
+          assignStations,
         })
       );
       const scorecardsOnLastPage = groupScorecards.length % 4;
@@ -195,6 +199,7 @@ const scorecard = ({
   attemptCount = 5,
   competitor = { name: ' ', registrantId: ' ' },
   localNamesFirst = false,
+  assignStations,
 }) => {
   const { eventId, roundNumber, groupNumber } = activityCode
     ? parseActivityCode(activityCode)
@@ -203,10 +208,7 @@ const scorecard = ({
 
   return [
     {
-      text:
-        scorecardNumber &&
-        scorecardInGroupNumber &&
-        `${scorecardNumber}/${scorecardInGroupNumber}`,
+      text: scorecardNumber && `${scorecardNumber}`,
       fontSize: 10,
     },
     {
@@ -217,16 +219,32 @@ const scorecard = ({
       alignment: 'center',
     },
     {
-      margin: [25, 0, 0, 0],
+      margin: [25, 0, 0, 0, 0],
       table: {
-        widths: ['*', 'auto', 'auto'],
+        widths: assignStations
+          ? ['*', 'auto', 'auto', 'auto']
+          : ['*', 'auto', 'auto'],
         body: [
-          columnLabels(['Event', 'Round', 'Group']),
-          [
-            eventId ? eventNameById(eventId) : ' ',
-            { text: roundNumber, alignment: 'center' },
-            { text: groupNumber, alignment: 'center' },
-          ],
+          columnLabels(
+            assignStations
+              ? ['Event', 'Round', 'Group', 'Station']
+              : ['Event', 'Round', 'Group']
+          ),
+          assignStations
+            ? [
+                eventId ? eventNameById(eventId) : ' ',
+                { text: roundNumber, alignment: 'center' },
+                { text: groupNumber, alignment: 'center' },
+                {
+                  text: assignStations ? scorecardInGroupNumber : '',
+                  alignment: 'center',
+                },
+              ]
+            : [
+                eventId ? eventNameById(eventId) : ' ',
+                { text: roundNumber, alignment: 'center' },
+                { text: groupNumber, alignment: 'center' },
+              ],
         ],
       },
     },

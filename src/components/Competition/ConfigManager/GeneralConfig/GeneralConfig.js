@@ -70,6 +70,7 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
     tasksForOwnEventsOnly,
     localNamesFirst,
     scorecardsBackgroundUrl,
+    assignStations,
   } = getExtensionData('CompetitionConfig', wcif);
 
   return (
@@ -146,6 +147,22 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
             }
             label="Swap latin names with local ones"
           />
+          <Grid>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="assignStations"
+                  checked={assignStations}
+                  onChange={handleCheckboxChange}
+                />
+              }
+              label="Print out station number"
+            />
+            <FormHelperText>
+              Note that this is printing only, you have to control if there is
+              enough stations for everyone manually
+            </FormHelperText>
+          </Grid>
           <TextField
             fullWidth
             label="Scorecards background image URL"
