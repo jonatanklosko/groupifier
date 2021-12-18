@@ -4,7 +4,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import PositiveIntegerInput from '../PositiveIntegerInput/PositiveIntegerInput';
 
 const ZeroablePositiveIntegerInput = React.memo(
-  ({ value, disabled, ...props }) => {
+  React.forwardRef(({ value, disabled, ...props }, ref) => {
     const inputRef = useRef(null);
     const shouldFocusRef = useRef(false);
 
@@ -24,9 +24,10 @@ const ZeroablePositiveIntegerInput = React.memo(
     }, [value]);
 
     return (
-      <div>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
         <PositiveIntegerInput
           {...props}
+          ref={ref}
           value={value}
           disabled={value === 0 || disabled}
           inputRef={inputRef}
@@ -39,7 +40,7 @@ const ZeroablePositiveIntegerInput = React.memo(
         />
       </div>
     );
-  }
+  })
 );
 
 export default ZeroablePositiveIntegerInput;
