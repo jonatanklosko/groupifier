@@ -58,7 +58,7 @@ const competitorCard = (wcif, person) => {
       .join(', '),
     alignment: 'center',
   });
-  const [assignmentCodes, headers] = zip(
+  const [assignmentCodes = [], headers = []] = zip(
     ...[
       ['competitor', 'Comp'],
       ['staff-scrambler', 'Scr'],
