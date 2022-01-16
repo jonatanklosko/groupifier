@@ -1,5 +1,5 @@
 import pdfMake from './pdfmake';
-import { flatMap, sortByArray } from '../utils';
+import { flatMap, sortBy, sortByArray } from '../utils';
 import {
   activityCodeToName,
   activityDurationString,
@@ -8,6 +8,7 @@ import {
 } from '../activities';
 import { hasAssignment } from '../assignments';
 import { pdfName } from './pdf-utils';
+import { competitorsForRound } from '../competitors';
 
 export const downloadGroupOverview = (wcif, rounds) => {
   const pdfDefinition = groupOverviewPdfDefinition(wcif, rounds);
@@ -42,12 +43,24 @@ const overviewForGroup = (wcif, room, timezone, groupActivity) => {
     ['Runners', 'staff-runner'],
     ['Judges', 'staff-judge'],
   ]
-    .map(([header, assignmentCode]) => [
-      header,
-      wcif.persons.filter(person =>
-        hasAssignment(person, groupActivity.id, assignmentCode)
-      ),
-    ])
+    .map(([header, assignmentCode]) => {
+      const { eventId, roundNumber } = parseActivityCode(
+        groupActivity.activityCode
+      );
+      const roundId = `${eventId}-r${roundNumber}`;
+      // When listing competitors, sort by results, the same
+      // way as we do with scorecards
+      const sortedPersons =
+        assignmentCode === 'competitor'
+          ? competitorsForRound(wcif, roundId).reverse()
+          : sortBy(wcif.persons, person => person.name);
+      return [
+        header,
+        sortedPersons.filter(person =>
+          hasAssignment(person, groupActivity.id, assignmentCode)
+        ),
+      ];
+    })
     .filter(([header, people]) => people.length > 0);
   return {
     unbreakable: true,
@@ -75,9 +88,9 @@ const overviewForGroup = (wcif, room, timezone, groupActivity) => {
             margin: [0, 0, 0, 2],
           },
           {
-            ul: people
-              .map(person => pdfName(person.name, { short: true }))
-              .sort(),
+            [header === 'Competitors' ? 'ol' : 'ul']: people.map(person =>
+              pdfName(person.name, { short: true })
+            ),
           },
         ]),
       },
