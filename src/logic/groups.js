@@ -433,7 +433,13 @@ const assignScrambling = (wcif, roundsToAssign) => {
                 age(competitor) >= 10 ? -1 : 1,
                 /* Avoid assigning tasks to people already busy due to their role. */
                 intersection(
-                  ['staff-dataentry', 'delegate', 'organizer', 'staff-other'],
+                  [
+                    'staff-dataentry',
+                    'delegate',
+                    'trainee-delegate',
+                    'organizer',
+                    'staff-other',
+                  ],
                   competitor.roles
                 ).length,
                 /* Avoid more than two assignments for the given event. */
@@ -504,7 +510,13 @@ const assignRunning = (wcif, roundsToAssign) => {
                   : -1,
                 age(competitor) >= 10 ? -1 : 1,
                 intersection(
-                  ['staff-dataentry', 'delegate', 'organizer', 'staff-other'],
+                  [
+                    'staff-dataentry',
+                    'delegate',
+                    'trainee-delegate',
+                    'organizer',
+                    'staff-other',
+                  ],
                   competitor.roles
                 ).length,
                 staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2
@@ -575,7 +587,13 @@ const assignJudging = (wcif, roundsToAssign) => {
                   : -1,
                 age(competitor) >= 10 ? -1 : 1,
                 intersection(
-                  ['staff-dataentry', 'delegate', 'organizer', 'staff-other'],
+                  [
+                    'staff-dataentry',
+                    'delegate',
+                    'trainee-delegate',
+                    'organizer',
+                    'staff-other',
+                  ],
                   competitor.roles
                 ).length,
                 staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2
@@ -680,7 +698,13 @@ const availabilityRate = (wcif, activity, competitor) => {
 
 const overlapsEveryoneWithSameRole = (wcif, groups, activity, competitor) =>
   intersection(
-    ['staff-dataentry', 'delegate', 'organizer', 'staff-other'],
+    [
+      'staff-dataentry',
+      'delegate',
+      'trainee-delegate',
+      'organizer',
+      'staff-other',
+    ],
     competitor.roles
   ).some(role => {
     const others = acceptedPeople(wcif)
