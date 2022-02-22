@@ -48,7 +48,10 @@ const RoundActivityConfig = React.memo(
       ? pluralize(Math.round(groupSize / scramblers), 'cube') + ' per scrambler'
       : ' ';
     const runnersHelperText = runners
-      ? pluralize(Math.round(stations / runners), 'station') + ' per runner'
+      ? pluralize(
+          Math.round(Math.min(stations, groupSize) / runners),
+          'station'
+        ) + ' per runner'
       : ' ';
 
     const groupsCreated = activity.childActivities.length > 0;
