@@ -111,3 +111,8 @@ export const newAssignmentError = (wcif, assignments, newAssignment) => {
   }
   return null;
 };
+
+// Returns an assignment identifier unique in the context of a single competitor
+export const toAssignmentKey = assignment => {
+  return `${assignment.activityId}-${assignment.activityCode}`;
+};

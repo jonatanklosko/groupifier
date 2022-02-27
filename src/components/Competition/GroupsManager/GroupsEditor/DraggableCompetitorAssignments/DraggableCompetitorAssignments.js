@@ -4,6 +4,7 @@ import DraggableCompetitor from '../DraggableCompetitor/DraggableCompetitor';
 import { parseActivityCode } from '../../../../../logic/activities';
 import { bestAverageAndSingle } from '../../../../../logic/competitors';
 import { sortByArray } from '../../../../../logic/utils';
+import { toAssignmentKey } from '../../../../../logic/assignments';
 
 const DraggableCompetitorAssignments = React.memo(
   ({ people, assignmentCode, groupActivity }) => {
@@ -15,7 +16,7 @@ const DraggableCompetitorAssignments = React.memo(
     ]);
 
     return sortedPeople.map((person, index) => {
-      const assignmentIndex = person.assignments.findIndex(
+      const assignment = person.assignments.find(
         assignment =>
           assignment.activityId === groupActivity.id &&
           assignment.assignmentCode === assignmentCode
@@ -24,7 +25,7 @@ const DraggableCompetitorAssignments = React.memo(
         <DraggableCompetitor
           key={person.wcaUserId}
           person={person}
-          draggableId={`${person.registrantId}:${assignmentIndex}`}
+          draggableId={`${person.registrantId}:${toAssignmentKey(assignment)}`}
           index={index}
           averageLabelEventId={eventId}
         />

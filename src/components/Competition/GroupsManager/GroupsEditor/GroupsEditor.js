@@ -21,6 +21,7 @@ import { competitorsForRound } from '../../../../logic/competitors';
 import {
   newAssignmentError,
   updateAssignments,
+  toAssignmentKey,
 } from '../../../../logic/assignments';
 import { sortedGroupActivitiesWithSize } from '../../../../logic/groups';
 
@@ -59,14 +60,16 @@ const GroupsEditor = ({ roundId, wcif, onClose }) => {
     if (!destination || source.droppableId === destination.droppableId) return;
     const draggableData = draggableId.split(':');
     const personId = toInt(draggableData[0]);
-    const assignmentIndex = toInt(draggableData[1]);
+    const assignmentKey = draggableData[1];
     const destinationData = destination.droppableId.split(':');
     const destinationGroupActivityId = toInt(destinationData[0]);
     const destinationAssignmentCode = destinationData[1];
     if (destination.droppableId === COMPETITORS_PANEL_DROPPABLE_ID) {
       setLocalWcif(
         updateAssignments(localWcif, personId, assignments =>
-          assignments.filter((assignment, index) => index !== assignmentIndex)
+          assignments.filter(
+            assignment => toAssignmentKey(assignment) !== assignmentKey
+          )
         )
       );
     } else if (source.droppableId === COMPETITORS_PANEL_DROPPABLE_ID) {
@@ -97,7 +100,7 @@ const GroupsEditor = ({ roundId, wcif, onClose }) => {
             assignmentCode: destinationAssignmentCode,
           };
           const otherAssignments = assignments.filter(
-            (assignment, index) => index !== assignmentIndex
+            assignment => toAssignmentKey(assignment) !== assignmentKey
           );
           const errorMessage = newAssignmentError(
             localWcif,
@@ -108,8 +111,10 @@ const GroupsEditor = ({ roundId, wcif, onClose }) => {
             setErrorMessage(errorMessage);
             return assignments;
           } else {
-            return assignments.map((assignment, index) =>
-              index === assignmentIndex ? newAssignment : assignment
+            return assignments.map(assignment =>
+              toAssignmentKey(assignment) === assignmentKey
+                ? newAssignment
+                : assignment
             );
           }
         })
