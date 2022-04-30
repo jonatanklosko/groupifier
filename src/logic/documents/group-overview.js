@@ -52,7 +52,7 @@ const overviewForGroup = (wcif, room, timezone, groupActivity) => {
       // way as we do with scorecards
       const sortedPersons =
         assignmentCode === 'competitor'
-          ? competitorsForRound(wcif, roundId).reverse()
+          ? (competitorsForRound(wcif, roundId) || []).reverse()
           : sortBy(wcif.persons, person => person.name);
       return [
         header,
