@@ -390,7 +390,10 @@ const moveCompetitorToGroupEnd = (groups, fromGroupId, toGroupId, competitor) =>
   );
 
 const assignScrambling = (wcif, roundsToAssign) => {
-  const { noTasksForNewcomers } = getExtensionData('CompetitionConfig', wcif);
+  const { noTasksForNewcomers, tasksForOwnEventsOnly } = getExtensionData(
+    'CompetitionConfig',
+    wcif
+  );
   /* Sort rounds by the number of competitors, so the further the more people able to scramble there are. */
   const sortedRoundsToAssign = sortBy(
     roundsToAssign,
@@ -415,6 +418,10 @@ const assignScrambling = (wcif, roundsToAssign) => {
         const sortedAvailableStaff = sortByArray(
           available(staffScramblers),
           competitor => [
+            tasksForOwnEventsOnly &&
+            !competitor.registration.eventIds.includes(eventId)
+              ? 1
+              : -1,
             /* Avoid difference in the number of tasks bigger than 3.
              (General note: this is better than sorting by the number of tasks,
              as it allows one person to be assigned a couple times in a row). */
@@ -429,6 +436,10 @@ const assignScrambling = (wcif, roundsToAssign) => {
             : sortByArray(available(competitors), competitor => [
                 /* Optionally avoid assigning tasks to newcomers. */
                 noTasksForNewcomers && !competitor.wcaId ? 1 : -1,
+                tasksForOwnEventsOnly &&
+                !competitor.registration.eventIds.includes(eventId)
+                  ? 1
+                  : -1,
                 /* Strongly prefer people at least 10 years old. */
                 age(competitor) >= 10 ? -1 : 1,
                 /* Avoid assigning tasks to people already busy due to their role. */
