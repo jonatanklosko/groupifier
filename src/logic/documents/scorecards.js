@@ -17,35 +17,49 @@ import { sortedGroupActivitiesWithSize } from '../groups';
 import { hasAssignment } from '../assignments';
 
 /* See: https://github.com/bpampuch/pdfmake/blob/3da11bd8148b190808b06f7bc27883102bf82917/src/standardPageSizes.js#L10 */
-const pageWidth = 595.28;
-const pageHeight = 841.89;
+const scorecardPaperSizeInfos = {
+  a4: {
+    pageWidth: 595.28,
+    pageHeight: 841.89,
+    scorecardsPerRow: 2,
+    scorecardsPerPage: 4,
+  },
+  a6: {
+    pageWidth: 297.64,
+    pageHeight: 419.53,
+    scorecardsPerRow: 1,
+    scorecardsPerPage: 1,
+  },
+};
 const scorecardMargin = 20;
 
 const maxAttemptCountByFormat = { '1': 1, '2': 2, '3': 3, m: 3, a: 5 };
 
 export const downloadScorecards = (wcif, rounds) => {
-  const { scorecardsBackgroundUrl } = getExtensionData(
+  const { scorecardsBackgroundUrl, scorecardPaperSize } = getExtensionData(
     'CompetitionConfig',
     wcif
   );
   getImageDataUrl(scorecardsBackgroundUrl).then(imageData => {
     const pdfDefinition = scorecardsPdfDefinition(
       scorecards(wcif, rounds),
-      imageData
+      imageData,
+      scorecardPaperSize
     );
     pdfMake.createPdf(pdfDefinition).download(`${wcif.id}-scorecards.pdf`);
   });
 };
 
 export const downloadBlankScorecards = wcif => {
-  const { scorecardsBackgroundUrl } = getExtensionData(
+  const { scorecardsBackgroundUrl, scorecardPaperSize } = getExtensionData(
     'CompetitionConfig',
     wcif
   );
   getImageDataUrl(scorecardsBackgroundUrl).then(imageData => {
     const pdfDefinition = scorecardsPdfDefinition(
       blankScorecards(wcif),
-      imageData
+      imageData,
+      scorecardPaperSize
     );
     pdfMake
       .createPdf(pdfDefinition)
@@ -53,55 +67,78 @@ export const downloadBlankScorecards = wcif => {
   });
 };
 
-const scorecardsPdfDefinition = (scorecardList, imageData) => ({
-  background: [
-    ...(imageData === null
-      ? []
-      : [
-          /* Determined empirically to fit results table. */
-          { x: 60, y: 170 },
-          { x: 360, y: 170 },
-          { x: 60, y: 590 },
-          { x: 360, y: 590 },
-        ].map(absolutePosition => ({ absolutePosition, image: imageData }))),
-    {
-      canvas: [
-        cutLine({
-          x1: scorecardMargin,
-          y1: pageHeight / 2,
-          x2: pageWidth - scorecardMargin,
-          y2: pageHeight / 2,
-        }),
-        cutLine({
-          x1: pageWidth / 2,
-          y1: scorecardMargin,
-          x2: pageWidth / 2,
-          y2: pageHeight - scorecardMargin,
-        }),
-      ],
+const scorecardsPdfDefinition = (
+  scorecardList,
+  imageData,
+  scorecardPaperSize
+) => {
+  const {
+    pageWidth,
+    pageHeight,
+    scorecardsPerRow,
+    scorecardsPerPage,
+  } = scorecardPaperSizeInfos[scorecardPaperSize];
+  const imagePositions = [
+    /* Determined empirically to fit results table. */
+    { x: 60, y: 170 },
+    { x: 360, y: 170 },
+    { x: 60, y: 590 },
+    { x: 360, y: 590 },
+  ].slice(0, scorecardsPerPage);
+  const cutLines =
+    scorecardsPerPage === 4
+      ? {
+          canvas: [
+            cutLine({
+              x1: scorecardMargin,
+              y1: pageHeight / 2,
+              x2: pageWidth - scorecardMargin,
+              y2: pageHeight / 2,
+            }),
+            cutLine({
+              x1: pageWidth / 2,
+              y1: scorecardMargin,
+              x2: pageWidth / 2,
+              y2: pageHeight - scorecardMargin,
+            }),
+          ],
+        }
+      : {};
+
+  return {
+    background: [
+      ...(imageData === null
+        ? []
+        : imagePositions.map(absolutePosition => ({
+            absolutePosition,
+            image: imageData,
+          }))),
+      cutLines,
+    ],
+    pageSize: { width: pageWidth, height: pageHeight },
+    pageMargins: [scorecardMargin, scorecardMargin],
+    content: {
+      layout: {
+        /* Outer margin is done using pageMargins, we use padding for the remaining inner margins. */
+        paddingLeft: i => (i % scorecardsPerRow === 0 ? 0 : scorecardMargin),
+        paddingRight: i =>
+          i % scorecardsPerRow === scorecardsPerRow - 1 ? 0 : scorecardMargin,
+        paddingTop: i => (i % scorecardsPerRow === 0 ? 0 : scorecardMargin),
+        paddingBottom: i =>
+          i % scorecardsPerRow === scorecardsPerRow - 1 ? 0 : scorecardMargin,
+        /* Get rid of borders. */
+        hLineWidth: () => 0,
+        vLineWidth: () => 0,
+      },
+      table: {
+        widths: Array(scorecardsPerRow).fill('*'),
+        heights: pageHeight / scorecardsPerRow - 2 * scorecardMargin,
+        dontBreakRows: true,
+        body: chunk(scorecardList, scorecardsPerRow),
+      },
     },
-  ],
-  pageMargins: [scorecardMargin, scorecardMargin],
-  content: {
-    layout: {
-      /* Outer margin is done using pageMargins, we use padding for the remaining inner margins. */
-      paddingLeft: i => (i % 2 === 0 ? 0 : scorecardMargin),
-      paddingRight: i => (i % 2 === 0 ? scorecardMargin : 0),
-      paddingTop: i => (i % 2 === 0 ? 0 : scorecardMargin),
-      paddingBottom: i => (i % 2 === 0 ? scorecardMargin : 0),
-      /* Get rid of borders. */
-      hLineWidth: () => 0,
-      vLineWidth: () => 0,
-    },
-    table: {
-      widths: ['*', '*'],
-      /* A4 page height minus vertical margins, divided into a half. */
-      heights: (pageHeight - 4 * scorecardMargin) / 2,
-      dontBreakRows: true,
-      body: chunk(scorecardList, 2),
-    },
-  },
-});
+  };
+};
 
 const cutLine = properties => ({
   ...properties,
@@ -112,10 +149,11 @@ const cutLine = properties => ({
 });
 
 const scorecards = (wcif, rounds) => {
-  const { localNamesFirst, printStations } = getExtensionData(
-    'CompetitionConfig',
-    wcif
-  );
+  const {
+    localNamesFirst,
+    printStations,
+    scorecardPaperSize,
+  } = getExtensionData('CompetitionConfig', wcif);
   return flatMap(rounds, round => {
     const groupsWithCompetitors = groupActivitiesWithCompetitors(
       wcif,
@@ -137,12 +175,18 @@ const scorecards = (wcif, rounds) => {
           competitor,
           localNamesFirst,
           printStations,
+          scorecardPaperSize,
         })
       );
-      const scorecardsOnLastPage = groupScorecards.length % 4;
-      return scorecardsOnLastPage === 0
+      const { scorecardsPerPage } = scorecardPaperSizeInfos[scorecardPaperSize];
+      const scorecardsOnLastPage = groupScorecards.length % scorecardsPerPage;
+      const extraScorecards =
+        scorecardsOnLastPage === scorecardsPerPage
+          ? 0
+          : scorecardsPerPage - scorecardsOnLastPage;
+      return extraScorecards === 0
         ? groupScorecards
-        : groupScorecards.concat(times(4 - scorecardsOnLastPage, () => ({})));
+        : groupScorecards.concat(times(extraScorecards, () => ({})));
     });
   });
 };
@@ -185,8 +229,16 @@ const blankScorecards = wcif => {
   const attemptCounts = flatMap(wcif.events, event => event.rounds).map(
     round => maxAttemptCountByFormat[round.format]
   );
+  const { scorecardPaperSize } = getExtensionData('CompetitionConfig', wcif);
+  const { scorecardsPerPage } = scorecardPaperSizeInfos[scorecardPaperSize];
   return flatMap(uniq(attemptCounts), attemptCount =>
-    times(4, () => scorecard({ competitionName: wcif.name, attemptCount }))
+    times(scorecardsPerPage, () =>
+      scorecard({
+        competitionName: wcif.name,
+        attemptCount,
+        scorecardPaperSize,
+      })
+    )
   );
 };
 
@@ -200,11 +252,16 @@ const scorecard = ({
   competitor = { name: ' ', registrantId: ' ' },
   localNamesFirst = false,
   printStations,
+  scorecardPaperSize,
 }) => {
   const { eventId, roundNumber, groupNumber } = activityCode
     ? parseActivityCode(activityCode)
     : {};
   const { cutoff, timeLimit } = round || {};
+  const { pageWidth, scorecardsPerRow } = scorecardPaperSizeInfos[
+    scorecardPaperSize
+  ];
+  const scorecardWidth = pageWidth / scorecardsPerRow - 2 * scorecardMargin;
 
   return [
     {
@@ -272,7 +329,7 @@ const scorecard = ({
           columnLabels(['', 'Scr', 'Result', 'Judge', 'Comp'], {
             alignment: 'center',
           }),
-          ...attemptRows(cutoff, attemptCount),
+          ...attemptRows(cutoff, attemptCount, scorecardWidth),
           [
             {
               text: 'Extra attempt',
@@ -315,7 +372,7 @@ const columnLabels = (labels, style = {}) =>
     text: label,
   }));
 
-const attemptRows = (cutoff, attemptCount) =>
+const attemptRows = (cutoff, attemptCount, scorecardWidth) =>
   times(attemptCount, attemptIndex => attemptRow(attemptIndex + 1)).reduce(
     (rows, attemptRow, attemptIndex) =>
       attemptIndex + 1 === attemptCount
@@ -324,13 +381,14 @@ const attemptRows = (cutoff, attemptCount) =>
             ...rows,
             attemptRow,
             attemptsSeparator(
-              cutoff && attemptIndex + 1 === cutoff.numberOfAttempts
+              cutoff && attemptIndex + 1 === cutoff.numberOfAttempts,
+              scorecardWidth
             ),
           ],
     []
   );
 
-const attemptsSeparator = cutoffLine => [
+const attemptsSeparator = (cutoffLine, scorecardWidth) => [
   {
     ...noBorder,
     colSpan: 5,
@@ -344,7 +402,7 @@ const attemptsSeparator = cutoffLine => [
                 type: 'line',
                 x1: 0,
                 y1: 0,
-                x2: (pageWidth - 4 * scorecardMargin) / 2,
+                x2: scorecardWidth,
                 y2: 0,
                 dash: { length: 5 },
               },

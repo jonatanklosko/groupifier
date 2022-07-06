@@ -28,6 +28,11 @@
     "printStations": {
       "description": "A flag indicating whether competitors should have printed stations on their scorecards in generated PDF documents.",
       "type": "boolean"
+    },
+    "scorecardPaperSize": {
+      "description": "The size of paper that should be used for printing scorecards.",
+      "type": "string",
+      "enum": ["a4", "a6"]
     }
   },
   "required": ["localNamesFirst", "scorecardsBackgroundUrl", "competitorsSortingRule", "noTasksForNewcomers", "tasksForOwnEventsOnly"]

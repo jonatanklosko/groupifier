@@ -31,6 +31,7 @@ const defaultExtensionData = {
     noTasksForNewcomers: false,
     tasksForOwnEventsOnly: false,
     printStations: false,
+    scorecardPaperSize: 'a4',
   },
 };
 

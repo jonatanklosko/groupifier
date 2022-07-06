@@ -43,6 +43,17 @@ const competitorsSortingRules = [
   },
 ];
 
+const scorecardPaperSizes = [
+  {
+    id: 'a4',
+    name: 'Four scorecards per page (A4 paper)',
+  },
+  {
+    id: 'a6',
+    name: 'One scorecard per page (A6 paper)',
+  },
+];
+
 const GeneralConfig = ({ wcif, onWcifChange }) => {
   const handlePropertyChange = (property, value) => {
     onWcifChange(
@@ -71,6 +82,7 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
     localNamesFirst,
     scorecardsBackgroundUrl,
     printStations,
+    scorecardPaperSize,
   } = getExtensionData('CompetitionConfig', wcif);
 
   return (
@@ -137,6 +149,27 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
           <Typography variant="h5" gutterBottom>
             Printing
           </Typography>
+          <Grid item>
+            <FormControl fullWidth>
+              <InputLabel htmlFor="scorecard-paper-size">
+                Scorecard Paper Size
+              </InputLabel>
+              <Select
+                value={scorecardPaperSize}
+                onChange={handleTextFieldChange}
+                inputProps={{
+                  name: 'scorecardPaperSize',
+                  id: 'scorecard-paper-size',
+                }}
+              >
+                {scorecardPaperSizes.map(({ id, name }) => (
+                  <MenuItem value={id} key={id}>
+                    {name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
           <FormControlLabel
             control={
               <Checkbox
