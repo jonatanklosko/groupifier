@@ -17,7 +17,7 @@ import { sortedGroupActivitiesWithSize } from '../groups';
 import { hasAssignment } from '../assignments';
 
 /* See: https://github.com/bpampuch/pdfmake/blob/3da11bd8148b190808b06f7bc27883102bf82917/src/standardPageSizes.js#L10 */
-const paperSizes = {
+const scorecardPaperSizeInfos = {
   a4: {
     pageWidth: 595.28,
     pageHeight: 841.89,
@@ -36,7 +36,7 @@ const scorecardMargin = 20;
 const maxAttemptCountByFormat = { '1': 1, '2': 2, '3': 3, m: 3, a: 5 };
 
 export const downloadScorecards = (wcif, rounds) => {
-  const { scorecardsBackgroundUrl, paperSize } = getExtensionData(
+  const { scorecardsBackgroundUrl, scorecardPaperSize } = getExtensionData(
     'CompetitionConfig',
     wcif
   );
@@ -44,21 +44,22 @@ export const downloadScorecards = (wcif, rounds) => {
     const pdfDefinition = scorecardsPdfDefinition(
       scorecards(wcif, rounds),
       imageData,
-      paperSize
+      scorecardPaperSize
     );
     pdfMake.createPdf(pdfDefinition).download(`${wcif.id}-scorecards.pdf`);
   });
 };
 
 export const downloadBlankScorecards = wcif => {
-  const { scorecardsBackgroundUrl } = getExtensionData(
+  const { scorecardsBackgroundUrl, scorecardPaperSize } = getExtensionData(
     'CompetitionConfig',
     wcif
   );
   getImageDataUrl(scorecardsBackgroundUrl).then(imageData => {
     const pdfDefinition = scorecardsPdfDefinition(
       blankScorecards(wcif),
-      imageData
+      imageData,
+      scorecardPaperSize
     );
     pdfMake
       .createPdf(pdfDefinition)
@@ -66,13 +67,17 @@ export const downloadBlankScorecards = wcif => {
   });
 };
 
-const scorecardsPdfDefinition = (scorecardList, imageData, paperSize) => {
+const scorecardsPdfDefinition = (
+  scorecardList,
+  imageData,
+  scorecardPaperSize
+) => {
   const {
     pageWidth,
     pageHeight,
     scorecardsPerRow,
     scorecardsPerPage,
-  } = paperSizes[paperSize];
+  } = scorecardPaperSizeInfos[scorecardPaperSize];
   const imagePositions = [
     /* Determined empirically to fit results table. */
     { x: 60, y: 170 },
@@ -126,11 +131,8 @@ const scorecardsPdfDefinition = (scorecardList, imageData, paperSize) => {
         vLineWidth: () => 0,
       },
       table: {
-        widths: ['*'] * scorecardsPerRow,
-        /* Page height minus vertical margins, divided by cards / row. */
-        heights:
-          (pageHeight - 2 * scorecardsPerRow * scorecardMargin) /
-          scorecardsPerRow,
+        widths: Array(scorecardsPerRow).fill('*'),
+        heights: pageHeight / scorecardsPerRow - 2 * scorecardMargin,
         dontBreakRows: true,
         body: chunk(scorecardList, scorecardsPerRow),
       },
@@ -147,10 +149,11 @@ const cutLine = properties => ({
 });
 
 const scorecards = (wcif, rounds) => {
-  const { localNamesFirst, printStations, paperSize } = getExtensionData(
-    'CompetitionConfig',
-    wcif
-  );
+  const {
+    localNamesFirst,
+    printStations,
+    scorecardPaperSize,
+  } = getExtensionData('CompetitionConfig', wcif);
   return flatMap(rounds, round => {
     const groupsWithCompetitors = groupActivitiesWithCompetitors(
       wcif,
@@ -172,10 +175,10 @@ const scorecards = (wcif, rounds) => {
           competitor,
           localNamesFirst,
           printStations,
-          paperSize,
+          scorecardPaperSize,
         })
       );
-      const { scorecardsPerPage } = paperSizes[paperSize];
+      const { scorecardsPerPage } = scorecardPaperSizeInfos[scorecardPaperSize];
       const scorecardsOnLastPage = groupScorecards.length % scorecardsPerPage;
       const extraScorecards =
         scorecardsOnLastPage === scorecardsPerPage
@@ -226,11 +229,15 @@ const blankScorecards = wcif => {
   const attemptCounts = flatMap(wcif.events, event => event.rounds).map(
     round => maxAttemptCountByFormat[round.format]
   );
-  const { paperSize } = getExtensionData('CompetitionConfig', wcif);
-  const { scorecardsPerPage } = paperSizes[paperSize];
+  const { scorecardPaperSize } = getExtensionData('CompetitionConfig', wcif);
+  const { scorecardsPerPage } = scorecardPaperSizeInfos[scorecardPaperSize];
   return flatMap(uniq(attemptCounts), attemptCount =>
     times(scorecardsPerPage, () =>
-      scorecard({ competitionName: wcif.name, attemptCount, paperSize })
+      scorecard({
+        competitionName: wcif.name,
+        attemptCount,
+        scorecardPaperSize,
+      })
     )
   );
 };
@@ -245,13 +252,15 @@ const scorecard = ({
   competitor = { name: ' ', registrantId: ' ' },
   localNamesFirst = false,
   printStations,
-  paperSize,
+  scorecardPaperSize,
 }) => {
   const { eventId, roundNumber, groupNumber } = activityCode
     ? parseActivityCode(activityCode)
     : {};
   const { cutoff, timeLimit } = round || {};
-  const { pageWidth, scorecardsPerRow } = paperSizes[paperSize];
+  const { pageWidth, scorecardsPerRow } = scorecardPaperSizeInfos[
+    scorecardPaperSize
+  ];
   const scorecardWidth = pageWidth / scorecardsPerRow - 2 * scorecardMargin;
 
   return [

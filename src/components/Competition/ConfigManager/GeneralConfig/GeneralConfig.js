@@ -43,7 +43,7 @@ const competitorsSortingRules = [
   },
 ];
 
-const paperSizes = [
+const scorecardPaperSizes = [
   {
     id: 'a4',
     name: 'Four scorecards per page (A4 paper)',
@@ -82,7 +82,7 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
     localNamesFirst,
     scorecardsBackgroundUrl,
     printStations,
-    paperSize,
+    scorecardPaperSize,
   } = getExtensionData('CompetitionConfig', wcif);
 
   return (
@@ -151,16 +151,18 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
           </Typography>
           <Grid item>
             <FormControl fullWidth>
-              <InputLabel htmlFor="paper-size">Page Size</InputLabel>
+              <InputLabel htmlFor="scorecard-paper-size">
+                Scorecard Paper Size
+              </InputLabel>
               <Select
-                value={paperSize}
+                value={scorecardPaperSize}
                 onChange={handleTextFieldChange}
                 inputProps={{
-                  name: 'paperSize',
-                  id: 'paper-size',
+                  name: 'scorecardPaperSize',
+                  id: 'scorecard-paper-size',
                 }}
               >
-                {paperSizes.map(({ id, name }) => (
+                {scorecardPaperSizes.map(({ id, name }) => (
                   <MenuItem value={id} key={id}>
                     {name}
                   </MenuItem>
