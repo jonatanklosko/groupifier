@@ -196,10 +196,11 @@ export const shouldHaveGroups = activity => {
 };
 
 export const anyActivityConfig = wcif =>
-  rooms(wcif).some(room =>
-    room.activities.some(activity =>
-      getExtensionData('ActivityConfig', activity)
-    )
+  rooms(wcif).some(anyActivityConfigInRoom);
+
+export const anyActivityConfigInRoom = room =>
+  room.activities.some(activity =>
+    getExtensionData('ActivityConfig', activity)
   );
 
 export const activitiesWithUnpopulatedConfig = wcif =>

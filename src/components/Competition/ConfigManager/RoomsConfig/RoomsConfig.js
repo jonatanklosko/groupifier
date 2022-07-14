@@ -4,7 +4,7 @@ import Paper from '@material-ui/core/Paper';
 
 import RoomConfig from '../RoomConfig/RoomConfig';
 import { mapIn } from '../../../../logic/utils';
-import { anyActivityConfig, rooms } from '../../../../logic/activities';
+import { anyActivityConfigInRoom, rooms } from '../../../../logic/activities';
 
 const RoomsConfig = ({ wcif, onWcifChange }) => {
   const handleRoomChange = updatedRoom => {
@@ -17,18 +17,16 @@ const RoomsConfig = ({ wcif, onWcifChange }) => {
     );
   };
 
-  /* Disable rooms configuration once activities config has been populated. */
-  const disabled = anyActivityConfig(wcif);
-
   return (
     <Paper style={{ padding: 16 }}>
       <Grid container spacing={2}>
         {rooms(wcif).map(room => (
           <Grid item key={room.id}>
+            {/* Disable rooms configuration once activities config has been populated. */}
             <RoomConfig
               room={room}
               onChange={handleRoomChange}
-              disabled={disabled}
+              disabled={anyActivityConfigInRoom(room)}
             />
           </Grid>
         ))}
