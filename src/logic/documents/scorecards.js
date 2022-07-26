@@ -180,13 +180,11 @@ const scorecards = (wcif, rounds) => {
       );
       const { scorecardsPerPage } = scorecardPaperSizeInfos[scorecardPaperSize];
       const scorecardsOnLastPage = groupScorecards.length % scorecardsPerPage;
-      const extraScorecards =
-        scorecardsOnLastPage === scorecardsPerPage
-          ? 0
-          : scorecardsPerPage - scorecardsOnLastPage;
-      return extraScorecards === 0
+      return scorecardsOnLastPage === 0
         ? groupScorecards
-        : groupScorecards.concat(times(extraScorecards, () => ({})));
+        : groupScorecards.concat(
+            times(scorecardsPerPage - scorecardsOnLastPage, () => ({}))
+          );
     });
   });
 };
