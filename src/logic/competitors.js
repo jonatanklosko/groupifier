@@ -1,6 +1,6 @@
 import { parseActivityCode, activityCodeToName } from './activities';
 import { personById, roundById, previousRound } from './wcif';
-import { sortBy, sortByArray } from './utils';
+import { sortBy, sortByArray, uniq } from './utils';
 
 export const best = (person, eventId, type) => {
   if (!['single', 'average'].includes(type)) {
@@ -116,3 +116,13 @@ const acceptedPeopleRegisteredForEvent = (wcif, eventId) =>
   acceptedPeople(wcif).filter(({ registration }) =>
     registration.eventIds.includes(eventId)
   );
+
+export const isForeigner = (wcif, competitor) => {
+  const competitionCountryIso2 = competitionCountryIso2s(wcif)[0];
+  return competitor.countryIso2 !== competitionCountryIso2;
+};
+
+const competitionCountryIso2s = wcif => {
+  const iso2s = wcif.schedule.venues.map(venue => venue.countryIso2);
+  return uniq(iso2s);
+};

@@ -79,6 +79,7 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
     competitorsSortingRule,
     noTasksForNewcomers,
     tasksForOwnEventsOnly,
+    noRunningForForeigners,
     localNamesFirst,
     scorecardsBackgroundUrl,
     printStations,
@@ -141,6 +142,18 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
                   />
                 }
                 label="Assign tasks to competitors only in events they registered for"
+              />
+            </Grid>
+            <Grid item>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="noRunningForForeigners"
+                    checked={noRunningForForeigners}
+                    onChange={handleCheckboxChange}
+                  />
+                }
+                label="Don't assign running to foreigners"
               />
             </Grid>
           </Grid>

@@ -40,6 +40,7 @@ import {
   age,
   bestAverageAndSingle,
   competitorsForRound,
+  isForeigner,
 } from './competitors';
 import {
   hasAssignment,
@@ -473,10 +474,11 @@ const assignScrambling = (wcif, roundsToAssign) => {
 };
 
 const assignRunning = (wcif, roundsToAssign) => {
-  const { noTasksForNewcomers, tasksForOwnEventsOnly } = getExtensionData(
-    'CompetitionConfig',
-    wcif
-  );
+  const {
+    noTasksForNewcomers,
+    tasksForOwnEventsOnly,
+    noRunningForForeigners,
+  } = getExtensionData('CompetitionConfig', wcif);
   return roundsToAssign.reduce((wcif, round) => {
     if (hasDistributedAttempts(round.id)) return wcif;
     const { eventId } = parseActivityCode(round.id);
@@ -503,6 +505,9 @@ const assignRunning = (wcif, roundsToAssign) => {
           sortedAvailableStaff.length >= runners
             ? []
             : sortByArray(available(people), competitor => [
+                noRunningForForeigners && isForeigner(wcif, competitor)
+                  ? 1
+                  : -1,
                 noTasksForNewcomers && !competitor.wcaId ? 1 : -1,
                 tasksForOwnEventsOnly &&
                 !competitor.registration.eventIds.includes(eventId)

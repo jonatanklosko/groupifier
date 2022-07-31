@@ -25,6 +25,10 @@
       "description": "A flag indicating whether competitors should be assigned tasks only in events they registered for.",
       "type": "boolean"
     },
+    "noRunningForForeigners": {
+      "description": "A flag indicating whether foreigners should be assigned running.",
+      "type": "boolean"
+    },
     "printStations": {
       "description": "A flag indicating whether competitors should have printed stations on their scorecards in generated PDF documents.",
       "type": "boolean"
