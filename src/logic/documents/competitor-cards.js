@@ -39,15 +39,18 @@ const competitorCard = (wcif, person) => {
   const { localNamesFirst } = getExtensionData('CompetitionConfig', wcif) || {
     localNamesFirst: false,
   };
-  const tasks = person.assignments
-    .map(({ activityId, assignmentCode }) => {
-      const activity = activityById(wcif, activityId);
-      const { eventId, roundNumber, groupNumber } = parseActivityCode(
-        activity.activityCode
-      );
-      return { assignmentCode, eventId, groupNumber, roundNumber };
-    })
-    .filter(({ roundNumber }) => roundNumber === 1);
+  const tasks = sortBy(
+    person.assignments
+      .map(({ activityId, assignmentCode }) => {
+        const activity = activityById(wcif, activityId);
+        const { eventId, roundNumber, groupNumber } = parseActivityCode(
+          activity.activityCode
+        );
+        return { assignmentCode, eventId, groupNumber, roundNumber };
+      })
+      .filter(({ roundNumber }) => roundNumber === 1),
+    ({ groupNumber }) => groupNumber
+  );
   const groupsText = (eventId, assignmentCode) => ({
     text: tasks
       .filter(
