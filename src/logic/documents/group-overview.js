@@ -10,12 +10,12 @@ import { hasAssignment } from '../assignments';
 import { pdfName } from './pdf-utils';
 import { competitorsForRound } from '../competitors';
 
-export const downloadGroupOverview = (wcif, rounds) => {
-  const pdfDefinition = groupOverviewPdfDefinition(wcif, rounds);
+export const downloadGroupOverview = (wcif, rounds, rooms) => {
+  const pdfDefinition = groupOverviewPdfDefinition(wcif, rounds, rooms);
   pdfMake.createPdf(pdfDefinition).download(`${wcif.id}-group-overview.pdf`);
 };
 
-const groupOverviewPdfDefinition = (wcif, rounds) => ({
+const groupOverviewPdfDefinition = (wcif, rounds, rooms) => ({
   footer: (currentPage, pageCount) => ({
     text: `${currentPage} of ${pageCount}`,
     alignment: 'center',
@@ -23,7 +23,11 @@ const groupOverviewPdfDefinition = (wcif, rounds) => ({
   }),
   content: sortByArray(
     flatMap(
-      flatMap(rounds, round => roomsWithTimezoneAndGroups(wcif, round.id)),
+      flatMap(rounds, round =>
+        roomsWithTimezoneAndGroups(wcif, round.id).filter(
+          ([room, timezone, groupActivities]) => rooms.includes(room)
+        )
+      ),
       ([room, timezone, groupActivities]) =>
         groupActivities.map(groupActivity => [room, timezone, groupActivity])
     ),

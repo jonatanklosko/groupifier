@@ -4,6 +4,7 @@ import {
   parseActivityCode,
   groupActivitiesByRound,
   hasDistributedAttempts,
+  roomByActivity,
 } from '../activities';
 import { eventNameById } from '../events';
 import { cutoffToString, timeLimitToString } from '../formatters';
@@ -35,14 +36,14 @@ const scorecardMargin = 20;
 
 const maxAttemptCountByFormat = { '1': 1, '2': 2, '3': 3, m: 3, a: 5 };
 
-export const downloadScorecards = (wcif, rounds) => {
+export const downloadScorecards = (wcif, rounds, rooms) => {
   const { scorecardsBackgroundUrl, scorecardPaperSize } = getExtensionData(
     'CompetitionConfig',
     wcif
   );
   getImageDataUrl(scorecardsBackgroundUrl).then(imageData => {
     const pdfDefinition = scorecardsPdfDefinition(
-      scorecards(wcif, rounds),
+      scorecards(wcif, rounds, rooms),
       imageData,
       scorecardPaperSize
     );
@@ -148,7 +149,7 @@ const cutLine = properties => ({
   lineColor: '#888888',
 });
 
-const scorecards = (wcif, rounds) => {
+const scorecards = (wcif, rounds, rooms) => {
   const {
     localNamesFirst,
     printStations,
@@ -158,6 +159,8 @@ const scorecards = (wcif, rounds) => {
     const groupsWithCompetitors = groupActivitiesWithCompetitors(
       wcif,
       round.id
+    ).filter(([groupActivity, _]) =>
+      rooms.includes(roomByActivity(wcif, groupActivity.id))
     );
     let scorecardNumber = sum(
       groupsWithCompetitors.map(([_, competitors]) => competitors.length)

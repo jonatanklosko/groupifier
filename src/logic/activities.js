@@ -94,7 +94,15 @@ export const rooms = wcif =>
   flatMap(wcif.schedule.venues, venue => venue.rooms);
 
 export const roomByActivity = (wcif, activityId) =>
-  rooms(wcif).find(room => room.activities.some(({ id }) => id === activityId));
+  rooms(wcif).find(room =>
+    room.activities.some(activity => hasActivity(activity, activityId))
+  );
+
+const hasActivity = (activity, activityId) =>
+  activity.id === activityId ||
+  activity.childActivities.some(childActivity =>
+    hasActivity(childActivity, activityId)
+  );
 
 export const stationsByActivity = (wcif, activityId) =>
   getExtensionData('RoomConfig', roomByActivity(wcif, activityId)).stations;
