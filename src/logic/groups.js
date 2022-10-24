@@ -186,7 +186,8 @@ const assignGroups = (wcif, roundsToAssign) => {
     const updatedCompetitors = flatMap(groups, ({ activity, competitors }) =>
       assignActivity(activity.id, 'competitor', competitors)
     );
-    return updatePeople(wcif, updatedCompetitors);
+    const updatedWcif = updatePeople(wcif, updatedCompetitors);
+    return updateAssignmentStationNumbers(updatedWcif, round.id);
   }, wcif);
 };
 
@@ -749,3 +750,36 @@ const scrambleSetCountForRound = (wcif, roundId) =>
           ({ startTime, endTime }) => startTime + endTime
         )
       ).length;
+
+export const updateAssignmentStationNumbers = (wcif, roundId) => {
+  const { printStations } = getExtensionData('CompetitionConfig', wcif);
+  if (!printStations) return wcif;
+
+  const sortedCompetitors = (
+    competitorsForRound(wcif, roundId) || []
+  ).reverse();
+  if (sortedCompetitors.length === 0) return wcif;
+
+  const groupActivities = groupActivitiesByRound(wcif, roundId);
+
+  return groupActivities.reduce((wcif, groupActivity) => {
+    const competitors = sortedCompetitors.filter(competitor =>
+      hasAssignment(competitor, groupActivity.id, 'competitor')
+    );
+
+    const updatedCompetitors = competitors.map((competitor, index) => {
+      return mapIn(competitor, ['assignments'], assignment => {
+        if (
+          assignment.activityId === groupActivity.id &&
+          assignment.assignmentCode === 'competitor'
+        ) {
+          return { ...assignment, stationNumber: index + 1 };
+        } else {
+          return assignment;
+        }
+      });
+    });
+
+    return updatePeople(wcif, updatedCompetitors);
+  }, wcif);
+};

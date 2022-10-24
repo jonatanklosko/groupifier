@@ -66,6 +66,14 @@ export const hasAssignment = (person, activityId, assignmentCode) => {
   );
 };
 
+export const getAssignment = (person, activityId, assignmentCode) => {
+  return person.assignments.find(
+    assignment =>
+      assignment.activityId === activityId &&
+      assignment.assignmentCode === assignmentCode
+  );
+};
+
 export const updateAssignments = (wcif, personId, updateFn) => {
   return {
     ...wcif,

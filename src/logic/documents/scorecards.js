@@ -15,7 +15,7 @@ import {
 import { getExtensionData } from '../wcif-extensions';
 import { pdfName, getImageDataUrl } from './pdf-utils';
 import { sortedGroupActivitiesWithSize } from '../groups';
-import { hasAssignment } from '../assignments';
+import { getAssignment, hasAssignment } from '../assignments';
 
 /* See: https://github.com/bpampuch/pdfmake/blob/3da11bd8148b190808b06f7bc27883102bf82917/src/standardPageSizes.js#L10 */
 const scorecardPaperSizeInfos = {
@@ -163,32 +163,41 @@ const scorecards = (wcif, rounds, rooms) => {
       rooms.includes(roomByActivity(wcif, groupActivity.id))
     );
     let scorecardNumber = sum(
-      groupsWithCompetitors.map(([_, competitors]) => competitors.length)
+      groupsWithCompetitors.map(
+        ([_, competitorsWithStation]) => competitorsWithStation.length
+      )
     );
-    return flatMap(groupsWithCompetitors, ([groupActivity, competitors]) => {
-      let scorecardInGroupNumber = competitors.length;
-      const groupScorecards = competitors.map(competitor =>
-        scorecard({
-          scorecardNumber: scorecardNumber--,
-          scorecardInGroupNumber: scorecardInGroupNumber--,
-          competitionName: wcif.shortName,
-          activityCode: groupActivity.activityCode,
-          round,
-          attemptCount: maxAttemptCountByFormat[round.format],
-          competitor,
-          localNamesFirst,
-          printStations,
-          scorecardPaperSize,
-        })
-      );
-      const { scorecardsPerPage } = scorecardPaperSizeInfos[scorecardPaperSize];
-      const scorecardsOnLastPage = groupScorecards.length % scorecardsPerPage;
-      return scorecardsOnLastPage === 0
-        ? groupScorecards
-        : groupScorecards.concat(
-            times(scorecardsPerPage - scorecardsOnLastPage, () => ({}))
-          );
-    });
+    return flatMap(
+      groupsWithCompetitors,
+      ([groupActivity, competitorsWithStation]) => {
+        let scorecardInGroupNumber = competitorsWithStation.length;
+        const groupScorecards = competitorsWithStation.map(
+          ([competitor, stationNumber]) =>
+            scorecard({
+              scorecardNumber: scorecardNumber--,
+              // If station numbers are assigned use those, otherwise generate on the fly
+              stationNumber: stationNumber || scorecardInGroupNumber--,
+              competitionName: wcif.shortName,
+              activityCode: groupActivity.activityCode,
+              round,
+              attemptCount: maxAttemptCountByFormat[round.format],
+              competitor,
+              localNamesFirst,
+              printStations,
+              scorecardPaperSize,
+            })
+        );
+        const { scorecardsPerPage } = scorecardPaperSizeInfos[
+          scorecardPaperSize
+        ];
+        const scorecardsOnLastPage = groupScorecards.length % scorecardsPerPage;
+        return scorecardsOnLastPage === 0
+          ? groupScorecards
+          : groupScorecards.concat(
+              times(scorecardsPerPage - scorecardsOnLastPage, () => ({}))
+            );
+      }
+    );
   });
 };
 
@@ -208,9 +217,15 @@ const groupActivitiesWithCompetitors = (wcif, roundId) => {
         );
     return sortedGroupActivities.map(groupActivity => [
       groupActivity,
-      sortedCompetitors.filter(competitor =>
-        hasAssignment(competitor, groupActivity.id, 'competitor')
-      ),
+      sortedCompetitors
+        .filter(competitor =>
+          hasAssignment(competitor, groupActivity.id, 'competitor')
+        )
+        .map(competitor => [
+          competitor,
+          getAssignment(competitor, groupActivity.id, 'competitor')
+            .stationNumber,
+        ]),
     ]);
   } else {
     /* If competitors for this round are not known yet, generate nameless scorecards. */
@@ -221,7 +236,7 @@ const groupActivitiesWithCompetitors = (wcif, roundId) => {
       : sortedGroupActivitiesWithSize(wcif, roundId, expectedCompetitorCount);
     return groupsWithSize.map(([groupActivity, size]) => [
       groupActivity,
-      times(size, () => ({ name: ' ', registrantId: ' ' })),
+      times(size, () => [{ name: ' ', registrantId: ' ' }, null]),
     ]);
   }
 };
@@ -245,7 +260,7 @@ const blankScorecards = wcif => {
 
 const scorecard = ({
   scorecardNumber,
-  scorecardInGroupNumber,
+  stationNumber,
   competitionName,
   activityCode,
   round,
@@ -292,7 +307,7 @@ const scorecard = ({
             { text: roundNumber, alignment: 'center' },
             { text: groupNumber, alignment: 'center' },
             ...(printStations
-              ? [{ text: scorecardInGroupNumber, alignment: 'center' }]
+              ? [{ text: stationNumber, alignment: 'center' }]
               : []),
           ],
         ],

@@ -23,7 +23,10 @@ import {
   updateAssignments,
   toAssignmentKey,
 } from '../../../../logic/assignments';
-import { sortedGroupActivitiesWithSize } from '../../../../logic/groups';
+import {
+  sortedGroupActivitiesWithSize,
+  updateAssignmentStationNumbers,
+} from '../../../../logic/groups';
 
 const useStyles = makeStyles(theme => ({
   scrollDisabled: {
@@ -133,7 +136,12 @@ const GroupsEditor = ({ roundId, wcif, onClose }) => {
           <Button onClick={() => onClose(wcif)} color="inherit">
             Cancel
           </Button>
-          <Button onClick={() => onClose(localWcif)} color="secondary">
+          <Button
+            onClick={() =>
+              onClose(updateAssignmentStationNumbers(localWcif, roundId))
+            }
+            color="secondary"
+          >
             Done
           </Button>
         </Toolbar>
