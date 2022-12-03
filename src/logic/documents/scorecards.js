@@ -316,7 +316,7 @@ const scorecard = ({
     {
       margin: [25, 0, 0, 0],
       table: {
-        widths: [25, '*'],
+        widths: [30, '*'],
         body: [
           columnLabels(['ID', 'Name']),
           [
