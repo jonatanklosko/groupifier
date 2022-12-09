@@ -2,6 +2,8 @@ import './polyfills';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import '@cubing/icons';
+
 import './index.css';
 import App from './components/App/App';
 import { unregister as unregisterServiceWorker } from './registerServiceWorker';
