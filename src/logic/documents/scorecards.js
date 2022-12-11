@@ -245,13 +245,17 @@ const blankScorecards = wcif => {
   const attemptCounts = flatMap(wcif.events, event => event.rounds).map(
     round => maxAttemptCountByFormat[round.format]
   );
-  const { scorecardPaperSize } = getExtensionData('CompetitionConfig', wcif);
+  const { printStations, scorecardPaperSize } = getExtensionData(
+    'CompetitionConfig',
+    wcif
+  );
   const { scorecardsPerPage } = scorecardPaperSizeInfos[scorecardPaperSize];
   return flatMap(uniq(attemptCounts), attemptCount =>
     times(scorecardsPerPage, () =>
       scorecard({
         competitionName: wcif.name,
         attemptCount,
+        printStations,
         scorecardPaperSize,
       })
     )
