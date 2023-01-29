@@ -36,7 +36,7 @@
     "scorecardPaperSize": {
       "description": "The size of paper that should be used for printing scorecards.",
       "type": "string",
-      "enum": ["a4", "a6"]
+      "enum": ["a4", "a6", "letter"]
     }
   },
   "required": ["localNamesFirst", "scorecardsBackgroundUrl", "competitorsSortingRule", "noTasksForNewcomers", "tasksForOwnEventsOnly"]
