@@ -49,6 +49,10 @@ const scorecardPaperSizes = [
     name: 'Four scorecards per page (A4 paper)',
   },
   {
+    id: 'letter',
+    name: 'Four scorecards per page (Letter paper, used in North America)',
+  },
+  {
     id: 'a6',
     name: 'One scorecard per page (A6 paper)',
   },

@@ -31,6 +31,12 @@ const scorecardPaperSizeInfos = {
     scorecardsPerRow: 1,
     scorecardsPerPage: 1,
   },
+  letter: {
+    pageWidth: 612.0,
+    pageHeight: 792.0,
+    scorecardsPerRow: 2,
+    scorecardsPerPage: 4,
+  },
 };
 const scorecardMargin = 20;
 
