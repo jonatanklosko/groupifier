@@ -24,21 +24,26 @@ const scorecardPaperSizeInfos = {
     pageHeight: 841.89,
     scorecardsPerRow: 2,
     scorecardsPerPage: 4,
+    horizontalMargin: 20,
+    verticalMargin: 20,
   },
   a6: {
     pageWidth: 297.64,
     pageHeight: 419.53,
     scorecardsPerRow: 1,
     scorecardsPerPage: 1,
+    horizontalMargin: 20,
+    verticalMargin: 20,
   },
   letter: {
     pageWidth: 612.0,
     pageHeight: 792.0,
     scorecardsPerRow: 2,
     scorecardsPerPage: 4,
+    horizontalMargin: 20,
+    verticalMargin: 10,
   },
 };
-const scorecardMargin = 20;
 
 const maxAttemptCountByFormat = { '1': 1, '2': 2, '3': 3, m: 3, a: 5 };
 
@@ -84,6 +89,8 @@ const scorecardsPdfDefinition = (
     pageHeight,
     scorecardsPerRow,
     scorecardsPerPage,
+    horizontalMargin,
+    verticalMargin,
   } = scorecardPaperSizeInfos[scorecardPaperSize];
   const imagePositions = [
     /* Determined empirically to fit results table. */
@@ -97,16 +104,16 @@ const scorecardsPdfDefinition = (
       ? {
           canvas: [
             cutLine({
-              x1: scorecardMargin,
+              x1: horizontalMargin,
               y1: pageHeight / 2,
-              x2: pageWidth - scorecardMargin,
+              x2: pageWidth - horizontalMargin,
               y2: pageHeight / 2,
             }),
             cutLine({
               x1: pageWidth / 2,
-              y1: scorecardMargin,
+              y1: verticalMargin,
               x2: pageWidth / 2,
-              y2: pageHeight - scorecardMargin,
+              y2: pageHeight - verticalMargin,
             }),
           ],
         }
@@ -123,23 +130,23 @@ const scorecardsPdfDefinition = (
       cutLines,
     ],
     pageSize: { width: pageWidth, height: pageHeight },
-    pageMargins: [scorecardMargin, scorecardMargin],
+    pageMargins: [horizontalMargin, verticalMargin],
     content: {
       layout: {
         /* Outer margin is done using pageMargins, we use padding for the remaining inner margins. */
-        paddingLeft: i => (i % scorecardsPerRow === 0 ? 0 : scorecardMargin),
+        paddingLeft: i => (i % scorecardsPerRow === 0 ? 0 : horizontalMargin),
         paddingRight: i =>
-          i % scorecardsPerRow === scorecardsPerRow - 1 ? 0 : scorecardMargin,
-        paddingTop: i => (i % scorecardsPerRow === 0 ? 0 : scorecardMargin),
+          i % scorecardsPerRow === scorecardsPerRow - 1 ? 0 : horizontalMargin,
+        paddingTop: i => (i % scorecardsPerRow === 0 ? 0 : verticalMargin),
         paddingBottom: i =>
-          i % scorecardsPerRow === scorecardsPerRow - 1 ? 0 : scorecardMargin,
+          i % scorecardsPerRow === scorecardsPerRow - 1 ? 0 : verticalMargin,
         /* Get rid of borders. */
         hLineWidth: () => 0,
         vLineWidth: () => 0,
       },
       table: {
         widths: Array(scorecardsPerRow).fill('*'),
-        heights: pageHeight / scorecardsPerRow - 2 * scorecardMargin,
+        heights: pageHeight / scorecardsPerRow - 2 * verticalMargin,
         dontBreakRows: true,
         body: chunk(scorecardList, scorecardsPerRow),
       },
@@ -284,10 +291,12 @@ const scorecard = ({
     ? parseActivityCode(activityCode)
     : {};
   const { cutoff, timeLimit } = round || {};
-  const { pageWidth, scorecardsPerRow } = scorecardPaperSizeInfos[
-    scorecardPaperSize
-  ];
-  const scorecardWidth = pageWidth / scorecardsPerRow - 2 * scorecardMargin;
+  const {
+    pageWidth,
+    scorecardsPerRow,
+    horizontalMargin,
+  } = scorecardPaperSizeInfos[scorecardPaperSize];
+  const scorecardWidth = pageWidth / scorecardsPerRow - 2 * horizontalMargin;
 
   return [
     {
