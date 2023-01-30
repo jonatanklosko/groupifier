@@ -167,8 +167,10 @@ const scorecards = (wcif, rounds, rooms) => {
     localNamesFirst,
     printStations,
     scorecardPaperSize,
+    scorecardSortOrder,
   } = getExtensionData('CompetitionConfig', wcif);
-  return flatMap(rounds, round => {
+  const { scorecardsPerPage } = scorecardPaperSizeInfos[scorecardPaperSize];
+  let cards = flatMap(rounds, round => {
     const groupsWithCompetitors = groupActivitiesWithCompetitors(
       wcif,
       round.id
@@ -200,11 +202,9 @@ const scorecards = (wcif, rounds, rooms) => {
               scorecardPaperSize,
             })
         );
-        const { scorecardsPerPage } = scorecardPaperSizeInfos[
-          scorecardPaperSize
-        ];
         const scorecardsOnLastPage = groupScorecards.length % scorecardsPerPage;
-        return scorecardsOnLastPage === 0
+        return scorecardsOnLastPage === 0 ||
+          scorecardSortOrder === 'by-page-section'
           ? groupScorecards
           : groupScorecards.concat(
               times(scorecardsPerPage - scorecardsOnLastPage, () => ({}))
@@ -212,6 +212,30 @@ const scorecards = (wcif, rounds, rooms) => {
       }
     );
   });
+  if (scorecardSortOrder === 'by-page-section') {
+    const scorecardsOnLastPage = cards.length % scorecardsPerPage;
+    if (scorecardsOnLastPage !== 0) {
+      cards = cards.concat(
+        times(scorecardsPerPage - scorecardsOnLastPage, () => ({}))
+      );
+    }
+    cards = cards
+      .map((card, idx) => {
+        return { overallNumber: idx, card };
+      })
+      .sort((cardA, cardB) => {
+        const sectionA =
+          cardA.overallNumber % (cards.length / scorecardsPerPage);
+        const sectionB =
+          cardB.overallNumber % (cards.length / scorecardsPerPage);
+        if (sectionA !== sectionB) {
+          return sectionA - sectionB;
+        }
+        return cardA.overallNumber - cardB.overallNumber;
+      })
+      .map(card => card.card);
+  }
+  return cards;
 };
 
 const groupActivitiesWithCompetitors = (wcif, roundId) => {
