@@ -58,6 +58,19 @@ const scorecardPaperSizes = [
   },
 ];
 
+const scorecardSortingRules = [
+  {
+    id: 'naturall',
+    name:
+      'Scorecards are arranged by row, page by page (1/2/3/4 5/6/7/8 9/10/11/12)',
+  },
+  {
+    id: 'stacked',
+    name:
+      'Scorecards are arranged such that each stack of scorecards is sorted (1/4/7/10 2/5/8/11 3/6/9/12)',
+  },
+];
+
 const GeneralConfig = ({ wcif, onWcifChange }) => {
   const handlePropertyChange = (property, value) => {
     onWcifChange(
@@ -88,6 +101,7 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
     scorecardsBackgroundUrl,
     printStations,
     scorecardPaperSize,
+    scorecardOrder,
   } = getExtensionData('CompetitionConfig', wcif);
 
   return (
@@ -180,6 +194,27 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
                 }}
               >
                 {scorecardPaperSizes.map(({ id, name }) => (
+                  <MenuItem value={id} key={id}>
+                    {name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item>
+            <FormControl fullWidth>
+              <InputLabel htmlFor="scorecard-sort-order">
+                Scorecard order
+              </InputLabel>
+              <Select
+                value={scorecardOrder}
+                onChange={handleTextFieldChange}
+                inputProps={{
+                  name: 'scorecardOrder',
+                  id: 'scorecard-order',
+                }}
+              >
+                {scorecardSortingRules.map(({ id, name }) => (
                   <MenuItem value={id} key={id}>
                     {name}
                   </MenuItem>
