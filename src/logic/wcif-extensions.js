@@ -33,7 +33,7 @@ const defaultExtensionData = {
     noRunningForForeigners: false,
     printStations: false,
     scorecardPaperSize: 'a4',
-    scorecardSortOrder: 'natural',
+    scorecardOrder: 'natural',
   },
 };
 
