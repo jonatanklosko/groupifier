@@ -167,7 +167,7 @@ const scorecards = (wcif, rounds, rooms) => {
     localNamesFirst,
     printStations,
     scorecardPaperSize,
-    scorecardSortOrder,
+    scorecardOrder,
   } = getExtensionData('CompetitionConfig', wcif);
   const { scorecardsPerPage } = scorecardPaperSizeInfos[scorecardPaperSize];
   let cards = flatMap(rounds, round => {
@@ -203,8 +203,7 @@ const scorecards = (wcif, rounds, rooms) => {
             })
         );
         const scorecardsOnLastPage = groupScorecards.length % scorecardsPerPage;
-        return scorecardsOnLastPage === 0 ||
-          scorecardSortOrder === 'by-page-section'
+        return scorecardsOnLastPage === 0 || scorecardOrder === 'stacked'
           ? groupScorecards
           : groupScorecards.concat(
               times(scorecardsPerPage - scorecardsOnLastPage, () => ({}))
@@ -212,7 +211,7 @@ const scorecards = (wcif, rounds, rooms) => {
       }
     );
   });
-  if (scorecardSortOrder === 'by-page-section') {
+  if (scorecardOrder === 'stacked') {
     const scorecardsOnLastPage = cards.length % scorecardsPerPage;
     if (scorecardsOnLastPage !== 0) {
       cards = cards.concat(
