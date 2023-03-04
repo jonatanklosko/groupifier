@@ -60,7 +60,7 @@ const scorecardPaperSizes = [
 
 const scorecardSortingRules = [
   {
-    id: 'naturall',
+    id: 'natural',
     name:
       'Scorecards are arranged by row, page by page (1/2/3/4 5/6/7/8 9/10/11/12)',
   },
