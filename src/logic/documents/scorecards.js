@@ -185,6 +185,10 @@ const scorecards = (wcif, rounds, rooms) => {
     return flatMap(
       groupsWithCompetitors,
       ([groupActivity, competitorsWithStation]) => {
+        const { featuredCompetitorIds } = getExtensionData(
+          'ActivityConfig',
+          groupActivity
+        );
         let scorecardInGroupNumber = competitorsWithStation.length;
         const groupScorecards = competitorsWithStation.map(
           ([competitor, stationNumber]) =>
@@ -200,6 +204,7 @@ const scorecards = (wcif, rounds, rooms) => {
               localNamesFirst,
               printStations,
               scorecardPaperSize,
+              featured: featuredCompetitorIds.includes(competitor.wcaUserId),
             })
         );
         const scorecardsOnLastPage = groupScorecards.length % scorecardsPerPage;
@@ -309,6 +314,7 @@ const scorecard = ({
   localNamesFirst = false,
   printStations,
   scorecardPaperSize,
+  featured = false,
 }) => {
   const { eventId, roundNumber, groupNumber } = activityCode
     ? parseActivityCode(activityCode)
@@ -323,8 +329,20 @@ const scorecard = ({
 
   return [
     {
-      text: scorecardNumber && `${scorecardNumber}`,
       fontSize: 10,
+      columns: [
+        {
+          text: scorecardNumber && `${scorecardNumber}`,
+          alignment: 'left',
+        },
+        featured
+          ? {
+              text: '★',
+              font: 'WenQuanYiZenHei', // Roboto (default) does not support unicode icons like ★
+              alignment: 'right',
+            }
+          : {},
+      ],
     },
     {
       text: competitionName,

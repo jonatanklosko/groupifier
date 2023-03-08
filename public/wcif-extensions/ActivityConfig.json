@@ -28,6 +28,10 @@
     "assignJudges": {
       "description": "A flag indicating whether judges should be assigned to the given activity.",
       "type": "boolean"
+    },
+    "featuredCompetitorIds": {
+      "description": "A list of competitors' WCA user IDs who should have a star printed on their scorecard, for special handling by runners or scramblers.",
+      "type": "list",
     }
   },
   "required": ["capacity", "groups", "scramblers", "runners", "assignJudges"]
