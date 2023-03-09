@@ -20,7 +20,10 @@ export const setExtensionData = (extensionName, wcifEntity, data) => {
 };
 
 const defaultExtensionData = {
-  ActivityConfig: null /* This always gets generated, so it's fine for it to be null until then. */,
+  /* This always gets generated, so we don't need defaults for other fields */
+  ActivityConfig: {
+    featuredCompetitorWcaUserIds: [],
+  },
   RoomConfig: {
     stations: null,
   },
