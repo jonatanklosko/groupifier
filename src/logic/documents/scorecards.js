@@ -296,7 +296,7 @@ const blankScorecards = wcif => {
   return flatMap(uniq(attemptCounts), attemptCount =>
     times(scorecardsPerPage, () =>
       scorecard({
-        competitionName: wcif.name,
+        competitionName: wcif.shortName,
         attemptCount,
         printStations,
         scorecardPaperSize,
