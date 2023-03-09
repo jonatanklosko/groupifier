@@ -185,7 +185,7 @@ const scorecards = (wcif, rounds, rooms) => {
     return flatMap(
       groupsWithCompetitors,
       ([groupActivity, competitorsWithStation]) => {
-        const { featuredCompetitorIds } = getExtensionData(
+        const { featuredCompetitorWcaUserIds } = getExtensionData(
           'ActivityConfig',
           groupActivity
         );
@@ -204,7 +204,9 @@ const scorecards = (wcif, rounds, rooms) => {
               localNamesFirst,
               printStations,
               scorecardPaperSize,
-              featured: featuredCompetitorIds.includes(competitor.wcaUserId),
+              featured: featuredCompetitorWcaUserIds.includes(
+                competitor.wcaUserId
+              ),
             })
         );
         const scorecardsOnLastPage = groupScorecards.length % scorecardsPerPage;
