@@ -20,6 +20,7 @@ export const setExtensionData = (extensionName, wcifEntity, data) => {
 };
 
 const defaultExtensionData = {
+  /* This always gets generated, so we don't need defaults for other fields */
   ActivityConfig: {
     featuredCompetitorWcaUserIds: [],
   },
