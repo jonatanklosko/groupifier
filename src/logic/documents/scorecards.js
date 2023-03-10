@@ -185,10 +185,8 @@ const scorecards = (wcif, rounds, rooms) => {
     return flatMap(
       groupsWithCompetitors,
       ([groupActivity, competitorsWithStation]) => {
-        const { featuredCompetitorWcaUserIds } = getExtensionData(
-          'ActivityConfig',
-          groupActivity
-        );
+        const { featuredCompetitorWcaUserIds = [] } =
+          getExtensionData('ActivityConfig', groupActivity) || {};
         let scorecardInGroupNumber = competitorsWithStation.length;
         const groupScorecards = competitorsWithStation.map(
           ([competitor, stationNumber]) =>
