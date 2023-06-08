@@ -14,10 +14,19 @@ export const best = (person, eventId, type) => {
   return personalBest ? personalBest.best : Infinity;
 };
 
-export const bestAverageAndSingle = (competitor, eventId) => [
-  best(competitor, eventId, 'average'),
-  best(competitor, eventId, 'single'),
-];
+export const bestAverageAndSingle = (competitor, eventId) => {
+  if (['333bf', '444bf', '555bf', '333mbf'].includes(eventId)) {
+    return [
+      best(competitor, eventId, 'single'),
+      best(competitor, eventId, 'average'),
+    ];
+  } else {
+    return [
+      best(competitor, eventId, 'average'),
+      best(competitor, eventId, 'single'),
+    ];
+  }
+};
 
 const competitorsExpectedToAdvance = (
   sortedCompetitors,
@@ -47,7 +56,9 @@ const competitorsExpectedToAdvance = (
 export const getExpectedCompetitorsByRound = wcif =>
   wcif.events.reduce((expectedCompetitorsByRound, event) => {
     const [firstRound, ...nextRounds] = event.rounds;
-    expectedCompetitorsByRound[firstRound.id] = sortByArray(
+    expectedCompetitorsByRound[
+      firstRound.id
+    ] = sortByArray(
       acceptedPeopleRegisteredForEvent(wcif, event.id),
       competitor => bestAverageAndSingle(competitor, event.id)
     );
