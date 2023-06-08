@@ -27,7 +27,7 @@ const competitorsSortingRules = [
     id: 'balanced',
     name: 'Balanced',
     description:
-      'Sort competitors in 3x3x3 (any variation), 2x2x2, Pyraminx and Skewb by their official rankings. For other events put best people in different groups, so that there are good scramblers for each group.',
+      'Sort competitors in 3x3x3 (any variation), 2x2x2, Pyraminx, Skewb, Square-1 and Clock by their official rankings. For other events put best people in different groups, so that there are good scramblers for each group.',
   },
   {
     id: 'symmetric',

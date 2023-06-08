@@ -234,9 +234,17 @@ const sortedCompetitorsForRound = (wcif, roundId) => {
   if (competitorsSortingRule === 'ranks') return sortedByRanks;
   if (
     competitorsSortingRule === 'balanced' &&
-    ['333', '222', '333bf', '333oh', '333ft', 'pyram', 'skewb'].includes(
-      eventId
-    )
+    [
+      '333',
+      '222',
+      '333bf',
+      '333oh',
+      '333ft',
+      'pyram',
+      'skewb',
+      'clock',
+      'sq1',
+    ].includes(eventId)
   )
     return sortedByRanks;
   if (['balanced', 'symmetric'].includes(competitorsSortingRule)) {
