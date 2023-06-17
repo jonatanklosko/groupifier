@@ -10,8 +10,10 @@ import { getExtensionData } from '../wcif-extensions';
 import pdfMake from './pdfmake';
 import { pdfName } from './pdf-utils';
 
-export const downloadCompetitorCards = wcif => {
-  const pdfDefinition = competitorCardsPdfDefinition(wcif);
+export const downloadCompetitorCards = (wcif, evenlySpaced = false) => {
+  const pdfDefinition = evenlySpaced
+    ? competitorCardsEvenlySpacedPdfDefinition(wcif)
+    : competitorCardsPdfDefinition(wcif);
   pdfMake.createPdf(pdfDefinition).download(`${wcif.id}-competitor-cards.pdf`);
 };
 
@@ -19,19 +21,82 @@ const competitorCardsPdfDefinition = wcif => ({
   pageMargins: [5, 5],
   content: chunk(competitorCards(wcif), 3).map(cards => ({
     columns: cards,
+    margin: [5, 5],
+    columnGap: 10,
     fontSize: 8,
     unbreakable: true,
   })),
 });
 
-const competitorCards = wcif => {
-  const cards = sortBy(acceptedPeople(wcif), person => person.name).map(
-    person => competitorCard(wcif, person)
-  );
-  const cardsInLastRow = cards.length % 3;
+const competitorCardsEvenlySpacedPdfDefinition = wcif => {
+  const pageWidth = 595.28;
+  const pageHeight = 841.89;
+  const cardsPerRow = 2;
+  const horizontalMargin = 20;
+  const verticalMargin = 20;
+
+  const cutLines = {
+    canvas: [
+      cutLine({
+        x1: horizontalMargin,
+        y1: pageHeight / 2,
+        x2: pageWidth - horizontalMargin,
+        y2: pageHeight / 2,
+      }),
+      cutLine({
+        x1: pageWidth / 2,
+        y1: verticalMargin,
+        x2: pageWidth / 2,
+        y2: pageHeight - verticalMargin,
+      }),
+    ],
+  };
+
+  return {
+    pageSize: { width: pageWidth, height: pageHeight },
+    pageMargins: [horizontalMargin, verticalMargin],
+    background: [cutLines],
+    content: {
+      fontSize: 8,
+      layout: {
+        /* Outer margin is done using pageMargins, we use padding for the remaining inner margins. */
+        paddingLeft: i => (i % cardsPerRow === 0 ? 0 : horizontalMargin),
+        paddingRight: i =>
+          i % cardsPerRow === cardsPerRow - 1 ? 0 : horizontalMargin,
+        paddingTop: i => (i % cardsPerRow === 0 ? 0 : verticalMargin),
+        paddingBottom: i =>
+          i % cardsPerRow === cardsPerRow - 1 ? 0 : verticalMargin,
+        /* Get rid of borders. */
+        hLineWidth: () => 0,
+        vLineWidth: () => 0,
+      },
+      table: {
+        widths: Array(cardsPerRow).fill('*'),
+        heights: pageHeight / cardsPerRow - 2 * verticalMargin,
+        dontBreakRows: true,
+        body: chunk(competitorCards(wcif, cardsPerRow), cardsPerRow),
+      },
+    },
+  };
+};
+
+const cutLine = properties => ({
+  ...properties,
+  type: 'line',
+  lineWidth: 0.1,
+  dash: { length: 10 },
+  lineColor: '#888888',
+});
+
+const competitorCards = (wcif, cardsPerRow) => {
+  const cards = sortBy(
+    acceptedPeople(wcif),
+    person => person.name
+  ).map(person => competitorCard(wcif, person));
+  const cardsInLastRow = cards.length % cardsPerRow;
   return cardsInLastRow === 0
     ? cards
-    : cards.concat(times(3 - cardsInLastRow, () => ({})));
+    : cards.concat(times(cardsPerRow - cardsInLastRow, () => ({})));
 };
 
 const competitorCard = (wcif, person) => {
@@ -72,7 +137,6 @@ const competitorCard = (wcif, person) => {
     )
   );
   return {
-    margin: [5, 5],
     stack: [
       {
         text: pdfName(person.name, {
