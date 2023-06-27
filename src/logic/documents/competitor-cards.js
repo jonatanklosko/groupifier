@@ -19,7 +19,7 @@ export const downloadCompetitorCards = (wcif, evenlySpaced = false) => {
 
 const competitorCardsPdfDefinition = wcif => ({
   pageMargins: [5, 5],
-  content: chunk(competitorCards(wcif), 3).map(cards => ({
+  content: chunk(competitorCards(wcif, 3), 3).map(cards => ({
     columns: cards,
     margin: [5, 5],
     columnGap: 10,
