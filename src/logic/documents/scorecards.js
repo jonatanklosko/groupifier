@@ -310,7 +310,7 @@ const scorecard = ({
   activityCode,
   round,
   attemptCount = 5,
-  competitor = { name: ' ', registrantId: ' ' },
+  competitor = { name: ' ', registrantId: ' ', wcaId: null },
   localNamesFirst = false,
   printStations,
   scorecardPaperSize,
@@ -378,7 +378,13 @@ const scorecard = ({
       table: {
         widths: [30, '*'],
         body: [
-          columnLabels(['ID', 'Name']),
+          columnLabels([
+            'ID',
+            [
+              { text: 'Name', alignment: 'left', width: 'auto' },
+              { text: competitor.wcaId || ' ', alignment: 'right' },
+            ],
+          ]),
           [
             { text: competitor.registrantId, alignment: 'center' },
             {
@@ -445,7 +451,7 @@ const columnLabels = (labels, style = {}) =>
     ...style,
     ...noBorder,
     fontSize: 9,
-    text: label,
+    ...(Array.isArray(label) ? { columns: label } : { text: label }),
   }));
 
 const attemptRows = (cutoff, attemptCount, scorecardWidth) =>
