@@ -126,6 +126,8 @@ const scorecardsPdfDefinition = (
         : imagePositions.map(absolutePosition => ({
             absolutePosition,
             image: imageData,
+            width: 200,
+            height: 200,
           }))),
       cutLines,
     ],
