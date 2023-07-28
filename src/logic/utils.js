@@ -195,3 +195,16 @@ export const shortTime = (isoString, timeZone = 'UTC') =>
   });
 
 export const toInt = string => parseInt(string, 10);
+
+export const copyQueryParams = (sourceQuery, targetQuery, keys) => {
+  const query = new URLSearchParams(sourceQuery);
+  const newQuery = new URLSearchParams(targetQuery);
+
+  for (let key of keys) {
+    if (query.has(key)) {
+      newQuery.set(key, query.get(key));
+    }
+  }
+
+  return newQuery.toString();
+};

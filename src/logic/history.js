@@ -1,14 +1,14 @@
 /* Customized history preserving `staging` query parameter on location change. */
 
 import { createBrowserHistory } from 'history';
+import { copyQueryParams } from './utils';
 
 const preserveQueryParams = (history, location) => {
-  const query = new URLSearchParams(history.location.search);
-  const newQuery = new URLSearchParams(location.search);
-  if (query.has('staging')) {
-    newQuery.set('staging', 'true');
-    location.search = newQuery.toString();
-  }
+  location.search = copyQueryParams(history.location.search, location.search, [
+    'staging',
+    'wca_prod_host',
+  ]);
+
   return location;
 };
 
