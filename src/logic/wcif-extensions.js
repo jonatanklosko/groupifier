@@ -35,6 +35,7 @@ const defaultExtensionData = {
     printStations: false,
     scorecardPaperSize: 'a4',
     scorecardOrder: 'natural',
+    includeCoverSheets: false,
   },
 };
 
