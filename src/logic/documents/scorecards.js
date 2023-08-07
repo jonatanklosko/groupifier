@@ -485,7 +485,7 @@ const coverSheet = ({
       alignment: 'center',
     },
     {
-      text: `${room.name}: Group ${groupNumber}`, // TODO: make aware of room/stage
+      text: `Group ${groupNumber} (${room.name})`,
       fontSize: 15,
       margin: [0, 6],
       alignment: 'center',
