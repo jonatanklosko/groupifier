@@ -384,7 +384,14 @@ const scorecard = ({
             'ID',
             [
               { text: 'Name', alignment: 'left', width: 'auto' },
-              { text: competitor.wcaId || ' ', alignment: 'right' },
+              {
+                text:
+                  competitor.wcaId ||
+                  // If the competitor has a name, then this is a new competitor
+                  // Else this is a blank scorecard
+                  (competitor.name.trim().length > 0 ? 'New Competitor' : ' '),
+                alignment: 'right',
+              },
             ],
           ]),
           [
