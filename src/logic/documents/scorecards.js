@@ -170,6 +170,7 @@ const scorecards = (wcif, rounds, rooms) => {
     printStations,
     scorecardPaperSize,
     scorecardOrder,
+    printScorecardsCoverSheets,
   } = getExtensionData('CompetitionConfig', wcif);
   const { scorecardsPerPage } = scorecardPaperSizeInfos[scorecardPaperSize];
   let cards = flatMap(rounds, round => {
@@ -190,6 +191,14 @@ const scorecards = (wcif, rounds, rooms) => {
         const { featuredCompetitorWcaUserIds = [] } =
           getExtensionData('ActivityConfig', groupActivity) || {};
         let scorecardInGroupNumber = competitorsWithStation.length;
+        const groupCoverSheet = printScorecardsCoverSheets
+          ? coverSheet({
+              competitionName: wcif.shortName,
+              activityCode: groupActivity.activityCode,
+              numberOfScorecards: competitorsWithStation.length,
+              room: roomByActivity(wcif, groupActivity.id),
+            })
+          : null;
         const groupScorecards = competitorsWithStation.map(
           ([competitor, stationNumber]) =>
             scorecard({
@@ -209,6 +218,9 @@ const scorecards = (wcif, rounds, rooms) => {
               ),
             })
         );
+        if (groupCoverSheet) {
+          groupScorecards.unshift(groupCoverSheet);
+        }
         const scorecardsOnLastPage = groupScorecards.length % scorecardsPerPage;
         return scorecardsOnLastPage === 0 || scorecardOrder === 'stacked'
           ? groupScorecards
@@ -416,7 +428,7 @@ const scorecard = ({
           ...attemptRows(cutoff, attemptCount, scorecardWidth),
           [
             {
-              text: 'Extra attempt',
+              text: 'Extra attempt (Delegate initials _______)',
               ...noBorder,
               colSpan: 5,
               margin: [0, 1],
@@ -447,6 +459,100 @@ const scorecard = ({
     },
   ];
 };
+
+const coverSheet = ({
+  competitionName,
+  activityCode,
+  numberOfScorecards,
+  room,
+}) => {
+  const { eventId, roundNumber, groupNumber } = activityCode
+    ? parseActivityCode(activityCode)
+    : {};
+
+  return [
+    {
+      text: competitionName,
+      bold: true,
+      fontSize: 15,
+      margin: [0, 6],
+      alignment: 'center',
+    },
+    {
+      text: `${eventNameById(eventId)} Round ${roundNumber}`,
+      fontSize: 15,
+      margin: [0, 6],
+      alignment: 'center',
+    },
+    {
+      text: `Group ${groupNumber} (${room.name})`,
+      fontSize: 15,
+      margin: [0, 6],
+      alignment: 'center',
+    },
+    {
+      text: '-------------------- FOR DELEGATE --------------------',
+      alignment: 'center',
+      margin: [0, 6],
+    },
+    {
+      text: [
+        '1. Bundled all ',
+        { text: numberOfScorecards, bold: true },
+        ' scorecards ',
+        { text: '□', font: 'WenQuanYiZenHei' },
+      ],
+      fontSize: 10,
+      alignment: 'left',
+      margin: [20, 6, 0, 6],
+    },
+    {
+      text: [
+        '2. Checked for missing signatures ',
+        { text: '□', font: 'WenQuanYiZenHei' },
+      ],
+      fontSize: 10,
+      font: 'WenQuanYiZenHei',
+      alignment: 'left',
+      margin: [20, 6, 0, 6],
+    },
+    {
+      text: '3. Number of scorecards with incidents: ______',
+      fontSize: 10,
+      margin: [20, 6, 0, 6],
+    },
+    initialsField('Delegate'),
+    {
+      text: '-------------------- FOR DATA ENTRY --------------------',
+      alignment: 'center',
+      margin: [0, 6],
+    },
+    {
+      text: '4. Results entered by Scoretaker',
+      fontSize: 10,
+      margin: [20, 6, 0, 6],
+    },
+    initialsField('Scoretaker'),
+    {
+      text: '5. Incidents logged by Delegate',
+      fontSize: 10,
+      margin: [20, 6, 0, 6],
+    },
+    initialsField('Delegate'),
+    {
+      text: '6. Results checked by Delegate',
+      fontSize: 10,
+      margin: [20, 6, 0, 6],
+    },
+    initialsField('Delegate'),
+  ];
+};
+
+const initialsField = (person) => ({
+  text: [{ text: `${person} initials`, bold: true }, ' ______'],
+  alignment: 'center',
+  fontSize: 10,
+});
 
 const columnLabels = (labels, style = {}) =>
   labels.map(label => ({

@@ -102,6 +102,7 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
     printStations,
     scorecardPaperSize,
     scorecardOrder,
+    printScorecardsCoverSheets,
   } = getExtensionData('CompetitionConfig', wcif);
 
   return (
@@ -222,16 +223,30 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
               </Select>
             </FormControl>
           </Grid>
-          <FormControlLabel
-            control={
-              <Checkbox
-                name="localNamesFirst"
-                checked={localNamesFirst}
-                onChange={handleCheckboxChange}
-              />
-            }
-            label="Swap latin names with local ones"
-          />
+          <Grid item>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="printScorecardsCoverSheets"
+                  checked={printScorecardsCoverSheets}
+                  onChange={handleCheckboxChange}
+                />
+              }
+              label="Print cover sheets for scorecards"
+            />
+          </Grid>
+          <Grid item>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="localNamesFirst"
+                  checked={localNamesFirst}
+                  onChange={handleCheckboxChange}
+                />
+              }
+              label="Swap latin names with local ones"
+            />
+          </Grid>
           <Grid>
             <FormControlLabel
               control={
