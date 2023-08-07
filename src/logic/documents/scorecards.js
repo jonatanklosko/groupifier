@@ -428,7 +428,7 @@ const scorecard = ({
           ...attemptRows(cutoff, attemptCount, scorecardWidth),
           [
             {
-              text: 'Extra attempt (Delegate initials _______).',
+              text: 'Extra attempt (Delegate initials _______)',
               ...noBorder,
               colSpan: 5,
               margin: [0, 1],
@@ -549,7 +549,7 @@ const coverSheet = ({
 };
 
 const initialsField = (person = 'Delegate') => ({
-  text: [{ text: `${person} Initials`, bold: true }, ' ______'],
+  text: [{ text: `${person} initials`, bold: true }, ' ______'],
   alignment: 'center',
   fontSize: 10,
 });
