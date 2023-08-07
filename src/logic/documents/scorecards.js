@@ -389,7 +389,7 @@ const scorecard = ({
                   competitor.wcaId ||
                   // If the competitor has a name, then this is a new competitor
                   // Else this is a blank scorecard
-                  (competitor.name.trim().length > 0 ? 'New Competitor' : ' '),
+                  (competitor.name.trim().length > 0 ? 'New competitor' : ' '),
                 alignment: 'right',
               },
             ],
