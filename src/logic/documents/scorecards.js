@@ -416,7 +416,7 @@ const scorecard = ({
           ...attemptRows(cutoff, attemptCount, scorecardWidth),
           [
             {
-              text: 'Extra attempt',
+              text: 'Extra attempt (Delegate initials _______).',
               ...noBorder,
               colSpan: 5,
               margin: [0, 1],
