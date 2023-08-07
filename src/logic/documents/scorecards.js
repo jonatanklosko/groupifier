@@ -170,7 +170,7 @@ const scorecards = (wcif, rounds, rooms) => {
     printStations,
     scorecardPaperSize,
     scorecardOrder,
-    includeCoverSheets,
+    printScorecardsCoverSheets,
   } = getExtensionData('CompetitionConfig', wcif);
   const { scorecardsPerPage } = scorecardPaperSizeInfos[scorecardPaperSize];
   let cards = flatMap(rounds, round => {
@@ -191,7 +191,7 @@ const scorecards = (wcif, rounds, rooms) => {
         const { featuredCompetitorWcaUserIds = [] } =
           getExtensionData('ActivityConfig', groupActivity) || {};
         let scorecardInGroupNumber = competitorsWithStation.length;
-        const groupCoverSheet = includeCoverSheets
+        const groupCoverSheet = printScorecardsCoverSheets
           ? coverSheet({
               competitionName: wcif.shortName,
               activityCode: groupActivity.activityCode,

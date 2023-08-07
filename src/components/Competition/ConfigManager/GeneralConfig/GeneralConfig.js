@@ -102,7 +102,7 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
     printStations,
     scorecardPaperSize,
     scorecardOrder,
-    includeCoverSheets,
+    printScorecardsCoverSheets,
   } = getExtensionData('CompetitionConfig', wcif);
 
   return (
@@ -227,12 +227,12 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
             <FormControlLabel
               control={
                 <Checkbox
-                  name="includeCoverSheets"
-                  checked={includeCoverSheets}
+                  name="printScorecardsCoverSheets"
+                  checked={printScorecardsCoverSheets}
                   onChange={handleCheckboxChange}
                 />
               }
-              label="Include cover sheets"
+              label="Print cover sheets for scorecards"
             />
           </Grid>
           <Grid item>
