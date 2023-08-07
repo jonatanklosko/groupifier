@@ -521,7 +521,7 @@ const coverSheet = ({
       fontSize: 10,
       margin: [20, 6, 0, 6],
     },
-    initialsField(),
+    initialsField('Delegate'),
     {
       text: '-------------------- FOR DATA ENTRY --------------------',
       alignment: 'center',
@@ -538,17 +538,17 @@ const coverSheet = ({
       fontSize: 10,
       margin: [20, 6, 0, 6],
     },
-    initialsField(),
+    initialsField('Delegate'),
     {
       text: '6. Results checked by Delegate',
       fontSize: 10,
       margin: [20, 6, 0, 6],
     },
-    initialsField(),
+    initialsField('Delegate'),
   ];
 };
 
-const initialsField = (person = 'Delegate') => ({
+const initialsField = (person) => ({
   text: [{ text: `${person} initials`, bold: true }, ' ______'],
   alignment: 'center',
   fontSize: 10,
