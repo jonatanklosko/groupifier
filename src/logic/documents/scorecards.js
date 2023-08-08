@@ -279,7 +279,7 @@ const groupActivitiesWithCompetitors = (wcif, roundId) => {
       : sortedGroupActivitiesWithSize(wcif, roundId, expectedCompetitorCount);
     return groupsWithSize.map(([groupActivity, size]) => [
       groupActivity,
-      times(size, () => [{ name: ' ', registrantId: ' ' }, null]),
+      times(size, () => [{ name: null, registrantId: null }, null]),
     ]);
   }
 };
@@ -312,7 +312,7 @@ const scorecard = ({
   activityCode,
   round,
   attemptCount = 5,
-  competitor = { name: ' ', registrantId: ' ', wcaId: null },
+  competitor = { name: null, registrantId: null, wcaId: null },
   localNamesFirst = false,
   printStations,
   scorecardPaperSize,
@@ -389,15 +389,15 @@ const scorecard = ({
                   competitor.wcaId ||
                   // If the competitor has a name, then this is a new competitor
                   // Else this is a blank scorecard
-                  (competitor.name.trim().length > 0 ? 'New competitor' : ' '),
+                  (competitor.name ? 'New competitor' : ' '),
                 alignment: 'right',
               },
             ],
           ]),
           [
-            { text: competitor.registrantId, alignment: 'center' },
+            { text: competitor.registrantId || ' ', alignment: 'center' },
             {
-              text: pdfName(competitor.name, {
+              text: pdfName(competitor.name || ' ', {
                 swapLatinWithLocalNames: localNamesFirst,
               }),
               maxHeight: 20 /* See: https://github.com/bpampuch/pdfmake/issues/264#issuecomment-108347567 */,
