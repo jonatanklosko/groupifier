@@ -24,23 +24,23 @@ const scorecardPaperSizeInfos = {
     pageHeight: 841.89,
     scorecardsPerRow: 2,
     scorecardsPerPage: 4,
-    horizontalMargin: 20,
-    verticalMargin: 20,
+    horizontalMargin: 15,
+    verticalMargin: 15,
   },
   a6: {
     pageWidth: 297.64,
     pageHeight: 419.53,
     scorecardsPerRow: 1,
     scorecardsPerPage: 1,
-    horizontalMargin: 20,
-    verticalMargin: 20,
+    horizontalMargin: 15,
+    verticalMargin: 15,
   },
   letter: {
     pageWidth: 612.0,
     pageHeight: 792.0,
     scorecardsPerRow: 2,
     scorecardsPerPage: 4,
-    horizontalMargin: 20,
+    horizontalMargin: 15,
     verticalMargin: 10,
   },
 };
@@ -555,7 +555,7 @@ const coverSheet = ({
   ];
 };
 
-const initialsField = (person) => ({
+const initialsField = person => ({
   text: [{ text: `${person} initials`, bold: true }, ' ______'],
   alignment: 'center',
   fontSize: 10,
