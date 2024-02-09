@@ -32,7 +32,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const links = [
-  { text: 'Donate', url: 'https://ko-fi.com/jonatanklosko' },
   {
     text: 'Guide',
     url: 'https://github.com/jonatanklosko/groupifier/wiki/Guide',
