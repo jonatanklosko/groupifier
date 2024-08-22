@@ -35,27 +35,9 @@ const competitorCardsEvenlySpacedPdfDefinition = wcif => {
   const horizontalMargin = 20;
   const verticalMargin = 20;
 
-  const cutLines = {
-    canvas: [
-      cutLine({
-        x1: horizontalMargin,
-        y1: pageHeight / 2,
-        x2: pageWidth - horizontalMargin,
-        y2: pageHeight / 2,
-      }),
-      cutLine({
-        x1: pageWidth / 2,
-        y1: verticalMargin,
-        x2: pageWidth / 2,
-        y2: pageHeight - verticalMargin,
-      }),
-    ],
-  };
-
   return {
     pageSize: { width: pageWidth, height: pageHeight },
     pageMargins: [horizontalMargin, verticalMargin],
-    background: [cutLines],
     content: {
       fontSize: 8,
       layout: {
@@ -79,14 +61,6 @@ const competitorCardsEvenlySpacedPdfDefinition = wcif => {
     },
   };
 };
-
-const cutLine = properties => ({
-  ...properties,
-  type: 'line',
-  lineWidth: 0.1,
-  dash: { length: 10 },
-  lineColor: '#888888',
-});
 
 const competitorCards = (wcif, cardsPerRow) => {
   const cards = sortBy(
