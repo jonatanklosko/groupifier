@@ -13,6 +13,8 @@ const determineFont = text => {
     return 'NotoSansArmenian';
   } else if (inRange(code, 0x10a0, 0x10ff)) {
     return 'NotoSansGeorgian';
+  } else if (inRange(code, 0x0900, 0x097f)) {
+    return 'NotoSansDevanagari';
   } else {
     /* Default to WenQuanYiZenHei as it supports the most characters (mostly CJK). */
     return 'WenQuanYiZenHei';

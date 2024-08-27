@@ -25,6 +25,7 @@ pdfMake.fonts = {
   NotoSansArabic: singleFileFont('NotoSansArabicUI-Regular.ttf'),
   NotoSansGeorgian: singleFileFont('NotoSansGeorgian-Regular.ttf'),
   NotoSansArmenian: singleFileFont('NotoSansArmenian-Regular.ttf'),
+  NotoSansDevanagari: singleFileFont('NotoSansDevanagari-Regular.ttf'),
 };
 
 export default pdfMake;
