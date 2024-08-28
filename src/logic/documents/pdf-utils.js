@@ -15,6 +15,10 @@ const determineFont = text => {
     return 'NotoSansGeorgian';
   } else if (inRange(code, 0x0900, 0x097f)) {
     return 'NotoSansDevanagari';
+  } else if (inRange(code, 0x0d00, 0x0d7f)) {
+    return 'NotoSansMalayalam';
+  } else if (inRange(code, 0x0c80, 0x0cff)) {
+    return 'NotoSansKannada';
   } else {
     /* Default to WenQuanYiZenHei as it supports the most characters (mostly CJK). */
     return 'WenQuanYiZenHei';

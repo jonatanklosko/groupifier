@@ -13,8 +13,10 @@ font_files=(
   https://github.com/googlefonts/noto-fonts/raw/fa6a9f1d0ac6cb67fc70958a2713d4b47c89dcf7/hinted/ttf/NotoSansGeorgian/NotoSansGeorgian-Regular.ttf
   https://github.com/googlefonts/noto-fonts/raw/fa6a9f1d0ac6cb67fc70958a2713d4b47c89dcf7/hinted/ttf/NotoSansArmenian/NotoSansArmenian-Regular.ttf
   https://github.com/notofonts/notofonts.github.io/raw/main/fonts/NotoSansDevanagari/hinted/ttf/NotoSansDevanagari-Regular.ttf
+  https://github.com/notofonts/notofonts.github.io/raw/main/fonts/NotoSansMalayalam/hinted/ttf/NotoSansMalayalam-Regular.ttf
+  https://github.com/notofonts/notofonts.github.io/raw/main/fonts/NotoSansKannada/hinted/ttf/NotoSansKannada-Regular.ttf
 )
-target="$(pwd)/public/vfs-fonts.bundle.v2.json"
+target="$(pwd)/public/vfs-fonts.bundle.v3.json"
 tmpdir=$(mktemp -d)
 
 if [ -f $target ]; then

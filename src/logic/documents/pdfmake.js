@@ -1,7 +1,7 @@
 import pdfMake from 'pdfmake/build/pdfmake';
 
 /* Asynchronously download fonts bundle for PDF Make. */
-fetch('/vfs-fonts.bundle.v2.json', { mode: 'same-origin' })
+fetch('/vfs-fonts.bundle.v3.json', { mode: 'same-origin' })
   .then(response => response.json())
   .then(vfsFonts => (pdfMake.vfs = vfsFonts));
 
@@ -26,6 +26,8 @@ pdfMake.fonts = {
   NotoSansGeorgian: singleFileFont('NotoSansGeorgian-Regular.ttf'),
   NotoSansArmenian: singleFileFont('NotoSansArmenian-Regular.ttf'),
   NotoSansDevanagari: singleFileFont('NotoSansDevanagari-Regular.ttf'),
+  NotoSansMalayalam: singleFileFont('NotoSansMalayalam-Regular.ttf'),
+  NotoSansKannada: singleFileFont('NotoSansKannada-Regular.ttf'),
 };
 
 export default pdfMake;
