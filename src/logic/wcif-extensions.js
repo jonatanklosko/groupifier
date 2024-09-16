@@ -40,7 +40,7 @@ const defaultExtensionData = {
 };
 
 export const getExtensionData = (extensionName, wcifEntity) => {
-  const extension = wcifEntity.extensions.find(
+  const extension = (wcifEntity.extensions || []).find(
     extension => extension.id === groupifierExtensionId(extensionName)
   );
   const defaultData = defaultExtensionData[extensionName];
