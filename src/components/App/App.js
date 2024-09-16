@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 import blueGrey from '@material-ui/core/colors/blueGrey';
 import blue from '@material-ui/core/colors/blue';
@@ -17,7 +17,7 @@ import Home from '../Home/Home';
 
 import { isSignedIn, signIn, signOut } from '../../logic/auth';
 
-const theme = createMuiTheme({
+const theme = createTheme({
   palette: {
     primary: {
       main: blueGrey[900],
@@ -63,7 +63,7 @@ const App = () => {
             onSignIn={handleSignIn}
             onSignOut={handleSignOut}
           />
-          <Grid container justify="center" className={classes.grow}>
+          <Grid container justifyContent="center" className={classes.grow}>
             <Grid item xs={12} md={8} xl={6} className={classes.main}>
               {signedIn ? (
                 <Switch>

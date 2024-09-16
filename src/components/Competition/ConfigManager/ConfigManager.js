@@ -50,7 +50,7 @@ const ConfigManager = ({ wcif, onWcifUpdate }) => {
     roomsConfigComplete(localWcif) && activitiesConfigComplete(localWcif);
 
   return (
-    <Grid container spacing={1} justify="flex-end">
+    <Grid container spacing={1} justifyContent="flex-end">
       <Grid item xs={12}>
         <Tabs value={tabValue} onChange={(event, value) => setTabValue(value)}>
           <Tab label="Rooms" />

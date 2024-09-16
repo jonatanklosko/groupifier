@@ -87,7 +87,7 @@ const RolesManager = ({ wcif, onWcifUpdate }) => {
   };
 
   return (
-    <Grid container spacing={1} justify="flex-end">
+    <Grid container spacing={1} justifyContent="flex-end">
       <Grid item xs={12}>
         <Paper>
           <Toolbar>

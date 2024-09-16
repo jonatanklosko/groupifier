@@ -17,12 +17,12 @@ import {
 const PrintingManager = ({ wcif }) => {
   const [tabValue, setTabValue] = useState(0);
 
-  const roundsMissingAssignmentsNames = roundsMissingAssignments(wcif).map(
-    round => activityCodeToName(round.id)
-  );
+  const roundsMissingAssignmentsNames = roundsMissingAssignments(
+    wcif
+  ).map(round => activityCodeToName(round.id));
 
   return (
-    <Grid container spacing={1} justify="flex-end">
+    <Grid container spacing={1} justifyContent="flex-end">
       <Grid item xs={12}>
         {roundsMissingAssignmentsNames.length > 0 && (
           <SnackbarContent
