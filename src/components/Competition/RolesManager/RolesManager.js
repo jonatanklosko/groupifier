@@ -30,12 +30,10 @@ const roles = [
   { id: 'staff-other', name: 'Other staff' },
 ];
 
-const rowsPerPage = 5;
-const rowsPerPageOptions = [5];
-
 const RolesManager = ({ wcif, onWcifUpdate }) => {
   const [localWcif, setLocalWcif] = useState(wcif);
   const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchString, setSearchString] = useState('');
 
   const allSortedPeople = sortBy(
@@ -52,6 +50,15 @@ const RolesManager = ({ wcif, onWcifUpdate }) => {
               searchPart && person.name.match(new RegExp(searchPart, 'i'))
           )
       );
+
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleRowsPerPageChange = event => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   const handleSearchStringChange = event => {
     setSearchString(event.target.value);
@@ -157,9 +164,10 @@ const RolesManager = ({ wcif, onWcifUpdate }) => {
             component="div"
             count={people.length}
             rowsPerPage={rowsPerPage}
-            rowsPerPageOptions={rowsPerPageOptions}
+            rowsPerPageOptions={[5, 25, 50, 100]}
+            onRowsPerPageChange={handleRowsPerPageChange}
             page={page}
-            onChangePage={(event, page) => setPage(page)}
+            onPageChange={handlePageChange}
           />
         </Paper>
       </Grid>
