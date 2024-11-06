@@ -42,6 +42,10 @@
       "description": "Whether scorecards should be printed in overall ascending order (1-2-3-4 5-6-7-8 9-10-11-12), or ascending order within each section of the page (1-4-7-10 2-5-8-11 3-6-9-12)",
       "type": "string",
       "enum": ["natural", "stacked"]
+    },
+    "printScorecardsCoverSheets": {
+      "description": "A flag indicating whether score cards should have printed cover sheets in generated PDF documents.",
+      "type": "boolean"
     }
   },
   "required": ["localNamesFirst", "scorecardsBackgroundUrl", "competitorsSortingRule", "noTasksForNewcomers", "tasksForOwnEventsOnly"]
