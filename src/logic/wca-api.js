@@ -26,7 +26,18 @@ export const saveWcifChanges = (previousWcif, newWcif) => {
     key => previousWcif[key] !== newWcif[key]
   );
   if (keysDiff.length === 0) return Promise.resolve();
-  return updateWcif(newWcif.id, pick(newWcif, keysDiff));
+
+  let wcifDiff = pick(newWcif, keysDiff);
+
+  // TODO: remove once WCIF registration status evaluation is resolved
+  if (wcifDiff.persons) {
+    const persons = wcifDiff.persons.map(
+      ({ registration, ...person }) => person
+    );
+    wcifDiff = { ...wcifDiff, persons };
+  }
+
+  return updateWcif(newWcif.id, wcifDiff);
 };
 
 const wcaApiFetch = (path, fetchOptions = {}) => {
