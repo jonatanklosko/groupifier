@@ -16,6 +16,7 @@ import { getExtensionData } from '../wcif-extensions';
 import { pdfName, getImageDataUrl } from './pdf-utils';
 import { sortedGroupActivitiesWithSize } from '../groups';
 import { getAssignment, hasAssignment } from '../assignments';
+import { translation } from '../translations';
 
 /* See: https://github.com/bpampuch/pdfmake/blob/3da11bd8148b190808b06f7bc27883102bf82917/src/standardPageSizes.js#L10 */
 const scorecardPaperSizeInfos = {
@@ -47,14 +48,21 @@ const scorecardPaperSizeInfos = {
 
 const maxAttemptCountByFormat = { '1': 1, '2': 2, '3': 3, m: 3, a: 5 };
 
-export const downloadScorecards = (wcif, rounds, rooms) => {
+export const downloadScorecards = (
+  wcif,
+  rounds,
+  rooms,
+  language,
+  language2,
+  language3
+) => {
   const { scorecardsBackgroundUrl, scorecardPaperSize } = getExtensionData(
     'CompetitionConfig',
     wcif
   );
   getImageDataUrl(scorecardsBackgroundUrl).then(imageData => {
     const pdfDefinition = scorecardsPdfDefinition(
-      scorecards(wcif, rounds, rooms),
+      scorecards(wcif, rounds, rooms, language, language2, language3),
       imageData,
       scorecardPaperSize
     );
@@ -62,14 +70,19 @@ export const downloadScorecards = (wcif, rounds, rooms) => {
   });
 };
 
-export const downloadBlankScorecards = wcif => {
+export const downloadBlankScorecards = (
+  wcif,
+  language,
+  language2,
+  language3
+) => {
   const { scorecardsBackgroundUrl, scorecardPaperSize } = getExtensionData(
     'CompetitionConfig',
     wcif
   );
   getImageDataUrl(scorecardsBackgroundUrl).then(imageData => {
     const pdfDefinition = scorecardsPdfDefinition(
-      blankScorecards(wcif),
+      blankScorecards(wcif, language, language2, language3),
       imageData,
       scorecardPaperSize
     );
@@ -164,7 +177,7 @@ const cutLine = properties => ({
   lineColor: '#888888',
 });
 
-const scorecards = (wcif, rounds, rooms) => {
+const scorecards = (wcif, rounds, rooms, language, language2, language3) => {
   const {
     localNamesFirst,
     printStations,
@@ -216,6 +229,9 @@ const scorecards = (wcif, rounds, rooms) => {
               featured: featuredCompetitorWcaUserIds.includes(
                 competitor.wcaUserId
               ),
+              language: language,
+              language2: language2,
+              language3: language3,
             })
         );
         if (groupCoverSheet) {
@@ -296,7 +312,7 @@ const groupActivitiesWithCompetitors = (wcif, roundId) => {
   }
 };
 
-const blankScorecards = wcif => {
+const blankScorecards = (wcif, language, language2, language3) => {
   const attemptCounts = flatMap(wcif.events, event => event.rounds).map(
     round => maxAttemptCountByFormat[round.format]
   );
@@ -312,6 +328,9 @@ const blankScorecards = wcif => {
         attemptCount,
         printStations,
         scorecardPaperSize,
+        language: language,
+        language2: language2,
+        language3: language3,
       })
     )
   );
@@ -323,6 +342,9 @@ const scorecard = ({
   competitionName,
   activityCode,
   round,
+  language = 'en',
+  language2 = '',
+  language3 = '',
   attemptCount = 5,
   competitor = { name: null, registrantId: null, wcaId: null },
   localNamesFirst = false,
@@ -330,6 +352,70 @@ const scorecard = ({
   scorecardPaperSize,
   featured = false,
 }) => {
+  const defaultTranslation = translation('en');
+  const translationData = translation(language) || defaultTranslation;
+  const translationData2 =
+    language2 !== language ? translation(language2) : null;
+  const translationData3 =
+    language3 !== language && language2 !== language3
+      ? translation(language3)
+      : null;
+
+  // This handles all the translations (monolingual and multilingual)
+  const t = (
+    stringKey,
+    mergeInOneLine = false,
+    forcePrimaryLanguage = false
+  ) => {
+    if (forcePrimaryLanguage === 'short') {
+      // Force return the short version of the first language translation
+      return (
+        translationData[stringKey + '_short'] ?? translationData[stringKey]
+      );
+    }
+
+    const primaryString = translationData[stringKey];
+    const primaryShort = translationData[stringKey + '_short'] ?? primaryString;
+
+    // No secondary language or forced primary language (long version) then return primary language
+    if (!translationData2 || forcePrimaryLanguage === 'long') {
+      return primaryString;
+    }
+
+    // Sometimes we want the different languages in one line and sometimes in new lines
+    const separator = mergeInOneLine ? ' | ' : '\n';
+    // Build strings for secondary and tertiary translations. If we're in one-line mode and we have a short version then we take it.
+    const secondaryString =
+      mergeInOneLine && translationData2[stringKey + '_short']
+        ? translationData2[stringKey + '_short']
+        : translationData2[stringKey];
+    const tertiaryString =
+      mergeInOneLine && translationData3?.[stringKey + '_short']
+        ? translationData3?.[stringKey + '_short']
+        : translationData3?.[stringKey];
+
+    let result = primaryShort;
+    if (mergeInOneLine) {
+      if (primaryShort !== secondaryString) {
+        result += separator + secondaryString;
+      }
+      if (
+        tertiaryString &&
+        primaryShort !== tertiaryString &&
+        secondaryString !== tertiaryString
+      ) {
+        result += separator + tertiaryString;
+      }
+    } else {
+      result += separator + secondaryString;
+      if (tertiaryString) {
+        result += separator + tertiaryString;
+      }
+    }
+
+    return result;
+  };
+
   const { eventId, roundNumber, groupNumber } = activityCode
     ? parseActivityCode(activityCode)
     : {};
@@ -362,22 +448,36 @@ const scorecard = ({
       text: competitionName,
       bold: true,
       fontSize: 15,
-      margin: [0, 0, 0, 10],
+      // If we have a string accross three lines (or two lines for US Letter) we need to gain some space by moving everything a bit up
+      margin: [
+        0,
+        (scorecardPaperSize === 'letter' && language2) || language3 ? -15 : 0,
+        0,
+        language3 ? 0 : language2 ? 5 : 10,
+      ],
       alignment: 'center',
     },
     {
       margin: [25, 0, 0, 0],
       table: {
-        widths: ['*', 'auto', 'auto', ...(printStations ? ['auto'] : [])],
+        // Make sure the width of round, group and station is at least 25 by preventing short texts to automatically shrink it
+        widths: [
+          '*',
+          getWidthOfBoxOrAuto(t('round'), 25),
+          getWidthOfBoxOrAuto(t('group'), 25),
+          ...(printStations ? [getWidthOfBoxOrAuto(t('station'), 25)] : []),
+        ],
         body: [
           columnLabels([
-            'Event',
-            'Round',
-            'Group',
-            ...(printStations ? ['Station'] : []),
+            t('eventLabel'),
+            { text: t('round'), alignment: 'center' },
+            { text: t('group'), alignment: 'center' },
+            ...(printStations
+              ? [{ text: t('station'), alignment: 'center' }]
+              : []),
           ]),
           [
-            eventId ? eventNameById(eventId) : ' ',
+            eventId ? t('eventName')?.[eventId] || eventNameById(eventId) : ' ',
             { text: roundNumber, alignment: 'center' },
             { text: groupNumber, alignment: 'center' },
             ...(printStations
@@ -395,13 +495,20 @@ const scorecard = ({
           columnLabels([
             'ID',
             [
-              { text: 'Name', alignment: 'left', width: 'auto' },
+              { text: t('name', true), alignment: 'left', width: 'auto' },
               {
                 text:
                   competitor.wcaId ||
                   // If the competitor has a name, then this is a new competitor
                   // Else this is a blank scorecard
-                  (competitor.name ? 'New competitor' : ' '),
+                  // If we have a string which is too long (in multi language mode most likely) then we use only the primary language
+                  (competitor.name
+                    ? t('name', true).length +
+                        t('new_competitor', true).length <
+                      47
+                      ? t('new_competitor', true)
+                      : t('new_competitor', true, 'long')
+                    : ' '),
                 alignment: 'right',
               },
             ],
@@ -419,7 +526,7 @@ const scorecard = ({
       },
     },
     {
-      margin: [0, 10, 0, 0],
+      margin: [0, language2 ? 5 : 10, 0, 0],
       table: {
         widths: [
           16,
@@ -429,13 +536,21 @@ const scorecard = ({
           25,
         ] /* Note: 16 (width) + 4 + 4 (defult left and right padding) + 1 (left border) = 25 */,
         body: [
-          columnLabels(['', 'Scr', 'Result', 'Judge', 'Comp'], {
+          columnLabels(['', t('scr'), t('result'), t('judge'), t('comp')], {
             alignment: 'center',
+            fontSize: 8,
           }),
           ...attemptRows(cutoff, attemptCount, scorecardWidth),
           [
             {
-              text: 'Extra attempt (Delegate initials _______)',
+              /* There's a high chance the delegate_initials will be too long for 3 translations so we just use the primary language. Not the best solution though... */
+              text:
+                t('extra', true) +
+                ' (' +
+                (language3
+                  ? t('delegate_initials', true, 'long')
+                  : t('delegate_initials', true)) +
+                ' _______)',
               ...noBorder,
               colSpan: 5,
               margin: [0, 1],
@@ -448,21 +563,22 @@ const scorecard = ({
       },
     },
     {
+      text: cutoff
+        ? `${t('cutoff', true)}: ${cutoffToString(cutoff, eventId)}`
+        : '',
       fontSize: 10,
-      columns: [
-        cutoff
-          ? {
-              text: `Cutoff: ${cutoffToString(cutoff, eventId)}`,
-              alignment: 'center',
-            }
-          : {},
-        timeLimit
-          ? {
-              text: `Time limit: ${timeLimitToString(timeLimit)}`,
-              alignment: 'center',
-            }
-          : {},
-      ],
+      alignment: 'center',
+    },
+    {
+      text: timeLimit
+        ? `${t('time_limit', true)}: ${timeLimitToString(
+            timeLimit,
+            t('global', true)
+          )}`
+        : ' ',
+      fontSize: 10,
+      alignment: 'center',
+      margin: [0, 0, 0, -10],
     },
   ];
 };
@@ -624,3 +740,23 @@ const attemptRow = attemptNumber => [
 ];
 
 const noBorder = { border: [false, false, false, false] };
+
+const getWidthOfBoxOrAuto = (translatedString, defaultWidth = 25) => {
+  // We define here what is considered "too short" for a string
+  const shortThreshold = 5;
+  const checkNewLineBreak = translatedString.indexOf('\n');
+
+  // Only line so we only need to check the length of the line and return the default width if it's too short
+  if (checkNewLineBreak < 0) {
+    if (translatedString.length < shortThreshold) {
+      return defaultWidth;
+    }
+  }
+
+  // Check the length of every line. If they are all too short we use the default width, else we let it adapt automatically
+  const partsOfString = translatedString.split('\n');
+  const hasLongString = partsOfString.some(
+    part => part.length >= shortThreshold
+  );
+  return hasLongString ? 'auto' : defaultWidth;
+};

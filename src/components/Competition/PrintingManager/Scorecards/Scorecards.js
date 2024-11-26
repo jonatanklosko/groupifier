@@ -8,6 +8,11 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import InputLabel from '@material-ui/core/InputLabel';
 
 import CubingIcon from '../../../common/CubingIcon/CubingIcon';
 import {
@@ -23,6 +28,7 @@ import {
   rooms,
 } from '../../../../logic/activities';
 import { difference, sortBy } from '../../../../logic/utils';
+import language_info from '../../../../logic/translations';
 
 const Scorecards = ({ wcif }) => {
   const missingScorecards = roundsMissingScorecards(wcif);
@@ -62,6 +68,48 @@ const Scorecards = ({ wcif }) => {
 
   const isSelectionEmpty =
     selectedRounds.length === 0 || selectedRooms.length === 0;
+
+  const [language, setLanguage] = useState('en');
+  const [language2, setLanguage2] = useState('');
+  const [language3, setLanguage3] = useState('');
+
+  const LanguageSelector = ({
+    language,
+    setLanguage,
+    label,
+    includeNoneOption = false,
+    withSubheader = false,
+    tip = false,
+    excludeLanguages = [],
+  }) => {
+    // do not show a language if it has already been selected in another select
+    const filteredLanguages = Object.entries(language_info).filter(
+      ([key]) => !excludeLanguages.includes(key)
+    );
+
+    return (
+      <Grid item xs={12}>
+        <FormControl variant="outlined" fullWidth>
+          <InputLabel>{label}</InputLabel>
+          <Select
+            value={language}
+            onChange={e => setLanguage(e.target.value)}
+            label={label}
+          >
+            {includeNoneOption && <MenuItem value="">None</MenuItem>}
+            {filteredLanguages.map(([key, { original_name, english_name }]) => (
+              <MenuItem key={key} value={key}>
+                {original_name === english_name
+                  ? original_name
+                  : `${original_name} (${english_name})`}
+              </MenuItem>
+            ))}
+          </Select>
+          <FormHelperText>{tip}</FormHelperText>
+        </FormControl>
+      </Grid>
+    );
+  };
 
   return (
     <Paper style={{ padding: 16 }}>
@@ -116,11 +164,50 @@ const Scorecards = ({ wcif }) => {
           </Grid>
         )}
       </Grid>
+      <Grid container spacing={2} style={{ marginTop: 16, marginBottom: 16 }}>
+        <Grid item xs={4}>
+          <LanguageSelector
+            language={language}
+            setLanguage={setLanguage}
+            label="Scorecards language"
+            tip="Scorecards main language"
+          />
+        </Grid>
+        <Grid item xs={4}>
+          <LanguageSelector
+            language={language2}
+            setLanguage={setLanguage2}
+            label="Second scorecards language"
+            includeNoneOption
+            tip="For bilingual scorecards (optional)"
+            excludeLanguages={[language, language3]}
+          />
+        </Grid>
+        {wcif.extensions[0].data.scorecardPaperSize !== 'letter' && (
+          <Grid item xs={4}>
+            <LanguageSelector
+              language={language3}
+              setLanguage={setLanguage3}
+              label="Third scorecards language"
+              includeNoneOption
+              tip="For trilingual scorecards (optional)"
+              excludeLanguages={[language, language2]}
+            />
+          </Grid>
+        )}
+      </Grid>
       <Grid container spacing={1}>
         <Grid item>
           <Button
             onClick={() =>
-              downloadScorecards(wcif, selectedRounds, selectedRooms)
+              downloadScorecards(
+                wcif,
+                selectedRounds,
+                selectedRooms,
+                language,
+                language2,
+                language3
+              )
             }
             disabled={isSelectionEmpty}
           >
@@ -139,7 +226,11 @@ const Scorecards = ({ wcif }) => {
         </Grid>
         <Grid item style={{ flexGrow: 1 }} />
         <Grid item>
-          <Button onClick={() => downloadBlankScorecards(wcif)}>
+          <Button
+            onClick={() =>
+              downloadBlankScorecards(wcif, language, language2, language3)
+            }
+          >
             Blank scorecards
           </Button>
         </Grid>
