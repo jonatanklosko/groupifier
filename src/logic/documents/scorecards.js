@@ -451,7 +451,10 @@ const scorecard = ({
       // If we have a string accross three lines (or two lines for US Letter) we need to gain some space by moving everything a bit up
       margin: [
         0,
-        (scorecardPaperSize === 'letter' && language2) || language3 ? -15 : 0,
+        competitor.name &&
+        ((scorecardPaperSize === 'letter' && language2) || language3)
+          ? -15
+          : 0,
         0,
         language3 ? 0 : language2 ? 5 : 10,
       ],
