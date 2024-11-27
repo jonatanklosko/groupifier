@@ -16,6 +16,7 @@ import { getExtensionData } from '../wcif-extensions';
 import { pdfName, getImageDataUrl } from './pdf-utils';
 import { sortedGroupActivitiesWithSize } from '../groups';
 import { getAssignment, hasAssignment } from '../assignments';
+import { translation } from '../translations';
 
 /* See: https://github.com/bpampuch/pdfmake/blob/3da11bd8148b190808b06f7bc27883102bf82917/src/standardPageSizes.js#L10 */
 const scorecardPaperSizeInfos = {
@@ -47,14 +48,14 @@ const scorecardPaperSizeInfos = {
 
 const maxAttemptCountByFormat = { '1': 1, '2': 2, '3': 3, m: 3, a: 5 };
 
-export const downloadScorecards = (wcif, rounds, rooms) => {
+export const downloadScorecards = (wcif, rounds, rooms, language) => {
   const { scorecardsBackgroundUrl, scorecardPaperSize } = getExtensionData(
     'CompetitionConfig',
     wcif
   );
   getImageDataUrl(scorecardsBackgroundUrl).then(imageData => {
     const pdfDefinition = scorecardsPdfDefinition(
-      scorecards(wcif, rounds, rooms),
+      scorecards(wcif, rounds, rooms, language),
       imageData,
       scorecardPaperSize
     );
@@ -62,14 +63,14 @@ export const downloadScorecards = (wcif, rounds, rooms) => {
   });
 };
 
-export const downloadBlankScorecards = wcif => {
+export const downloadBlankScorecards = (wcif, language) => {
   const { scorecardsBackgroundUrl, scorecardPaperSize } = getExtensionData(
     'CompetitionConfig',
     wcif
   );
   getImageDataUrl(scorecardsBackgroundUrl).then(imageData => {
     const pdfDefinition = scorecardsPdfDefinition(
-      blankScorecards(wcif),
+      blankScorecards(wcif, language),
       imageData,
       scorecardPaperSize
     );
@@ -164,7 +165,7 @@ const cutLine = properties => ({
   lineColor: '#888888',
 });
 
-const scorecards = (wcif, rounds, rooms) => {
+const scorecards = (wcif, rounds, rooms, language) => {
   const {
     localNamesFirst,
     printStations,
@@ -216,6 +217,7 @@ const scorecards = (wcif, rounds, rooms) => {
               featured: featuredCompetitorWcaUserIds.includes(
                 competitor.wcaUserId
               ),
+              language: language,
             })
         );
         if (groupCoverSheet) {
@@ -296,7 +298,7 @@ const groupActivitiesWithCompetitors = (wcif, roundId) => {
   }
 };
 
-const blankScorecards = wcif => {
+const blankScorecards = (wcif, language) => {
   const attemptCounts = flatMap(wcif.events, event => event.rounds).map(
     round => maxAttemptCountByFormat[round.format]
   );
@@ -312,6 +314,7 @@ const blankScorecards = wcif => {
         attemptCount,
         printStations,
         scorecardPaperSize,
+        language: language,
       })
     )
   );
@@ -329,7 +332,15 @@ const scorecard = ({
   printStations,
   scorecardPaperSize,
   featured = false,
+  language = 'en',
 }) => {
+  const defaultTranslation = translation('en');
+  const translationData = translation(language) || defaultTranslation;
+
+  const t = stringKey => {
+    return translationData[stringKey] || defaultTranslation[stringKey];
+  };
+
   const { eventId, roundNumber, groupNumber } = activityCode
     ? parseActivityCode(activityCode)
     : {};
@@ -368,16 +379,23 @@ const scorecard = ({
     {
       margin: [25, 0, 0, 0],
       table: {
-        widths: ['*', 'auto', 'auto', ...(printStations ? ['auto'] : [])],
+        widths: [
+          '*',
+          getWidthOfBoxOrAuto(t('round'), 25),
+          getWidthOfBoxOrAuto(t('group'), 25),
+          ...(printStations ? [getWidthOfBoxOrAuto(t('station'), 25)] : []),
+        ],
         body: [
           columnLabels([
-            'Event',
-            'Round',
-            'Group',
-            ...(printStations ? ['Station'] : []),
+            t('eventLabel'),
+            { text: t('round'), alignment: 'center' },
+            { text: t('group'), alignment: 'center' },
+            ...(printStations
+              ? [{ text: t('station'), alignment: 'center' }]
+              : []),
           ]),
           [
-            eventId ? eventNameById(eventId) : ' ',
+            eventId ? t('eventName')?.[eventId] || eventNameById(eventId) : ' ',
             { text: roundNumber, alignment: 'center' },
             { text: groupNumber, alignment: 'center' },
             ...(printStations
@@ -395,13 +413,13 @@ const scorecard = ({
           columnLabels([
             'ID',
             [
-              { text: 'Name', alignment: 'left', width: 'auto' },
+              { text: t('name'), alignment: 'left', width: 'auto' },
               {
                 text:
                   competitor.wcaId ||
                   // If the competitor has a name, then this is a new competitor
                   // Else this is a blank scorecard
-                  (competitor.name ? 'New competitor' : ' '),
+                  (competitor.name ? t('new_competitor') : ' '),
                 alignment: 'right',
               },
             ],
@@ -429,13 +447,13 @@ const scorecard = ({
           25,
         ] /* Note: 16 (width) + 4 + 4 (defult left and right padding) + 1 (left border) = 25 */,
         body: [
-          columnLabels(['', 'Scr', 'Result', 'Judge', 'Comp'], {
+          columnLabels(['', t('scr'), t('result'), t('judge'), t('comp')], {
             alignment: 'center',
           }),
           ...attemptRows(cutoff, attemptCount, scorecardWidth),
           [
             {
-              text: 'Extra attempt (Delegate initials _______)',
+              text: t('extra') + ' (' + t('delegate_initials') + ' _______)',
               ...noBorder,
               colSpan: 5,
               margin: [0, 1],
@@ -452,13 +470,13 @@ const scorecard = ({
       columns: [
         cutoff
           ? {
-              text: `Cutoff: ${cutoffToString(cutoff, eventId)}`,
+              text: `${t('cutoff')}: ${cutoffToString(cutoff, eventId)}`,
               alignment: 'center',
             }
           : {},
         timeLimit
           ? {
-              text: `Time limit: ${timeLimitToString(timeLimit)}`,
+              text: `${t('time_limit')}: ${timeLimitToString(timeLimit)}`,
               alignment: 'center',
             }
           : {},
@@ -624,3 +642,11 @@ const attemptRow = attemptNumber => [
 ];
 
 const noBorder = { border: [false, false, false, false] };
+
+const getWidthOfBoxOrAuto = (
+  translatedString,
+  defaultWidth = 25,
+  shortThreshold = 5
+) => {
+  return translatedString.length < shortThreshold ? defaultWidth : 'auto';
+};

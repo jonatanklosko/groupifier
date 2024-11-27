@@ -11,19 +11,19 @@ export const cutoffToString = (cutoff, eventId) => {
   }
 };
 
-export const timeLimitToString = timeLimit => {
+export const timeLimitToString = (timeLimit, globalTranslation) => {
   const { centiseconds, cumulativeRoundIds } = timeLimit;
   const clockFormat = centisecondsToClockFormat(centiseconds);
   if (cumulativeRoundIds.length === 0) {
     return clockFormat;
   } else if (cumulativeRoundIds.length === 1) {
-    return `${clockFormat} in total`;
+    return `${clockFormat} ${globalTranslation}`;
   } else {
     const roundStrings = cumulativeRoundIds.map(roundId => {
       const { eventId, roundNumber } = parseActivityCode(roundId);
       return `${shortEventNameById(eventId)} R${roundNumber}`;
     });
-    return `${clockFormat} total for ${roundStrings.join(', ')}`;
+    return `${clockFormat} ${globalTranslation} (${roundStrings.join('+ ')})`;
   }
 };
 
