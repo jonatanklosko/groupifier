@@ -1,29 +1,11 @@
-const language_info = {
-  br: {
-    original_name: 'Brezhoneg',
-    english_name: 'Breton',
-  },
-  ca: {
-    original_name: 'Català',
-    english_name: 'Catalan',
-  },
-  en: {
-    original_name: 'English',
-    english_name: 'English',
-  },
-  eo: {
-    original_name: 'Esperanto',
-    english_name: 'Esperanto',
-  },
-  fr: {
-    original_name: 'Français',
-    english_name: 'French',
-  },
-  galo: {
-    original_name: 'Galo',
-    english_name: 'Gallo',
-  },
-};
+const language_info = [
+  { code: 'br', original_name: 'Brezhoneg', english_name: 'Breton' },
+  { code: 'ca', original_name: 'Català', english_name: 'Catalan' },
+  { code: 'en', original_name: 'English', english_name: 'English' },
+  { code: 'eo', original_name: 'Esperanto', english_name: 'Esperanto' },
+  { code: 'fr', original_name: 'Français', english_name: 'French' },
+  { code: 'galo', original_name: 'Galo', english_name: 'Gallo' },
+];
 
 const texts = {
   en: {
@@ -41,13 +23,13 @@ const texts = {
     delegate_initials: 'Delegate initials',
     cutoff: 'Cutoff',
     time_limit: 'Time limit',
-    global: 'global',
+    total: 'total',
   },
   br: {
     eventLabel: 'Amprouenn',
     round: 'Tro',
-    group: 'Strollad',
-    station: "Savlec'h",
+    group: 'Stroll',
+    station: "Lec'h",
     name: 'Anv',
     new_competitor: 'Kenstrivadeg kentañ',
     scr: 'Mesk',
@@ -58,7 +40,7 @@ const texts = {
     delegate_initials: 'Dileuriad',
     cutoff: 'Amzer termen',
     time_limit: 'Harz-amzer',
-    global: 'global',
+    total: 'hollad',
     eventName: {
       '333': 'Diñs 3x3x3',
       '222': 'Diñs 2x2x2',
@@ -67,7 +49,7 @@ const texts = {
       '666': 'Diñs 6x6x6',
       '777': 'Diñs 7x7x7',
       '333bf': '3x3x3 dall',
-      '333fm': '3x3x3 Diluziadur Gwellekaet',
+      '333fm': '3x3x3 diluziadur gwellekaet',
       '333oh': '3x3x3 gant un dorn',
       minx: 'Megaminks',
       pyram: 'Piraminks',
@@ -94,7 +76,7 @@ const texts = {
     delegate_initials: 'Inicials del delegat',
     cutoff: 'Tall',
     time_limit: 'Temps límit',
-    global: 'acumulatiu',
+    total: 'acumulatiu',
     eventName: {
       '333': 'Cub 3x3x3',
       '222': 'Cub 2x2x2',
@@ -117,7 +99,7 @@ const texts = {
   },
   eo: {
     eventLabel: 'Konkursero',
-    round: 'Raŭndo',
+    round: "Raŭnd'",
     group: 'Grupo',
     station: 'Stacio',
     name: 'Nomo',
@@ -126,11 +108,11 @@ const texts = {
     result: 'Resulto',
     judge: 'Juĝ',
     comp: 'Part',
-    extra: 'Extra',
+    extra: 'Ekstra solvo',
     delegate_initials: 'Inicialoj de la Delegito',
     cutoff: 'Ĉestempo',
     time_limit: 'Tempolimo',
-    global: 'entute',
+    total: 'entute',
     eventName: {
       '333': 'Kubo 3x3x3',
       '222': 'Kubo 2x2x2',
@@ -166,7 +148,7 @@ const texts = {
     delegate_initials: 'Initiales Délégué·e',
     cutoff: 'Cutoff',
     time_limit: 'Time limit',
-    global: 'global',
+    total: 'total',
     eventName: {
       '333': 'Cube 3x3x3',
       '222': 'Cube 2x2x2',
@@ -199,10 +181,10 @@ const texts = {
     judge: 'Juje',
     comp: 'Cours',
     extra: 'Ajis',
-    delegate_initials: 'Déléguë',
+    delegate_initials: 'Déléguë·ée',
     cutoff: 'Temp de pâssaje',
     time_limit: 'Temp limite',
-    global: 'global',
+    total: 'en tout',
     eventName: {
       '333': 'Qhube 3x3x3',
       '222': 'Qhube 2x2x2',
@@ -211,16 +193,16 @@ const texts = {
       '666': 'Qhube 6x6x6',
       '777': 'Qhube 7x7x7',
       '333bf': '3x3x3 bôgné',
-      '333fm': '3x3x3 meins de mouvements possibl',
+      '333fm': '3x3x3 chieu le pus court',
       '333oh': '3x3x3 o ene main',
-      minx: 'Megaminxe',
-      pyram: 'Piraminxe',
+      minx: 'Megaminx',
+      pyram: 'Piraminx',
       clock: 'Cloc',
-      skewb: 'Skyoube',
+      skewb: 'Skyoub',
       sq1: 'Sqouère-Ouane',
       '444bf': '4x4x4 bôgné',
       '555bf': '5x5x5 bôgné',
-      '333mbf': '3x3x3 pûzieurs qhubes bôgné',
+      '333mbf': 'Puzieurs 3x3x3 bôgné',
     },
   },
 };

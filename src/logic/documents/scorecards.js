@@ -335,7 +335,7 @@ const scorecard = ({
   language = 'en',
 }) => {
   const defaultTranslation = translation('en');
-  const translationData = translation(language) || defaultTranslation;
+  const translationData = translation(language);
 
   const t = stringKey => {
     return translationData[stringKey] || defaultTranslation[stringKey];
@@ -377,14 +377,10 @@ const scorecard = ({
       alignment: 'center',
     },
     {
+      fontSize: 11,
       margin: [25, 0, 0, 0],
       table: {
-        widths: [
-          '*',
-          getWidthOfBoxOrAuto(t('round'), 25),
-          getWidthOfBoxOrAuto(t('group'), 25),
-          ...(printStations ? [getWidthOfBoxOrAuto(t('station'), 25)] : []),
-        ],
+        widths: ['*', 30, 30, ...(printStations ? [30] : [])],
         body: [
           columnLabels([
             t('eventLabel'),
@@ -476,7 +472,9 @@ const scorecard = ({
           : {},
         timeLimit
           ? {
-              text: `${t('time_limit')}: ${timeLimitToString(timeLimit)}`,
+              text: `${t('time_limit')}: ${timeLimitToString(timeLimit, {
+                totalText: t('total'),
+              })}`,
               alignment: 'center',
             }
           : {},

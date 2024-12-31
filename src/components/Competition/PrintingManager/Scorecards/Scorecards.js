@@ -70,31 +70,6 @@ const Scorecards = ({ wcif }) => {
 
   const [language, setLanguage] = useState('en');
 
-  const LanguageSelector = ({ language, setLanguage, label }) => {
-    return (
-      <Grid item xs={12}>
-        <FormControl variant="outlined" fullWidth>
-          <InputLabel>{label}</InputLabel>
-          <Select
-            value={language}
-            onChange={e => setLanguage(e.target.value)}
-            label={label}
-          >
-            {Object.entries(language_info).map(
-              ([key, { original_name, english_name }]) => (
-                <MenuItem key={key} value={key}>
-                  {original_name === english_name
-                    ? original_name
-                    : `${original_name} (${english_name})`}
-                </MenuItem>
-              )
-            )}
-          </Select>
-        </FormControl>
-      </Grid>
-    );
-  };
-
   return (
     <Paper style={{ padding: 16 }}>
       <Grid container>
@@ -150,11 +125,22 @@ const Scorecards = ({ wcif }) => {
       </Grid>
       <Grid container spacing={2} style={{ marginTop: 16, marginBottom: 16 }}>
         <Grid item xs={4}>
-          <LanguageSelector
-            language={language}
-            setLanguage={setLanguage}
-            label="Scorecards language"
-          />
+          <FormControl variant="outlined" fullWidth>
+            <InputLabel>Scorecards language</InputLabel>
+            <Select
+              value={language}
+              onChange={e => setLanguage(e.target.value)}
+              label="Scorecards language"
+            >
+              {language_info.map(({ code, original_name, english_name }) => (
+                <MenuItem key={code} value={code}>
+                  {original_name === english_name
+                    ? original_name
+                    : `${original_name} (${english_name})`}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Grid>
       </Grid>
       <Grid container spacing={1}>
