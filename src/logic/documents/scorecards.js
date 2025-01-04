@@ -334,11 +334,16 @@ const scorecard = ({
   featured = false,
   language = 'en',
 }) => {
-  const defaultTranslation = translation('en');
+  const defaultTranslationData = translation('en');
   const translationData = translation(language);
 
-  const t = stringKey => {
-    return translationData[stringKey] || defaultTranslation[stringKey];
+  const t = (...keys) => {
+    const [phrase, defaultPhrase] = keys.reduce(
+      ([data1, data2], key) => [data1[key], data2[key]],
+      [translationData, defaultTranslationData]
+    );
+
+    return phrase || defaultPhrase;
   };
 
   const { eventId, roundNumber, groupNumber } = activityCode
@@ -377,7 +382,6 @@ const scorecard = ({
       alignment: 'center',
     },
     {
-      fontSize: 11,
       margin: [25, 0, 0, 0],
       table: {
         widths: ['*', 30, 30, ...(printStations ? [30] : [])],
@@ -391,7 +395,7 @@ const scorecard = ({
               : []),
           ]),
           [
-            eventId ? t('eventName')?.[eventId] || eventNameById(eventId) : ' ',
+            eventId ? t('eventName', eventId) : ' ',
             { text: roundNumber, alignment: 'center' },
             { text: groupNumber, alignment: 'center' },
             ...(printStations
@@ -415,7 +419,7 @@ const scorecard = ({
                   competitor.wcaId ||
                   // If the competitor has a name, then this is a new competitor
                   // Else this is a blank scorecard
-                  (competitor.name ? t('new_competitor') : ' '),
+                  (competitor.name ? t('newCompetitor') : ' '),
                 alignment: 'right',
               },
             ],
@@ -449,7 +453,7 @@ const scorecard = ({
           ...attemptRows(cutoff, attemptCount, scorecardWidth),
           [
             {
-              text: t('extra') + ' (' + t('delegate_initials') + ' _______)',
+              text: t('extra') + ' (' + t('delegateInitials') + ' _______)',
               ...noBorder,
               colSpan: 5,
               margin: [0, 1],
@@ -472,7 +476,7 @@ const scorecard = ({
           : {},
         timeLimit
           ? {
-              text: `${t('time_limit')}: ${timeLimitToString(timeLimit, {
+              text: `${t('timeLimit')}: ${timeLimitToString(timeLimit, {
                 totalText: t('total'),
               })}`,
               alignment: 'center',
@@ -640,11 +644,3 @@ const attemptRow = attemptNumber => [
 ];
 
 const noBorder = { border: [false, false, false, false] };
-
-const getWidthOfBoxOrAuto = (
-  translatedString,
-  defaultWidth = 25,
-  shortThreshold = 5
-) => {
-  return translatedString.length < shortThreshold ? defaultWidth : 'auto';
-};

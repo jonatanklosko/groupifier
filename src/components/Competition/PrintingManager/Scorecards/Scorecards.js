@@ -27,7 +27,7 @@ import {
   rooms,
 } from '../../../../logic/activities';
 import { difference, sortBy } from '../../../../logic/utils';
-import language_info from '../../../../logic/translations';
+import languageInfo from '../../../../logic/translations';
 
 const Scorecards = ({ wcif }) => {
   const missingScorecards = roundsMissingScorecards(wcif);
@@ -132,11 +132,11 @@ const Scorecards = ({ wcif }) => {
               onChange={e => setLanguage(e.target.value)}
               label="Scorecards language"
             >
-              {language_info.map(({ code, original_name, english_name }) => (
+              {languageInfo.map(({ code, originalName, englishName }) => (
                 <MenuItem key={code} value={code}>
-                  {original_name === english_name
-                    ? original_name
-                    : `${original_name} (${english_name})`}
+                  {originalName === englishName
+                    ? originalName
+                    : `${originalName} (${englishName})`}
                 </MenuItem>
               ))}
             </Select>
