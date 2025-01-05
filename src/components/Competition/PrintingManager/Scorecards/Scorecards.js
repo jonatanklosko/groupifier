@@ -8,6 +8,10 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
 
 import CubingIcon from '../../../common/CubingIcon/CubingIcon';
 import {
@@ -23,6 +27,7 @@ import {
   rooms,
 } from '../../../../logic/activities';
 import { difference, sortBy } from '../../../../logic/utils';
+import languageInfo from '../../../../logic/translations';
 
 const Scorecards = ({ wcif }) => {
   const missingScorecards = roundsMissingScorecards(wcif);
@@ -62,6 +67,8 @@ const Scorecards = ({ wcif }) => {
 
   const isSelectionEmpty =
     selectedRounds.length === 0 || selectedRooms.length === 0;
+
+  const [language, setLanguage] = useState('en');
 
   return (
     <Paper style={{ padding: 16 }}>
@@ -116,11 +123,31 @@ const Scorecards = ({ wcif }) => {
           </Grid>
         )}
       </Grid>
+      <Grid container spacing={2} style={{ marginTop: 16, marginBottom: 16 }}>
+        <Grid item xs={4}>
+          <FormControl variant="outlined" fullWidth>
+            <InputLabel>Scorecards language</InputLabel>
+            <Select
+              value={language}
+              onChange={e => setLanguage(e.target.value)}
+              label="Scorecards language"
+            >
+              {languageInfo.map(({ code, originalName, englishName }) => (
+                <MenuItem key={code} value={code}>
+                  {originalName === englishName
+                    ? originalName
+                    : `${originalName} (${englishName})`}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+      </Grid>
       <Grid container spacing={1}>
         <Grid item>
           <Button
             onClick={() =>
-              downloadScorecards(wcif, selectedRounds, selectedRooms)
+              downloadScorecards(wcif, selectedRounds, selectedRooms, language)
             }
             disabled={isSelectionEmpty}
           >
@@ -139,7 +166,7 @@ const Scorecards = ({ wcif }) => {
         </Grid>
         <Grid item style={{ flexGrow: 1 }} />
         <Grid item>
-          <Button onClick={() => downloadBlankScorecards(wcif)}>
+          <Button onClick={() => downloadBlankScorecards(wcif, language)}>
             Blank scorecards
           </Button>
         </Grid>
