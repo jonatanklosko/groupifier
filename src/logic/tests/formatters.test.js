@@ -33,7 +33,7 @@ describe('timeLimitToString', () => {
       centiseconds: 60 * 100,
       cumulativeRoundIds: ['333bf-r1'],
     };
-    expect(timeLimitToString(timeLimit)).toEqual('1:00.00 in total');
+    expect(timeLimitToString(timeLimit)).toEqual('1:00.00 total');
   });
 
   test('includes list of short round names for multi-round cumulative limit', () => {
@@ -42,7 +42,7 @@ describe('timeLimitToString', () => {
       cumulativeRoundIds: ['444bf-r1', '555bf-r1'],
     };
     expect(timeLimitToString(timeLimit)).toEqual(
-      '1:30:00.00 total for 4BLD R1, 5BLD R1'
+      '1:30:00.00 total (4BLD R1 + 5BLD R1)'
     );
   });
 });
