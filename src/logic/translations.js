@@ -234,9 +234,9 @@ const texts = {
     station: 'Postazione',
     name: 'Nome',
     newCompetitor: 'Nuovo partecipante',
-    scr: 'Mis',
+    scr: 'Scr',
     result: 'Risultato',
-    judge: 'Giudice',
+    judge: 'Giud',
     comp: 'Part',
     extra: 'Tentativo extra',
     delegateInitials: 'Iniziali del delegato',
@@ -274,8 +274,8 @@ const texts = {
     result: 'Ergebnis', 
     judge: 'Judge',
     comp: 'Teil',
-    extra: 'zusätzlicher Versuch',
-    delegateInitials: 'Delegates Anfangsbuchstaben ',
+    extra: 'extra Versuch',
+    delegateInitials: 'Delegates Initialen',
     cutoff: 'cutoff',
     timeLimit: 'Zeitlimit',
     total: 'gesamt',
@@ -299,7 +299,7 @@ const texts = {
       '333mbf': '3x3x3 Mehrfach Blind',
     }
   },
-  tn: {
+  tnt: {
     eventLabel: 'Evènto',
     round: 'Turno',
     group: 'Grup',
