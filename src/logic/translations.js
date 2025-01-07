@@ -275,7 +275,7 @@ const texts = {
     judge: 'Judge',
     comp: 'Teil',
     extra: 'zusätzlicher Versuch',
-    delegateInitials: 'Delegates Anfangsbuchstaben ',
+    delegateInitials: 'Delegates Anfangsbuchstaben',
     cutoff: 'cutoff',
     timeLimit: 'Zeitlimit',
     total: 'gesamt',
