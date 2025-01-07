@@ -308,7 +308,7 @@ const texts = {
     newCompetitor: 'Nof partecipante',
     scr: 'Mis',
     result: 'Tèmp',
-    judge: 'Giùdice',
+    judge: 'Giùd',
     comp: 'Part',
     extra: 'Tentatif èxtra',
     delegateInitials: 'Iniziai del delegà',
