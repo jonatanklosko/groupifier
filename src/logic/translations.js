@@ -232,7 +232,7 @@ const texts = {
     eventLabel: 'Konkurencja',
     round: 'Runda',
     group: 'Grupa',
-    station: 'Stanowisko',
+    station: 'Stan',
     name: 'Imię i nazwisko',
     newCompetitor: 'Nowicjusz',
     scr: 'Miesz',
