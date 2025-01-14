@@ -125,7 +125,7 @@ const texts = {
     eventLabel: 'Categoría',
     round: 'Ronda',
     group: 'Grupo',
-    station: 'Estación',
+    station: 'Est',
     name: 'Nombre',
     newCompetitor: 'Nuevo competidor',
     scr: 'Mez',
