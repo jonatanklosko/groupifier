@@ -103,6 +103,7 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
     scorecardPaperSize,
     scorecardOrder,
     printScorecardsCoverSheets,
+    printSecondScrambler,
   } = getExtensionData('CompetitionConfig', wcif);
 
   return (
@@ -245,6 +246,18 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
                 />
               }
               label="Swap latin names with local ones"
+            />
+          </Grid>
+          <Grid>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="printSecondScrambler"
+                  checked={printSecondScrambler}
+                  onChange={handleCheckboxChange}
+                />
+              }
+              label="Print out second scrambler sign box"
             />
           </Grid>
           <Grid>
