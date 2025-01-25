@@ -321,19 +321,25 @@ export const anyResults = wcif =>
   );
 
 /* Clears groups and assignments only for rounds without results. */
-export const clearGroupsAndAssignments = wcif => {
+export const clearGroupsAndAssignmentsWithoutResults = wcif => {
   const clearableRounds = roundsWithoutResults(wcif);
   const clearableRoundIds = clearableRounds.map(({ id }) => id);
-  const clearableActivities = flatMap(clearableRounds, round =>
-    groupActivitiesByRound(wcif, round.id)
+  return clearGroupsAndAssignments(wcif, clearableRoundIds);
+};
+
+/* Clears groups and assignments for the given rounds. */
+export const clearGroupsAndAssignments = (wcif, roundIds) => {
+  const activities = flatMap(roundIds, roundId =>
+    groupActivitiesByRound(wcif, roundId)
   );
-  const clearableActivityIds = clearableActivities.map(({ id }) => id);
+
+  const activityIds = activities.map(({ id }) => id);
 
   const persons = wcif.persons.map(person =>
     updateIn(person, ['assignments'], assignments =>
       assignments.filter(
         ({ activityId, assignmentCode }) =>
-          !clearableActivityIds.includes(activityId) ||
+          !activityIds.includes(activityId) ||
           (!assignmentCode.startsWith('staff-') &&
             assignmentCode !== 'competitor')
       )
@@ -342,7 +348,7 @@ export const clearGroupsAndAssignments = wcif => {
   const schedule = mapIn(wcif.schedule, ['venues'], venue =>
     mapIn(venue, ['rooms'], room =>
       mapIn(room, ['activities'], activity =>
-        clearableRoundIds.includes(activity.activityCode)
+        roundIds.includes(activity.activityCode)
           ? setIn(activity, ['childActivities'], [])
           : activity
       )
