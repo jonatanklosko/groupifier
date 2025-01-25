@@ -331,13 +331,12 @@ export const clearGroupsAndAssignments = wcif => {
 
   const persons = wcif.persons.map(person =>
     updateIn(person, ['assignments'], assignments =>
-      assignments
-        .filter(({ activityId }) => !clearableActivityIds.includes(activityId))
-        .filter(
-          ({ assignmentCode }) =>
-            !assignmentCode.startsWith('staff-') &&
-            assignmentCode !== 'competitor'
-        )
+      assignments.filter(
+        ({ activityId, assignmentCode }) =>
+          !clearableActivityIds.includes(activityId) ||
+          (!assignmentCode.startsWith('staff-') &&
+            assignmentCode !== 'competitor')
+      )
     )
   );
   const schedule = mapIn(wcif.schedule, ['venues'], venue =>
