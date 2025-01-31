@@ -6,9 +6,10 @@ import pink from '@material-ui/core/colors/pink';
 import {
   roundsMissingAssignments,
   activityCodeToName,
+  rooms,
 } from '../../../logic/activities';
 import { anyCompetitorAssignment } from '../../../logic/assignments';
-import { assignTasks } from '../../../logic/groups';
+import { assignTasks, createGroupActivities } from '../../../logic/groups';
 import { downloadScorecards } from '../../../logic/documents/scorecards';
 import { saveWcifChanges } from '../../../logic/wca-api';
 
@@ -23,10 +24,17 @@ const NewAssignableRoundNotification = ({ wcif, onWcifUpdate }) => {
   );
 
   const handleActionClick = () => {
-    const updatedWcif = assignTasks(wcif);
+    // Group activites should be created, but in case there are missing
+    // ones, we create them.
+    const updatedWcif = assignTasks(createGroupActivities(wcif));
     /* Just make the request in the background. */
     saveWcifChanges(wcif, updatedWcif);
-    downloadScorecards(updatedWcif, newRoundsToAssign);
+    downloadScorecards(
+      updatedWcif,
+      newRoundsToAssign,
+      rooms(updatedWcif),
+      'en'
+    );
     onWcifUpdate(updatedWcif);
   };
 

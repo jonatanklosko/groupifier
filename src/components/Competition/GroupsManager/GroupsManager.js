@@ -17,7 +17,7 @@ import {
 import {
   allGroupsCreated,
   roundsMissingAssignments,
-  clearGroupsAndAssignments,
+  clearGroupsAndAssignmentsWithoutResults,
 } from '../../../logic/activities';
 
 const GroupsManager = ({ wcif, onWcifUpdate }) => {
@@ -32,7 +32,7 @@ const GroupsManager = ({ wcif, onWcifUpdate }) => {
   };
 
   const handleClearGroups = () => {
-    setLocalWcif(clearGroupsAndAssignments(localWcif));
+    setLocalWcif(clearGroupsAndAssignmentsWithoutResults(localWcif));
   };
 
   const groupsCreated = allGroupsCreated(localWcif);
