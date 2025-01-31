@@ -206,7 +206,7 @@ const texts = {
     result: 'Emaitza',
     judge: 'Epai',
     comp: 'Lehi',
-    extra: 'Saikera extra',
+    extra: 'Saiakera extra',
     delegateInitials: 'Ordezkariaren inizialak',
     cutoff: 'Ebaki-denbora',
     timeLimit: 'Denbora muga',
