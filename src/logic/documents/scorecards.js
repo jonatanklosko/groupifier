@@ -168,6 +168,7 @@ const cutLine = properties => ({
 const scorecards = (wcif, rounds, rooms, language) => {
   const {
     localNamesFirst,
+    printOneName,
     printStations,
     scorecardPaperSize,
     scorecardOrder,
@@ -212,6 +213,7 @@ const scorecards = (wcif, rounds, rooms, language) => {
               attemptCount: maxAttemptCountByFormat[round.format],
               competitor,
               localNamesFirst,
+              printOneName,
               printStations,
               scorecardPaperSize,
               featured: featuredCompetitorWcaUserIds.includes(
@@ -329,6 +331,7 @@ const scorecard = ({
   attemptCount = 5,
   competitor = { name: null, registrantId: null, wcaId: null },
   localNamesFirst = false,
+  printOneName = false,
   printStations,
   scorecardPaperSize,
   featured = false,
@@ -429,6 +432,7 @@ const scorecard = ({
             {
               text: pdfName(competitor.name || ' ', {
                 swapLatinWithLocalNames: localNamesFirst,
+                short: printOneName,
               }),
               maxHeight: 20 /* See: https://github.com/bpampuch/pdfmake/issues/264#issuecomment-108347567 */,
             },
