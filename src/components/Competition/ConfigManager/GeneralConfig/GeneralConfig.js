@@ -98,6 +98,7 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
     tasksForOwnEventsOnly,
     noRunningForForeigners,
     localNamesFirst,
+    printOneName,
     scorecardsBackgroundUrl,
     printStations,
     scorecardPaperSize,
@@ -246,6 +247,18 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
                 />
               }
               label="Swap latin names with local ones"
+            />
+          </Grid>
+          <Grid item>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="printOneName"
+                  checked={printOneName}
+                  onChange={handleCheckboxChange}
+                />
+              }
+              label="Only one name (does not put local/latin name in parentheses)"
             />
           </Grid>
           <Grid>

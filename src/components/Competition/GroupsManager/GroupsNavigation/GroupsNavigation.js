@@ -15,6 +15,7 @@ import {
   hasDistributedAttempts,
   roomsWithTimezoneAndGroups,
   groupActivitiesByRound,
+  clearGroupsAndAssignments,
 } from '../../../../logic/activities';
 
 const GroupsNavigation = ({ wcif, onWcifChange }) => {
@@ -60,7 +61,18 @@ const GroupsNavigation = ({ wcif, onWcifChange }) => {
   const renderActions = roundId => {
     const anyGroup = groupActivitiesByRound(wcif, roundId).length > 0;
     if (!anyGroup) return false;
-    return <Button onClick={() => setEditedRoundId(roundId)}>Edit</Button>;
+    return (
+      <>
+        <Button
+          onClick={() =>
+            onWcifChange(clearGroupsAndAssignments(wcif, [roundId]))
+          }
+        >
+          Clear
+        </Button>
+        <Button onClick={() => setEditedRoundId(roundId)}>Edit</Button>
+      </>
+    );
   };
 
   return (

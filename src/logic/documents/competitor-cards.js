@@ -75,9 +75,10 @@ const competitorCards = (wcif, cardsPerRow) => {
 
 const competitorCard = (wcif, person) => {
   const events = wcif.events.filter(event => !hasDistributedAttempts(event.id));
-  const { localNamesFirst } = getExtensionData('CompetitionConfig', wcif) || {
-    localNamesFirst: false,
-  };
+  const { localNamesFirst, printOneName } = getExtensionData(
+    'CompetitionConfig',
+    wcif
+  );
   const tasks = sortBy(
     person.assignments
       .map(({ activityId, assignmentCode }) => {
@@ -115,6 +116,7 @@ const competitorCard = (wcif, person) => {
       {
         text: pdfName(person.name, {
           swapLatinWithLocalNames: localNamesFirst,
+          short: printOneName,
         }),
         fontSize: 10,
         maxHeight: 20 /* See: https://github.com/bpampuch/pdfmake/issues/264#issuecomment-108347567 */,

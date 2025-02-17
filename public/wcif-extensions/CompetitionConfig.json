@@ -8,6 +8,10 @@
       "description": "A flag indicating whether to swap competitor latin names with local ones in generated PDF documents.",
       "type": "boolean"
     },
+    "printOneName": {
+      "description": "A flag indicating whether the local/latin name should be printed in parentheses.",
+      "type": "boolean"
+    },
     "scorecardsBackgroundUrl": {
       "description": "URL of an image to be placed in the background of scorecards.",
       "type": "string"
@@ -48,5 +52,5 @@
       "type": "boolean"
     }
   },
-  "required": ["localNamesFirst", "scorecardsBackgroundUrl", "competitorsSortingRule", "noTasksForNewcomers", "tasksForOwnEventsOnly"]
+  "required": ["localNamesFirst", "printOneName", "scorecardsBackgroundUrl", "competitorsSortingRule", "noTasksForNewcomers", "tasksForOwnEventsOnly"]
 }
