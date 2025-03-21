@@ -710,14 +710,28 @@ const availabilityRate = (wcif, activity, competitor) => {
   return -(timeWhenBusy / activityDuration(activity));
 };
 
-const overlapsEveryoneWithSameRole = (wcif, groups, activity, competitor) =>
-  intersection(
+const overlapsEveryoneWithSameRole = (wcif, groups, activity, competitor) => {
+  const roleMapping = {
+    'trainee-delegate': 'delegate',
+  };
+
+  const normalizedRoles = competitor.roles.map(
+    role => roleMapping[role] || role
+  );
+
+  return intersection(
     ['staff-dataentry', 'delegate', 'trainee-delegate', 'organizer'],
-    competitor.roles
+    normalizedRoles
   ).some(role => {
+    const mappedRole = roleMapping[role] || role;
+
     const others = acceptedPeople(wcif)
       .filter(person => person.wcaUserId !== competitor.wcaUserId)
-      .filter(person => person.roles.includes(role));
+      .filter(person => {
+        const personRoles = person.roles.map(r => roleMapping[r] || r);
+        return personRoles.includes(mappedRole);
+      });
+
     return (
       others.length > 0 &&
       others.every(
@@ -731,6 +745,7 @@ const overlapsEveryoneWithSameRole = (wcif, groups, activity, competitor) =>
       )
     );
   });
+};
 
 export const updateScrambleSetCount = wcif =>
   mapIn(wcif, ['events'], event =>
