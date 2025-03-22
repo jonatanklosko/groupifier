@@ -450,7 +450,7 @@ const assignScrambling = (wcif, roundsToAssign) => {
                     'organizer',
                     'staff-other',
                   ],
-                  competitor.roles
+                  normalizeRoles(competitor.roles)
                 ).length,
                 /* Avoid more than two assignments for the given event. */
                 staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2
@@ -531,7 +531,7 @@ const assignRunning = (wcif, roundsToAssign) => {
                     'organizer',
                     'staff-other',
                   ],
-                  competitor.roles
+                  normalizeRoles(competitor.roles)
                 ).length,
                 staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2
                   ? 1
@@ -608,7 +608,7 @@ const assignJudging = (wcif, roundsToAssign) => {
                     'organizer',
                     'staff-other',
                   ],
-                  competitor.roles
+                  normalizeRoles(competitor.roles)
                 ).length,
                 staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2
                   ? 1
@@ -710,14 +710,20 @@ const availabilityRate = (wcif, activity, competitor) => {
   return -(timeWhenBusy / activityDuration(activity));
 };
 
+const normalizeRoles = roles => {
+  // Treat trainee delegates the same as delegates.
+  const mapping = { 'trainee-delegate': 'delegate' };
+  return roles.map(role => mapping[role] || role);
+};
+
 const overlapsEveryoneWithSameRole = (wcif, groups, activity, competitor) =>
   intersection(
     ['staff-dataentry', 'delegate', 'trainee-delegate', 'organizer'],
-    competitor.roles
+    normalizeRoles(competitor.roles)
   ).some(role => {
     const others = acceptedPeople(wcif)
       .filter(person => person.wcaUserId !== competitor.wcaUserId)
-      .filter(person => person.roles.includes(role));
+      .filter(person => normalizeRoles(person.roles).includes(role));
     return (
       others.length > 0 &&
       others.every(
