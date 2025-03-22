@@ -450,7 +450,7 @@ const assignScrambling = (wcif, roundsToAssign) => {
                     'organizer',
                     'staff-other',
                   ],
-                  competitor.roles
+                  normalizeRoles(competitor.roles)
                 ).length,
                 /* Avoid more than two assignments for the given event. */
                 staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2
@@ -531,7 +531,7 @@ const assignRunning = (wcif, roundsToAssign) => {
                     'organizer',
                     'staff-other',
                   ],
-                  competitor.roles
+                  normalizeRoles(competitor.roles)
                 ).length,
                 staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2
                   ? 1
@@ -608,7 +608,7 @@ const assignJudging = (wcif, roundsToAssign) => {
                     'organizer',
                     'staff-other',
                   ],
-                  competitor.roles
+                  normalizeRoles(competitor.roles)
                 ).length,
                 staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2
                   ? 1
@@ -710,28 +710,20 @@ const availabilityRate = (wcif, activity, competitor) => {
   return -(timeWhenBusy / activityDuration(activity));
 };
 
-const overlapsEveryoneWithSameRole = (wcif, groups, activity, competitor) => {
-  const roleMapping = {
-    'trainee-delegate': 'delegate',
-  };
+const normalizeRoles = roles => {
+  // Treat trainee delegates the same as delegates.
+  const mapping = { 'trainee-delegate': 'delegate' };
+  return roles.map(role => mapping[role] || role);
+};
 
-  const normalizedRoles = competitor.roles.map(
-    role => roleMapping[role] || role
-  );
-
-  return intersection(
+const overlapsEveryoneWithSameRole = (wcif, groups, activity, competitor) =>
+  intersection(
     ['staff-dataentry', 'delegate', 'trainee-delegate', 'organizer'],
-    normalizedRoles
+    normalizeRoles(competitor.roles)
   ).some(role => {
-    const mappedRole = roleMapping[role] || role;
-
     const others = acceptedPeople(wcif)
       .filter(person => person.wcaUserId !== competitor.wcaUserId)
-      .filter(person => {
-        const personRoles = person.roles.map(r => roleMapping[r] || r);
-        return personRoles.includes(mappedRole);
-      });
-
+      .filter(person => normalizeRoles(person.roles).includes(role));
     return (
       others.length > 0 &&
       others.every(
@@ -745,7 +737,6 @@ const overlapsEveryoneWithSameRole = (wcif, groups, activity, competitor) => {
       )
     );
   });
-};
 
 export const updateScrambleSetCount = wcif =>
   mapIn(wcif, ['events'], event =>
