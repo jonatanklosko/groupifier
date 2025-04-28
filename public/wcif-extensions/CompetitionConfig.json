@@ -50,6 +50,18 @@
     "printScorecardsCoverSheets": {
       "description": "A flag indicating whether score cards should have printed cover sheets in generated PDF documents.",
       "type": "boolean"
+    },
+    "printSecondScramblerForTopRankedCompetitors": {
+      "description": "A flag indicating whether the second scrambler box should be printed for top-ranked competitors (WR100/NR25 in single or WR50/NR15 in average).",
+      "type": "boolean"
+    },
+    "printSecondScramblerForFinalRounds": {
+      "description": "A flag indicating whether the second scrambler box should be printed for final rounds.",
+      "type": "boolean"
+    },
+    "printSecondScramblerForBlankScorecards": {
+      "description": "A flag indicating whether the second scrambler box should be printed for blank scorecards.",
+      "type": "boolean"
     }
   },
   "required": ["localNamesFirst", "printOneName", "scorecardsBackgroundUrl", "competitorsSortingRule", "noTasksForNewcomers", "tasksForOwnEventsOnly"]
