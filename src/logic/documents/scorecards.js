@@ -294,7 +294,7 @@ const shouldPrintScrambleChecker = (competitor, round, wcif) => {
   }
   if (
     printScrambleCheckerForFinalRounds &&
-    round?.advancementCondition === null
+    round.advancementCondition === null
   ) {
     return true;
   }
