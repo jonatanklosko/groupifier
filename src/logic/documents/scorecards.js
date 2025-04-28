@@ -305,7 +305,7 @@ const shouldPrintScrambleChecker = (competitor, round, activityCode, wcif) => {
     printScrambleCheckerBox = true;
   }
 
-  return printScrambleCheckerBox;
+  return false;
 };
 
 const groupActivitiesWithCompetitors = (wcif, roundId) => {
