@@ -292,7 +292,7 @@ const shouldPrintScrambleChecker = (competitor, round, activityCode, wcif) => {
         (averagePersonalBest.worldRanking <= 50 ||
           averagePersonalBest.nationalRanking <= 15))
     ) {
-      printScrambleCheckerBox = true;
+      return true;
     }
   }
   if (
