@@ -268,7 +268,6 @@ const scorecards = (wcif, rounds, rooms, language) => {
 
 const shouldPrintScrambleChecker = (competitor, round, activityCode, wcif) => {
   const { eventId } = activityCode ? parseActivityCode(activityCode) : {};
-  console.log(competitor, round, eventId);
   const {
     printScrambleCheckerForTopRankedCompetitors,
     printScrambleCheckerForFinalRounds,
