@@ -173,8 +173,6 @@ const scorecards = (wcif, rounds, rooms, language) => {
     scorecardPaperSize,
     scorecardOrder,
     printScorecardsCoverSheets,
-    printScrambleCheckerForTopRankedCompetitors,
-    printScrambleCheckerForFinalRounds,
   } = getExtensionData('CompetitionConfig', wcif);
   const { scorecardsPerPage } = scorecardPaperSizeInfos[scorecardPaperSize];
   let cards = flatMap(rounds, round => {
@@ -222,8 +220,12 @@ const scorecards = (wcif, rounds, rooms, language) => {
                 competitor.wcaUserId
               ),
               language: language,
-              printScrambleCheckerForTopRankedCompetitors,
-              printScrambleCheckerForFinalRounds,
+              printScrambleCheckerBox: shouldPrintScrambleChecker(
+                competitor,
+                round,
+                groupActivity.activityCode,
+                wcif
+              ),
             })
         );
         if (groupCoverSheet) {
@@ -262,6 +264,49 @@ const scorecards = (wcif, rounds, rooms, language) => {
       .map(card => card.card);
   }
   return cards;
+};
+
+const shouldPrintScrambleChecker = (competitor, round, activityCode, wcif) => {
+  const { eventId } = activityCode ? parseActivityCode(activityCode) : {};
+  console.log(competitor, round, eventId);
+  const {
+    printScrambleCheckerForTopRankedCompetitors,
+    printScrambleCheckerForFinalRounds,
+    printScrambleCheckerForBlankScorecards,
+  } = getExtensionData('CompetitionConfig', wcif);
+
+  let printScrambleCheckerBox = false;
+  if (printScrambleCheckerForTopRankedCompetitors) {
+    const singlePersonalBest = competitor.personalBests?.find(
+      personalBest =>
+        personalBest.eventId === eventId && personalBest.type === 'single'
+    );
+    const averagePersonalBest = competitor.personalBests?.find(
+      personalBest =>
+        personalBest.eventId === eventId && personalBest.type === 'average'
+    );
+    if (
+      (singlePersonalBest &&
+        (singlePersonalBest.worldRanking <= 100 ||
+          singlePersonalBest.nationalRanking <= 25)) ||
+      (averagePersonalBest &&
+        (averagePersonalBest.worldRanking <= 50 ||
+          averagePersonalBest.nationalRanking <= 15))
+    ) {
+      printScrambleCheckerBox = true;
+    }
+  }
+  if (
+    printScrambleCheckerForFinalRounds &&
+    round?.advancementCondition === null
+  ) {
+    printScrambleCheckerBox = true;
+  }
+  if (printScrambleCheckerForBlankScorecards && !round) {
+    printScrambleCheckerBox = true;
+  }
+
+  return printScrambleCheckerBox;
 };
 
 const groupActivitiesWithCompetitors = (wcif, roundId) => {
@@ -311,8 +356,6 @@ const blankScorecards = (wcif, language) => {
   const {
     printStations,
     scorecardPaperSize,
-    printScrambleCheckerForTopRankedCompetitors,
-    printScrambleCheckerForFinalRounds,
     printScrambleCheckerForBlankScorecards,
   } = getExtensionData('CompetitionConfig', wcif);
   const { scorecardsPerPage } = scorecardPaperSizeInfos[scorecardPaperSize];
@@ -324,9 +367,7 @@ const blankScorecards = (wcif, language) => {
         printStations,
         scorecardPaperSize,
         language: language,
-        printScrambleCheckerForTopRankedCompetitors,
-        printScrambleCheckerForFinalRounds,
-        printScrambleCheckerForBlankScorecards,
+        printScrambleCheckerBox: printScrambleCheckerForBlankScorecards,
       })
     )
   );
@@ -346,9 +387,7 @@ const scorecard = ({
   scorecardPaperSize,
   featured = false,
   language = 'en',
-  printScrambleCheckerForTopRankedCompetitors,
-  printScrambleCheckerForFinalRounds,
-  printScrambleCheckerForBlankScorecards,
+  printScrambleCheckerBox,
 }) => {
   const defaultTranslationData = translation('en');
   const translationData = translation(language);
@@ -372,37 +411,6 @@ const scorecard = ({
     horizontalMargin,
   } = scorecardPaperSizeInfos[scorecardPaperSize];
   const scorecardWidth = pageWidth / scorecardsPerRow - 2 * horizontalMargin;
-
-  let printScrambleCheckerBox = false;
-  if (printScrambleCheckerForTopRankedCompetitors) {
-    const singlePersonalBest = competitor.personalBests?.find(
-      personalBest =>
-        personalBest.eventId === eventId && personalBest.type === 'single'
-    );
-    const averagePersonalBest = competitor.personalBests?.find(
-      personalBest =>
-        personalBest.eventId === eventId && personalBest.type === 'average'
-    );
-    if (
-      (singlePersonalBest &&
-        (singlePersonalBest.worldRanking <= 100 ||
-          singlePersonalBest.nationalRanking <= 25)) ||
-      (averagePersonalBest &&
-        (averagePersonalBest.worldRanking <= 50 ||
-          averagePersonalBest.nationalRanking <= 15))
-    ) {
-      printScrambleCheckerBox = true;
-    }
-  }
-  if (
-    printScrambleCheckerForFinalRounds &&
-    round?.advancementCondition === null
-  ) {
-    printScrambleCheckerBox = true;
-  }
-  if (printScrambleCheckerForBlankScorecards && !round) {
-    printScrambleCheckerBox = true;
-  }
 
   return [
     {
