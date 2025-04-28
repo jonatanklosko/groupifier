@@ -104,6 +104,9 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
     scorecardPaperSize,
     scorecardOrder,
     printScorecardsCoverSheets,
+    printScrambleCheckerForTopRankedCompetitors,
+    printScrambleCheckerForFinalRounds,
+    printScramblerCheckerForBlankScorecards,
   } = getExtensionData('CompetitionConfig', wcif);
 
   return (
@@ -258,6 +261,42 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
                 />
               }
               label="Only one name (does not put local/latin name in parentheses)"
+            />
+          </Grid>
+          <Grid>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="printScrambleCheckerForTopRankedCompetitors"
+                  checked={printScrambleCheckerForTopRankedCompetitors}
+                  onChange={handleCheckboxChange}
+                />
+              }
+              label="Print out scramble checker sign box for top ranked competitors (WR100/NR25 in single or WR50/NR15 in average)"
+            />
+          </Grid>
+          <Grid>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="printScrambleCheckerForFinalRounds"
+                  checked={printScrambleCheckerForFinalRounds}
+                  onChange={handleCheckboxChange}
+                />
+              }
+              label="Print out scramble checker sign box for final rounds"
+            />
+          </Grid>
+          <Grid>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="printScramblerCheckerForBlankScorecards"
+                  checked={printScramblerCheckerForBlankScorecards}
+                  onChange={handleCheckboxChange}
+                />
+              }
+              label="Print out scrambler checker sign box for blank scorecards"
             />
           </Grid>
           <Grid>
