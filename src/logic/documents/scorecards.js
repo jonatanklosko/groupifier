@@ -64,14 +64,13 @@ export const downloadScorecards = (wcif, rounds, rooms, language) => {
 };
 
 export const downloadBlankScorecards = (wcif, language) => {
-  const {
-    scorecardsBackgroundUrl,
-    scorecardPaperSize,
-    printScramblerCheckerForBlankScorecards,
-  } = getExtensionData('CompetitionConfig', wcif);
+  const { scorecardsBackgroundUrl, scorecardPaperSize } = getExtensionData(
+    'CompetitionConfig',
+    wcif
+  );
   getImageDataUrl(scorecardsBackgroundUrl).then(imageData => {
     const pdfDefinition = scorecardsPdfDefinition(
-      blankScorecards(wcif, language, printScramblerCheckerForBlankScorecards),
+      blankScorecards(wcif, language),
       imageData,
       scorecardPaperSize
     );
@@ -305,14 +304,17 @@ const groupActivitiesWithCompetitors = (wcif, roundId) => {
   }
 };
 
-const blankScorecards = (wcif, language, printScrambleChecker) => {
+const blankScorecards = (wcif, language) => {
   const attemptCounts = flatMap(wcif.events, event => event.rounds).map(
     round => maxAttemptCountByFormat[round.format]
   );
-  const { printStations, scorecardPaperSize } = getExtensionData(
-    'CompetitionConfig',
-    wcif
-  );
+  const {
+    printStations,
+    scorecardPaperSize,
+    printScrambleCheckerForTopRankedCompetitors,
+    printScrambleCheckerForFinalRounds,
+    printScrambleCheckerForBlankScorecards,
+  } = getExtensionData('CompetitionConfig', wcif);
   const { scorecardsPerPage } = scorecardPaperSizeInfos[scorecardPaperSize];
   return flatMap(uniq(attemptCounts), attemptCount =>
     times(scorecardsPerPage, () =>
@@ -322,7 +324,9 @@ const blankScorecards = (wcif, language, printScrambleChecker) => {
         printStations,
         scorecardPaperSize,
         language: language,
-        printScrambleChecker,
+        printScrambleCheckerForTopRankedCompetitors,
+        printScrambleCheckerForFinalRounds,
+        printScrambleCheckerForBlankScorecards,
       })
     )
   );
@@ -344,6 +348,7 @@ const scorecard = ({
   language = 'en',
   printScrambleCheckerForTopRankedCompetitors,
   printScrambleCheckerForFinalRounds,
+  printScrambleCheckerForBlankScorecards,
 }) => {
   const defaultTranslationData = translation('en');
   const translationData = translation(language);
@@ -391,8 +396,11 @@ const scorecard = ({
   }
   if (
     printScrambleCheckerForFinalRounds &&
-    round.advancementCondition === null
+    round?.advancementCondition === null
   ) {
+    printScrambleCheckerBox = true;
+  }
+  if (printScrambleCheckerForBlankScorecards && !round) {
     printScrambleCheckerBox = true;
   }
 

@@ -106,7 +106,7 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
     printScorecardsCoverSheets,
     printScrambleCheckerForTopRankedCompetitors,
     printScrambleCheckerForFinalRounds,
-    printScramblerCheckerForBlankScorecards,
+    printScrambleCheckerForBlankScorecards,
   } = getExtensionData('CompetitionConfig', wcif);
 
   return (
@@ -291,8 +291,8 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
             <FormControlLabel
               control={
                 <Checkbox
-                  name="printScramblerCheckerForBlankScorecards"
-                  checked={printScramblerCheckerForBlankScorecards}
+                  name="printScrambleCheckerForBlankScorecards"
+                  checked={printScrambleCheckerForBlankScorecards}
                   onChange={handleCheckboxChange}
                 />
               }

@@ -39,7 +39,7 @@ const defaultExtensionData = {
     printScorecardsCoverSheets: false,
     printScrambleCheckerForTopRankedCompetitors: false,
     printScrambleCheckerForFinalRounds: false,
-    printScramblerCheckerForBlankScorecards: false,
+    printScrambleCheckerForBlankScorecards: false,
   },
 };
 
