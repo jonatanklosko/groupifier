@@ -223,7 +223,6 @@ const scorecards = (wcif, rounds, rooms, language) => {
               printScrambleCheckerBox: shouldPrintScrambleChecker(
                 competitor,
                 round,
-                groupActivity.activityCode,
                 wcif
               ),
             })
@@ -266,15 +265,13 @@ const scorecards = (wcif, rounds, rooms, language) => {
   return cards;
 };
 
-const shouldPrintScrambleChecker = (competitor, round, activityCode, wcif) => {
-  const { eventId } = activityCode ? parseActivityCode(round.id) : {};
+const shouldPrintScrambleChecker = (competitor, round, wcif) => {
+  const { eventId } = round ? parseActivityCode(round.id) : {};
   const {
     printScrambleCheckerForTopRankedCompetitors,
     printScrambleCheckerForFinalRounds,
-    printScrambleCheckerForBlankScorecards,
   } = getExtensionData('CompetitionConfig', wcif);
 
-  let printScrambleCheckerBox = false;
   if (printScrambleCheckerForTopRankedCompetitors) {
     const singlePersonalBest = competitor.personalBests?.find(
       personalBest =>
@@ -299,7 +296,7 @@ const shouldPrintScrambleChecker = (competitor, round, activityCode, wcif) => {
     printScrambleCheckerForFinalRounds &&
     round?.advancementCondition === null
   ) {
-    printScrambleCheckerBox = true;
+    return true;
   }
 
   return false;
