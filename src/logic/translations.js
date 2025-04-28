@@ -8,9 +8,9 @@ const languageInfo = [
   { code: 'fr', originalName: 'Français', englishName: 'French' },
   { code: 'galo', originalName: 'Galo', englishName: 'Gallo' },
   { code: 'pl', originalName: 'Polski', englishName: 'Polish' },
-  { code: 'it', originalName: 'Italiano', englishName: 'Italian'},
-  { code: 'de', originalName: 'Deutsch', englishName: 'German'},
-  { code: 'tnt', originalName: 'Trentin', englishName: 'Trentin'},
+  { code: 'it', originalName: 'Italiano', englishName: 'Italian' },
+  { code: 'de', originalName: 'Deutsch', englishName: 'German' },
+  { code: 'tnt', originalName: 'Trentin', englishName: 'Trentin' },
 ];
 
 const texts = {
@@ -22,6 +22,7 @@ const texts = {
     name: 'Name',
     newCompetitor: 'New competitor',
     scr: 'Scr',
+    check: 'Check',
     result: 'Result',
     judge: 'Judge',
     comp: 'Comp',
@@ -158,7 +159,7 @@ const texts = {
       '333mbf': '3x3x3 Multi Ciega',
     },
   },
-  
+
   eo: {
     eventLabel: 'Konkursero',
     round: "Raŭnd'",
@@ -311,6 +312,7 @@ const texts = {
     name: 'Imię i nazwisko',
     newCompetitor: 'Nowicjusz',
     scr: 'Miesz',
+    check: 'Spr',
     result: 'Wynik',
     judge: 'Sędz',
     comp: 'Zaw',
@@ -378,7 +380,7 @@ const texts = {
     name: 'Name',
     newCompetitor: 'Neuer Teilnehmer',
     scr: 'Scr',
-    result: 'Ergebnis', 
+    result: 'Ergebnis',
     judge: 'Judge',
     comp: 'Teil',
     extra: 'extra Versuch',
@@ -404,7 +406,7 @@ const texts = {
       '444bf': '4x4x4 Blind',
       '555bf': '5x5x5 Blind',
       '333mbf': '3x3x3 Mehrfach Blind',
-    }
+    },
   },
   tnt: {
     eventLabel: 'Evènto',
@@ -440,8 +442,8 @@ const texts = {
       '444bf': '4x4x4 sènza vardar',
       '555bf': '5x5x5 sènza vardar',
       '333mbf': 'tanti 3x3x3 sènza vardar',
-    }
-  }
+    },
+  },
 };
 
 export const translation = language => texts[language];

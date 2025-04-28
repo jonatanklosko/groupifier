@@ -64,13 +64,14 @@ export const downloadScorecards = (wcif, rounds, rooms, language) => {
 };
 
 export const downloadBlankScorecards = (wcif, language) => {
-  const { scorecardsBackgroundUrl, scorecardPaperSize, printSecondScrambler } = getExtensionData(
-    'CompetitionConfig',
-    wcif
-  );
+  const {
+    scorecardsBackgroundUrl,
+    scorecardPaperSize,
+    printSecondScramblerForBlankScorecards,
+  } = getExtensionData('CompetitionConfig', wcif);
   getImageDataUrl(scorecardsBackgroundUrl).then(imageData => {
     const pdfDefinition = scorecardsPdfDefinition(
-      blankScorecards(wcif, language, printSecondScrambler),
+      blankScorecards(wcif, language, printSecondScramblerForBlankScorecards),
       imageData,
       scorecardPaperSize
     );
@@ -173,7 +174,8 @@ const scorecards = (wcif, rounds, rooms, language) => {
     scorecardPaperSize,
     scorecardOrder,
     printScorecardsCoverSheets,
-    printSecondScrambler,
+    printSecondScramblerForTopRankedCompetitors,
+    printSecondScramblerForFinalRounds,
   } = getExtensionData('CompetitionConfig', wcif);
   const { scorecardsPerPage } = scorecardPaperSizeInfos[scorecardPaperSize];
   let cards = flatMap(rounds, round => {
@@ -221,7 +223,8 @@ const scorecards = (wcif, rounds, rooms, language) => {
                 competitor.wcaUserId
               ),
               language: language,
-              needsSecondScrambler: printSecondScrambler,
+              printSecondScramblerForTopRankedCompetitors,
+              printSecondScramblerForFinalRounds,
             })
         );
         if (groupCoverSheet) {
@@ -319,7 +322,7 @@ const blankScorecards = (wcif, language, printSecondScrambler) => {
         printStations,
         scorecardPaperSize,
         language: language,
-        needsSecondScrambler: printSecondScrambler,
+        printSecondScrambler,
       })
     )
   );
@@ -339,7 +342,8 @@ const scorecard = ({
   scorecardPaperSize,
   featured = false,
   language = 'en',
-  needsSecondScrambler,
+  printSecondScramblerForTopRankedCompetitors,
+  printSecondScramblerForFinalRounds,
 }) => {
   const defaultTranslationData = translation('en');
   const translationData = translation(language);
@@ -363,6 +367,37 @@ const scorecard = ({
     horizontalMargin,
   } = scorecardPaperSizeInfos[scorecardPaperSize];
   const scorecardWidth = pageWidth / scorecardsPerRow - 2 * horizontalMargin;
+
+  let printSecondScramblerBox = false;
+  if (
+    printSecondScramblerForTopRankedCompetitors ||
+    printSecondScramblerForFinalRounds
+  ) {
+    if (printSecondScramblerForTopRankedCompetitors) {
+      const singlePersonalBest = competitor.personalBests?.find(
+        personalBest =>
+          personalBest.eventId === eventId && personalBest.type === 'single'
+      );
+      const averagePersonalBest = competitor.personalBests?.find(
+        personalBest =>
+          personalBest.eventId === eventId && personalBest.type === 'average'
+      );
+      if (
+        singlePersonalBest?.worldRanking <= 100 ||
+        singlePersonalBest?.nationalRanking <= 25 ||
+        averagePersonalBest?.worldRanking <= 50 ||
+        averagePersonalBest?.nationalRanking <= 15
+      ) {
+        printSecondScramblerBox = true;
+      }
+    }
+    if (
+      printSecondScramblerForFinalRounds &&
+      round.advancementCondition === null
+    ) {
+      printSecondScramblerBox = true;
+    }
+  }
 
   return [
     {
@@ -450,27 +485,49 @@ const scorecard = ({
         widths: [
           16,
           25,
-          ...needsSecondScrambler ? [25] : [],
+          ...(printSecondScramblerBox ? [25] : []),
           '*',
           25,
           25,
         ] /* Note: 16 (width) + 4 + 4 (defult left and right padding) + 1 (left border) = 25 */,
         body: [
-          columnLabels(['', t('scr'), ...needsSecondScrambler ? [t('scr')] : [], t('result'), t('judge'), t('comp')], {
-            alignment: 'center',
-          }),
-          ...attemptRows(cutoff, attemptCount, scorecardWidth, needsSecondScrambler),
+          columnLabels(
+            [
+              '',
+              t('scr'),
+              ...(printSecondScramblerBox ? [t('check')] : []),
+              t('result'),
+              t('judge'),
+              t('comp'),
+            ],
+            {
+              alignment: 'center',
+            }
+          ),
+          ...attemptRows(
+            cutoff,
+            attemptCount,
+            scorecardWidth,
+            printSecondScramblerBox
+          ),
           [
             {
               text: t('extra') + ' (' + t('delegateInitials') + ' _______)',
               ...noBorder,
-              colSpan: 5 + needsSecondScrambler,
+              colSpan: 5 + printSecondScramblerBox,
               margin: [0, 1],
               fontSize: 10,
             },
           ],
-          attemptRow('_', needsSecondScrambler),
-          [{ text: '', ...noBorder, colSpan: 5 + needsSecondScrambler, margin: [0, 1] }],
+          attemptRow('_', printSecondScramblerBox),
+          [
+            {
+              text: '',
+              ...noBorder,
+              colSpan: 5 + printSecondScramblerBox,
+              margin: [0, 1],
+            },
+          ],
         ],
       },
     },
@@ -598,8 +655,15 @@ const columnLabels = (labels, style = {}) =>
     ...(Array.isArray(label) ? { columns: label } : { text: label }),
   }));
 
-const attemptRows = (cutoff, attemptCount, scorecardWidth, printSecondScrambler) =>
-  times(attemptCount, attemptIndex => attemptRow(attemptIndex + 1, printSecondScrambler)).reduce(
+const attemptRows = (
+  cutoff,
+  attemptCount,
+  scorecardWidth,
+  printSecondScrambler
+) =>
+  times(attemptCount, attemptIndex =>
+    attemptRow(attemptIndex + 1, printSecondScrambler)
+  ).reduce(
     (rows, attemptRow, attemptIndex) =>
       attemptIndex + 1 === attemptCount
         ? [...rows, attemptRow]
@@ -615,7 +679,11 @@ const attemptRows = (cutoff, attemptCount, scorecardWidth, printSecondScrambler)
     []
   );
 
-const attemptsSeparator = (cutoffLine, scorecardWidth, printSecondScrambler) => [
+const attemptsSeparator = (
+  cutoffLine,
+  scorecardWidth,
+  printSecondScrambler
+) => [
   {
     ...noBorder,
     colSpan: 5 + printSecondScrambler,
@@ -648,7 +716,7 @@ const attemptRow = (attemptNumber, needsSecondScrambler) => [
     alignment: 'center',
   },
   {},
-  ...needsSecondScrambler ? [{}] : [],
+  ...(needsSecondScrambler ? [{}] : []),
   {},
   {},
   {},

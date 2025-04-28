@@ -104,7 +104,9 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
     scorecardPaperSize,
     scorecardOrder,
     printScorecardsCoverSheets,
-    printSecondScrambler,
+    printSecondScramblerForTopRankedCompetitors,
+    printSecondScramblerForFinalRounds,
+    printSecondScramblerForBlankScorecards,
   } = getExtensionData('CompetitionConfig', wcif);
 
   return (
@@ -265,12 +267,36 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
             <FormControlLabel
               control={
                 <Checkbox
-                  name="printSecondScrambler"
-                  checked={printSecondScrambler}
+                  name="printSecondScramblerForTopRankedCompetitors"
+                  checked={printSecondScramblerForTopRankedCompetitors}
                   onChange={handleCheckboxChange}
                 />
               }
-              label="Print out second scrambler sign box"
+              label="Print out second scrambler sign box for top ranked competitors (WR100/NR25 in single or WR50/NR15 in average)"
+            />
+          </Grid>
+          <Grid>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="printSecondScramblerForFinalRounds"
+                  checked={printSecondScramblerForFinalRounds}
+                  onChange={handleCheckboxChange}
+                />
+              }
+              label="Print out second scrambler sign box for final rounds"
+            />
+          </Grid>
+          <Grid>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="printSecondScramblerForBlankScorecards"
+                  checked={printSecondScramblerForBlankScorecards}
+                  onChange={handleCheckboxChange}
+                />
+              }
+              label="Print out second scrambler sign box for blank scorecards"
             />
           </Grid>
           <Grid>
