@@ -104,9 +104,9 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
     scorecardPaperSize,
     scorecardOrder,
     printScorecardsCoverSheets,
-    printSecondScramblerForTopRankedCompetitors,
-    printSecondScramblerForFinalRounds,
-    printSecondScramblerForBlankScorecards,
+    printScrambleCheckerForTopRankedCompetitors,
+    printScrambleCheckerForFinalRounds,
+    printScramblerCheckerForBlankScorecards,
   } = getExtensionData('CompetitionConfig', wcif);
 
   return (
@@ -267,36 +267,36 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
             <FormControlLabel
               control={
                 <Checkbox
-                  name="printSecondScramblerForTopRankedCompetitors"
-                  checked={printSecondScramblerForTopRankedCompetitors}
+                  name="printScrambleCheckerForTopRankedCompetitors"
+                  checked={printScrambleCheckerForTopRankedCompetitors}
                   onChange={handleCheckboxChange}
                 />
               }
-              label="Print out second scrambler sign box for top ranked competitors (WR100/NR25 in single or WR50/NR15 in average)"
+              label="Print out scramble checker sign box for top ranked competitors (WR100/NR25 in single or WR50/NR15 in average)"
             />
           </Grid>
           <Grid>
             <FormControlLabel
               control={
                 <Checkbox
-                  name="printSecondScramblerForFinalRounds"
-                  checked={printSecondScramblerForFinalRounds}
+                  name="printScrambleCheckerForFinalRounds"
+                  checked={printScrambleCheckerForFinalRounds}
                   onChange={handleCheckboxChange}
                 />
               }
-              label="Print out second scrambler sign box for final rounds"
+              label="Print out scramble checker sign box for final rounds"
             />
           </Grid>
           <Grid>
             <FormControlLabel
               control={
                 <Checkbox
-                  name="printSecondScramblerForBlankScorecards"
-                  checked={printSecondScramblerForBlankScorecards}
+                  name="printScramblerCheckerForBlankScorecards"
+                  checked={printScramblerCheckerForBlankScorecards}
                   onChange={handleCheckboxChange}
                 />
               }
-              label="Print out second scrambler sign box for blank scorecards"
+              label="Print out scrambler checker sign box for blank scorecards"
             />
           </Grid>
           <Grid>

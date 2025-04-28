@@ -37,9 +37,9 @@ const defaultExtensionData = {
     scorecardPaperSize: 'a4',
     scorecardOrder: 'natural',
     printScorecardsCoverSheets: false,
-    printSecondScramblerForTopRankedCompetitors: false,
-    printSecondScramblerForFinalRounds: false,
-    printSecondScramblerForBlankScorecards: false,
+    printScrambleCheckerForTopRankedCompetitors: false,
+    printScrambleCheckerForFinalRounds: false,
+    printScramblerCheckerForBlankScorecards: false,
   },
 };
 
