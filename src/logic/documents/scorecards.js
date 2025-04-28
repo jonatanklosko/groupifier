@@ -301,9 +301,6 @@ const shouldPrintScrambleChecker = (competitor, round, activityCode, wcif) => {
   ) {
     printScrambleCheckerBox = true;
   }
-  if (printScrambleCheckerForBlankScorecards && !round) {
-    printScrambleCheckerBox = true;
-  }
 
   return false;
 };
