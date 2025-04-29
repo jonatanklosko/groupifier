@@ -64,14 +64,13 @@ export const downloadScorecards = (wcif, rounds, rooms, language) => {
 };
 
 export const downloadBlankScorecards = (wcif, language) => {
-  const {
-    scorecardsBackgroundUrl,
-    scorecardPaperSize,
-    printScramblerCheckerForBlankScorecards,
-  } = getExtensionData('CompetitionConfig', wcif);
+  const { scorecardsBackgroundUrl, scorecardPaperSize } = getExtensionData(
+    'CompetitionConfig',
+    wcif
+  );
   getImageDataUrl(scorecardsBackgroundUrl).then(imageData => {
     const pdfDefinition = scorecardsPdfDefinition(
-      blankScorecards(wcif, language, printScramblerCheckerForBlankScorecards),
+      blankScorecards(wcif, language),
       imageData,
       scorecardPaperSize
     );
@@ -174,8 +173,6 @@ const scorecards = (wcif, rounds, rooms, language) => {
     scorecardPaperSize,
     scorecardOrder,
     printScorecardsCoverSheets,
-    printScrambleCheckerForTopRankedCompetitors,
-    printScrambleCheckerForFinalRounds,
   } = getExtensionData('CompetitionConfig', wcif);
   const { scorecardsPerPage } = scorecardPaperSizeInfos[scorecardPaperSize];
   let cards = flatMap(rounds, round => {
@@ -223,8 +220,11 @@ const scorecards = (wcif, rounds, rooms, language) => {
                 competitor.wcaUserId
               ),
               language: language,
-              printScrambleCheckerForTopRankedCompetitors,
-              printScrambleCheckerForFinalRounds,
+              printScrambleCheckerBox: shouldPrintScrambleChecker(
+                competitor,
+                round,
+                wcif
+              ),
             })
         );
         if (groupCoverSheet) {
@@ -263,6 +263,43 @@ const scorecards = (wcif, rounds, rooms, language) => {
       .map(card => card.card);
   }
   return cards;
+};
+
+const shouldPrintScrambleChecker = (competitor, round, wcif) => {
+  const { eventId } = round ? parseActivityCode(round.id) : {};
+  const {
+    printScrambleCheckerForTopRankedCompetitors,
+    printScrambleCheckerForFinalRounds,
+  } = getExtensionData('CompetitionConfig', wcif);
+
+  if (printScrambleCheckerForTopRankedCompetitors) {
+    const singlePersonalBest = competitor.personalBests?.find(
+      personalBest =>
+        personalBest.eventId === eventId && personalBest.type === 'single'
+    );
+    const averagePersonalBest = competitor.personalBests?.find(
+      personalBest =>
+        personalBest.eventId === eventId && personalBest.type === 'average'
+    );
+    if (
+      (singlePersonalBest &&
+        (singlePersonalBest.worldRanking <= 100 ||
+          singlePersonalBest.nationalRanking <= 25)) ||
+      (averagePersonalBest &&
+        (averagePersonalBest.worldRanking <= 50 ||
+          averagePersonalBest.nationalRanking <= 15))
+    ) {
+      return true;
+    }
+  }
+  if (
+    printScrambleCheckerForFinalRounds &&
+    round.advancementCondition === null
+  ) {
+    return true;
+  }
+
+  return false;
 };
 
 const groupActivitiesWithCompetitors = (wcif, roundId) => {
@@ -305,14 +342,15 @@ const groupActivitiesWithCompetitors = (wcif, roundId) => {
   }
 };
 
-const blankScorecards = (wcif, language, printScrambleChecker) => {
+const blankScorecards = (wcif, language) => {
   const attemptCounts = flatMap(wcif.events, event => event.rounds).map(
     round => maxAttemptCountByFormat[round.format]
   );
-  const { printStations, scorecardPaperSize } = getExtensionData(
-    'CompetitionConfig',
-    wcif
-  );
+  const {
+    printStations,
+    scorecardPaperSize,
+    printScrambleCheckerForBlankScorecards,
+  } = getExtensionData('CompetitionConfig', wcif);
   const { scorecardsPerPage } = scorecardPaperSizeInfos[scorecardPaperSize];
   return flatMap(uniq(attemptCounts), attemptCount =>
     times(scorecardsPerPage, () =>
@@ -322,7 +360,7 @@ const blankScorecards = (wcif, language, printScrambleChecker) => {
         printStations,
         scorecardPaperSize,
         language: language,
-        printScrambleChecker,
+        printScrambleCheckerBox: printScrambleCheckerForBlankScorecards,
       })
     )
   );
@@ -342,8 +380,7 @@ const scorecard = ({
   scorecardPaperSize,
   featured = false,
   language = 'en',
-  printScrambleCheckerForTopRankedCompetitors,
-  printScrambleCheckerForFinalRounds,
+  printScrambleCheckerBox,
 }) => {
   const defaultTranslationData = translation('en');
   const translationData = translation(language);
@@ -367,34 +404,6 @@ const scorecard = ({
     horizontalMargin,
   } = scorecardPaperSizeInfos[scorecardPaperSize];
   const scorecardWidth = pageWidth / scorecardsPerRow - 2 * horizontalMargin;
-
-  let printScrambleCheckerBox = false;
-  if (printScrambleCheckerForTopRankedCompetitors) {
-    const singlePersonalBest = competitor.personalBests?.find(
-      personalBest =>
-        personalBest.eventId === eventId && personalBest.type === 'single'
-    );
-    const averagePersonalBest = competitor.personalBests?.find(
-      personalBest =>
-        personalBest.eventId === eventId && personalBest.type === 'average'
-    );
-    if (
-      (singlePersonalBest &&
-        (singlePersonalBest.worldRanking <= 100 ||
-          singlePersonalBest.nationalRanking <= 25)) ||
-      (averagePersonalBest &&
-        (averagePersonalBest.worldRanking <= 50 ||
-          averagePersonalBest.nationalRanking <= 15))
-    ) {
-      printScrambleCheckerBox = true;
-    }
-  }
-  if (
-    printScrambleCheckerForFinalRounds &&
-    round.advancementCondition === null
-  ) {
-    printScrambleCheckerBox = true;
-  }
 
   return [
     {

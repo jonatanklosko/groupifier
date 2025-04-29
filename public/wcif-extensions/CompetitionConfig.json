@@ -59,7 +59,7 @@
       "description": "A flag indicating whether the box for scrambler checker signature should be printed for final rounds.",
       "type": "boolean"
     },
-    "printScramblerCheckerForBlankScorecards": {
+    "printScrambleCheckerForBlankScorecards": {
       "description": "A flag indicating whether the box for scrambler checker signature should be printed for blank scorecards.",
       "type": "boolean"
     }
