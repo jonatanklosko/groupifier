@@ -343,9 +343,10 @@ const groupActivitiesWithCompetitors = (wcif, roundId) => {
 };
 
 const blankScorecards = (wcif, language) => {
-  const attemptCounts = flatMap(wcif.events, event => event.rounds).map(
-    round => maxAttemptCountByFormat[round.format]
-  );
+  const attemptCounts = flatMap(
+    wcif.events.filter(event => event.id !== '333fm'),
+    event => event.rounds
+  ).map(round => maxAttemptCountByFormat[round.format]);
   const {
     printStations,
     scorecardPaperSize,
