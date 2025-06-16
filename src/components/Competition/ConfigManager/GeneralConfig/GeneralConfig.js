@@ -272,7 +272,7 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
                   onChange={handleCheckboxChange}
                 />
               }
-              label="Print out scramble checker sign box for top ranked competitors (WR100/NR25 in single or WR50/NR15 in average)"
+              label="Print out scramble checker sign box for top ranked competitors (WR100 in single or WR50/NR15 in average)"
             />
           </Grid>
           <Grid>

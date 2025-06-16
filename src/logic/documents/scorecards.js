@@ -282,9 +282,7 @@ const shouldPrintScrambleChecker = (competitor, round, wcif) => {
         personalBest.eventId === eventId && personalBest.type === 'average'
     );
     if (
-      (singlePersonalBest &&
-        (singlePersonalBest.worldRanking <= 100 ||
-          singlePersonalBest.nationalRanking <= 25)) ||
+      (singlePersonalBest && singlePersonalBest.worldRanking <= 50) ||
       (averagePersonalBest &&
         (averagePersonalBest.worldRanking <= 50 ||
           averagePersonalBest.nationalRanking <= 15))
