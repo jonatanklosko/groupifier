@@ -173,7 +173,7 @@ const texts = {
     name: 'Nomo',
     newCompetitor: 'Nova konkursanto',
     scr: 'Miks',
-    result: 'Resulto',
+    result: 'Rezulto',
     judge: 'Juĝ',
     comp: 'Part',
     extra: 'Ekstra solvo',
