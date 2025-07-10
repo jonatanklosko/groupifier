@@ -8,6 +8,7 @@ const languageInfo = [
   { code: 'it', originalName: 'Italiano', englishName: 'Italian'},
   { code: 'de', originalName: 'Deutsch', englishName: 'German'},
   { code: 'tnt', originalName: 'Trentin', englishName: 'Trentin'},
+  { code: 'fur', originalName: 'Furlan', englishName: 'Friulian' },
 ];
 
 const texts = {
@@ -231,7 +232,7 @@ const texts = {
     eventLabel: 'Evento',
     round: 'Turno',
     group: 'Gruppo',
-    station: 'Postazione',
+    station: 'Stazione',
     name: 'Nome',
     newCompetitor: 'Nuovo partecipante',
     scr: 'Scr',
@@ -334,6 +335,42 @@ const texts = {
       '555bf': '5x5x5 sènza vardar',
       '333mbf': 'tanti 3x3x3 sènza vardar',
     }
+  },
+  fur: {
+    eventLabel: 'Event',
+    round: 'Turno',
+    group: 'Grup',
+    station: 'Stazion',
+    name: 'Nomp',
+    newCompetitor: 'Nouf partecipant',
+    scr: 'Mascedot',
+    result: 'Risultât',
+    judge: 'Giudic',
+    comp: 'Part',
+    extra: 'Tentatîf extra',
+    delegateInitials: 'Iniziâls dal delegât',
+    cutoff: 'Tai',
+    timeLimit: 'Timp masimp',
+    total: 'totâl',
+    eventName: {
+      '333': 'Cubo 3x3x3',
+      '222': 'Cubo 2x2x2',
+      '444': 'Cubo 4x4x4',
+      '555': 'Cubo 5x5x5',
+      '666': 'Cubo 6x6x6',
+      '777': 'Cubo 7x7x7',
+      '333bf': '3x3x3 da bendât',
+      '333fm': '3x3x3 cun mancul rotazions',
+      '333oh': '3x3x3 cunt\'una man',
+      minx: 'Megaminx',
+      pyram: 'Pyraminx',
+      clock: 'Orloi',
+      skewb: 'Skewb',
+      sq1: 'Quadrât-1',
+      '444bf': '4x4x4 da bendât',
+      '555bf': '5x5x5 da bendât',
+      '333mbf': '3x3x3 Plui cubos da bendât',
+    },
   }
 };
 
