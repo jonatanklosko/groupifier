@@ -19,6 +19,7 @@ import InfoIcon from '@material-ui/icons/Info';
 import SaveWcifButton from '../../common/SaveWcifButton/SaveWcifButton';
 import { acceptedPeople } from '../../../logic/competitors';
 import { difference, sortBy } from '../../../logic/utils';
+import { anyCompetitorAssignment } from '../../../logic/assignments';
 
 const roles = [
   { id: 'staff-scrambler', name: 'Scrambler' },
@@ -131,6 +132,9 @@ const RolesManager = ({ wcif, onWcifUpdate }) => {
                       {role.name}
                     </TableCell>
                   ))}
+                  {anyCompetitorAssignment(localWcif) && (
+                    <TableCell align="center">Staffing count</TableCell>
+                  )}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -155,6 +159,15 @@ const RolesManager = ({ wcif, onWcifUpdate }) => {
                           />
                         </TableCell>
                       ))}
+                      {anyCompetitorAssignment(localWcif) && (
+                        <TableCell align="center">
+                          {
+                            person.assignments?.filter(assignment =>
+                              assignment.assignmentCode.startsWith('staff-')
+                            ).length
+                          }
+                        </TableCell>
+                      )}
                     </TableRow>
                   ))}
               </TableBody>

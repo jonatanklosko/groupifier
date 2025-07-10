@@ -8,6 +8,10 @@
       "description": "A flag indicating whether to swap competitor latin names with local ones in generated PDF documents.",
       "type": "boolean"
     },
+    "printOneName": {
+      "description": "A flag indicating whether the local/latin name should be printed in parentheses.",
+      "type": "boolean"
+    },
     "scorecardsBackgroundUrl": {
       "description": "URL of an image to be placed in the background of scorecards.",
       "type": "string"
@@ -46,7 +50,19 @@
     "printScorecardsCoverSheets": {
       "description": "A flag indicating whether score cards should have printed cover sheets in generated PDF documents.",
       "type": "boolean"
+    },
+    "printScrambleCheckerForTopRankedCompetitors": {
+      "description": "A flag indicating whether the box for scramble checker signature should be printed for top-ranked competitors (WR100 in single or WR50/NR15 in average).",
+      "type": "boolean"
+    },
+    "printScrambleCheckerForFinalRounds": {
+      "description": "A flag indicating whether the box for scrambler checker signature should be printed for final rounds.",
+      "type": "boolean"
+    },
+    "printScrambleCheckerForBlankScorecards": {
+      "description": "A flag indicating whether the box for scrambler checker signature should be printed for blank scorecards.",
+      "type": "boolean"
     }
   },
-  "required": ["localNamesFirst", "scorecardsBackgroundUrl", "competitorsSortingRule", "noTasksForNewcomers", "tasksForOwnEventsOnly"]
+  "required": ["localNamesFirst", "printOneName", "scorecardsBackgroundUrl", "competitorsSortingRule", "noTasksForNewcomers", "tasksForOwnEventsOnly"]
 }

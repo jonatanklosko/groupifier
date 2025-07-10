@@ -441,6 +441,8 @@ const assignScrambling = (wcif, roundsToAssign) => {
                 noTasksForNewcomers && !competitor.wcaId ? 1 : -1,
                 /* Strongly prefer people at least 10 years old. */
                 age(competitor) >= 10 ? -1 : 1,
+                /* For scrambling we give high precedence to competitors who know the event. */
+                -suitabilityForEvent(competitor, eventId),
                 /* Avoid assigning tasks to people already busy due to their role. */
                 intersection(
                   [
@@ -450,7 +452,7 @@ const assignScrambling = (wcif, roundsToAssign) => {
                     'organizer',
                     'staff-other',
                   ],
-                  competitor.roles
+                  normalizeRoles(competitor.roles)
                 ).length,
                 /* Avoid more than two assignments for the given event. */
                 staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2
@@ -531,7 +533,7 @@ const assignRunning = (wcif, roundsToAssign) => {
                     'organizer',
                     'staff-other',
                   ],
-                  competitor.roles
+                  normalizeRoles(competitor.roles)
                 ).length,
                 staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2
                   ? 1
@@ -608,7 +610,7 @@ const assignJudging = (wcif, roundsToAssign) => {
                     'organizer',
                     'staff-other',
                   ],
-                  competitor.roles
+                  normalizeRoles(competitor.roles)
                 ).length,
                 staffAssignmentsForEvent(wcif, competitor, eventId).length >= 2
                   ? 1
@@ -647,6 +649,37 @@ const competesIn15Minutes = (wcif, competitor, isoString) => {
   if (competingStartTimes.length === 0) return false;
   const competingStart = competingStartTimes.reduce((x, y) => (x < y ? x : y));
   return isoTimeDiff(competingStart, isoString) <= 15 * 60 * 1000;
+};
+
+/**
+ * Classifies competitor proficiency in the event.
+ *
+ * Returns a numeric category, higher is better:
+ *
+ *   * 0 - assumes the competitor does not know the event
+ *   * 1 - no official result yet, but registered for the event
+ *   * 2 - has an official result
+ *   * 3 - has an offical result and is registered for the event
+ */
+const suitabilityForEvent = (competitor, eventId) => {
+  const hasPersonalBest = competitor.personalBests.some(
+    pb => pb.eventId === eventId
+  );
+  const isRegistered = competitor.registration.eventIds.includes(eventId);
+
+  if (hasPersonalBest) {
+    if (isRegistered) {
+      return 3;
+    } else {
+      return 2;
+    }
+  } else {
+    if (isRegistered) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
 };
 
 /* The lower, the less likely the competitor is to be at the venue. */
@@ -710,14 +743,20 @@ const availabilityRate = (wcif, activity, competitor) => {
   return -(timeWhenBusy / activityDuration(activity));
 };
 
+const normalizeRoles = roles => {
+  // Treat trainee delegates the same as delegates.
+  const mapping = { 'trainee-delegate': 'delegate' };
+  return roles.map(role => mapping[role] || role);
+};
+
 const overlapsEveryoneWithSameRole = (wcif, groups, activity, competitor) =>
   intersection(
     ['staff-dataentry', 'delegate', 'trainee-delegate', 'organizer'],
-    competitor.roles
+    normalizeRoles(competitor.roles)
   ).some(role => {
     const others = acceptedPeople(wcif)
       .filter(person => person.wcaUserId !== competitor.wcaUserId)
-      .filter(person => person.roles.includes(role));
+      .filter(person => normalizeRoles(person.roles).includes(role));
     return (
       others.length > 0 &&
       others.every(

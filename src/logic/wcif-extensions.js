@@ -27,6 +27,7 @@ const defaultExtensionData = {
   },
   CompetitionConfig: {
     localNamesFirst: false,
+    printOneName: false,
     scorecardsBackgroundUrl: '',
     competitorsSortingRule: 'ranks',
     noTasksForNewcomers: false,
@@ -36,6 +37,9 @@ const defaultExtensionData = {
     scorecardPaperSize: 'a4',
     scorecardOrder: 'natural',
     printScorecardsCoverSheets: false,
+    printScrambleCheckerForTopRankedCompetitors: false,
+    printScrambleCheckerForFinalRounds: false,
+    printScrambleCheckerForBlankScorecards: false,
   },
 };
 

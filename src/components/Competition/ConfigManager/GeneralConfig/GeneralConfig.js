@@ -98,11 +98,15 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
     tasksForOwnEventsOnly,
     noRunningForForeigners,
     localNamesFirst,
+    printOneName,
     scorecardsBackgroundUrl,
     printStations,
     scorecardPaperSize,
     scorecardOrder,
     printScorecardsCoverSheets,
+    printScrambleCheckerForTopRankedCompetitors,
+    printScrambleCheckerForFinalRounds,
+    printScrambleCheckerForBlankScorecards,
   } = getExtensionData('CompetitionConfig', wcif);
 
   return (
@@ -245,6 +249,54 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
                 />
               }
               label="Swap latin names with local ones"
+            />
+          </Grid>
+          <Grid item>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="printOneName"
+                  checked={printOneName}
+                  onChange={handleCheckboxChange}
+                />
+              }
+              label="Only one name (does not put local/latin name in parentheses)"
+            />
+          </Grid>
+          <Grid>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="printScrambleCheckerForTopRankedCompetitors"
+                  checked={printScrambleCheckerForTopRankedCompetitors}
+                  onChange={handleCheckboxChange}
+                />
+              }
+              label="Print out scramble checker sign box for top ranked competitors (WR100 in single or WR50/NR15 in average)"
+            />
+          </Grid>
+          <Grid>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="printScrambleCheckerForFinalRounds"
+                  checked={printScrambleCheckerForFinalRounds}
+                  onChange={handleCheckboxChange}
+                />
+              }
+              label="Print out scramble checker sign box for final rounds"
+            />
+          </Grid>
+          <Grid>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="printScrambleCheckerForBlankScorecards"
+                  checked={printScrambleCheckerForBlankScorecards}
+                  onChange={handleCheckboxChange}
+                />
+              }
+              label="Print out scrambler checker sign box for blank scorecards"
             />
           </Grid>
           <Grid>
