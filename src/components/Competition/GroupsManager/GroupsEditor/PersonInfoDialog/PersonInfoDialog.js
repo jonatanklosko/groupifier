@@ -97,7 +97,7 @@ const PersonInfoDialog = ({ person, onClose }) => {
         </Typography>
         {assignmentCodes.map(code => (
           <Typography key={code}>
-            {assignmentName(code)} - {assignmentsCount(code)} times
+            {assignmentName(code)}: {assignmentsCount(code)} times
           </Typography>
         ))}
       </DialogContent>
