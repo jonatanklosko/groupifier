@@ -14,6 +14,7 @@ export const DELEGATE_ROLE = 'delegate';
 export const TRAINEE_DELEGATE_ROLE = 'trainee-delegate';
 export const ORGANIZER_ROLE = 'organizer';
 export const DATA_ENTRY_ROLE = 'staff-dataentry';
+export const OTHER_ROLE = 'staff-other';
 
 export const assignmentCodes = [
   COMPETITOR_ASSIGNMENT_CODE,
@@ -47,6 +48,8 @@ export const roleName = role => {
       return 'Organizer';
     case DATA_ENTRY_ROLE:
       return 'Data Entry';
+    case OTHER_ROLE:
+      return 'Other Staff';
     default:
       //The rest of the roles are the same as assignment codes
       return assignmentName(role);
