@@ -10,6 +10,11 @@ export const COMPETITOR_ASSIGNMENT_CODE = 'competitor';
 export const SCRAMBLER_ASSIGNMENT_CODE = 'staff-scrambler';
 export const RUNNER_ASSIGNMENT_CODE = 'staff-runner';
 export const JUDGE_ASSIGNMENT_CODE = 'staff-judge';
+export const DELEGATE_ROLE = 'delegate';
+export const TRAINEE_DELEGATE_ROLE = 'trainee-delegate';
+export const ORGANIZER_ROLE = 'organizer';
+export const DATA_ENTRY_ROLE = 'staff-dataentry';
+export const OTHER_ROLE = 'staff-other';
 
 export const assignmentCodes = [
   COMPETITOR_ASSIGNMENT_CODE,
@@ -30,6 +35,24 @@ export const assignmentName = assignmentCode => {
       return 'Judge';
     default:
       throw new Error(`Unrecognised assignment code: '${assignmentCode}'`);
+  }
+};
+
+export const roleName = role => {
+  switch (role) {
+    case DELEGATE_ROLE:
+      return 'Delegate';
+    case TRAINEE_DELEGATE_ROLE:
+      return 'Trainee Delegate';
+    case ORGANIZER_ROLE:
+      return 'Organizer';
+    case DATA_ENTRY_ROLE:
+      return 'Data Entry';
+    case OTHER_ROLE:
+      return 'Other Staff';
+    default:
+      //The rest of the roles are the same as assignment codes
+      return assignmentName(role);
   }
 };
 
