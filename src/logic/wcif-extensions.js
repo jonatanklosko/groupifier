@@ -40,6 +40,7 @@ const defaultExtensionData = {
     printScrambleCheckerForTopRankedCompetitors: false,
     printScrambleCheckerForFinalRounds: false,
     printScrambleCheckerForBlankScorecards: false,
+    printDedicatedMultiBlindScorecards: false,
   },
 };
 
