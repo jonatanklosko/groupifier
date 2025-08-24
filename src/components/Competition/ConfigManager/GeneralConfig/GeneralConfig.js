@@ -107,6 +107,7 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
     printScrambleCheckerForTopRankedCompetitors,
     printScrambleCheckerForFinalRounds,
     printScrambleCheckerForBlankScorecards,
+    printDedicatedMultiBlindScorecards,
   } = getExtensionData('CompetitionConfig', wcif);
 
   return (
@@ -297,6 +298,18 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
                 />
               }
               label="Print out scrambler checker sign box for blank scorecards"
+            />
+          </Grid>
+          <Grid>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="printDedicatedMultiBlindScorecards"
+                  checked={printDedicatedMultiBlindScorecards}
+                  onChange={handleCheckboxChange}
+                />
+              }
+              label="Print out dedicated Multi-Blind scorecards"
             />
           </Grid>
           <Grid>

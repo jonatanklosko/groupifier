@@ -13,9 +13,15 @@ import {
   roundsMissingAssignments,
   activityCodeToName,
 } from '../../../logic/activities';
+import { getExtensionData } from '../../../logic/wcif-extensions';
 
 const PrintingManager = ({ wcif }) => {
   const [tabValue, setTabValue] = useState(0);
+
+  const { printDedicatedMultiBlindScorecards } = getExtensionData(
+    'CompetitionConfig',
+    wcif
+  );
 
   const roundsMissingAssignmentsNames = roundsMissingAssignments(
     wcif
@@ -49,11 +55,30 @@ const PrintingManager = ({ wcif }) => {
         <Tabs value={tabValue} onChange={(event, value) => setTabValue(value)}>
           <Tab label="Scorecards" />
           <Tab label="Competitor cards" />
+          {printDedicatedMultiBlindScorecards && (
+            <Tab label="Multi-Blind scorecards" />
+          )}
         </Tabs>
       </Grid>
       <Grid item xs={12}>
-        {tabValue === 0 && <Scorecards wcif={wcif} />}
+        {tabValue === 0 && (
+          <Scorecards
+            wcif={wcif}
+            printDedicatedMultiBlindScorecards={
+              printDedicatedMultiBlindScorecards
+            }
+          />
+        )}
         {tabValue === 1 && <CompetitorCards wcif={wcif} />}
+        {printDedicatedMultiBlindScorecards && tabValue === 2 && (
+          <Scorecards
+            wcif={wcif}
+            multiBlindOnly={true}
+            printDedicatedMultiBlindScorecards={
+              printDedicatedMultiBlindScorecards
+            }
+          />
+        )}
       </Grid>
       <Grid item>
         <Button

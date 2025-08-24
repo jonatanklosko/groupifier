@@ -48,7 +48,13 @@ const scorecardPaperSizeInfos = {
 
 const maxAttemptCountByFormat = { '1': 1, '2': 2, '3': 3, m: 3, a: 5 };
 
-export const downloadScorecards = (wcif, rounds, rooms, language) => {
+export const downloadScorecards = (
+  wcif,
+  rounds,
+  rooms,
+  language,
+  orientation
+) => {
   const { scorecardsBackgroundUrl, scorecardPaperSize } = getExtensionData(
     'CompetitionConfig',
     wcif
@@ -57,13 +63,14 @@ export const downloadScorecards = (wcif, rounds, rooms, language) => {
     const pdfDefinition = scorecardsPdfDefinition(
       scorecards(wcif, rounds, rooms, language),
       imageData,
-      scorecardPaperSize
+      scorecardPaperSize,
+      orientation
     );
     pdfMake.createPdf(pdfDefinition).download(`${wcif.id}-scorecards.pdf`);
   });
 };
 
-export const downloadBlankScorecards = (wcif, language) => {
+export const downloadBlankScorecards = (wcif, language, orientation) => {
   const { scorecardsBackgroundUrl, scorecardPaperSize } = getExtensionData(
     'CompetitionConfig',
     wcif
@@ -72,7 +79,8 @@ export const downloadBlankScorecards = (wcif, language) => {
     const pdfDefinition = scorecardsPdfDefinition(
       blankScorecards(wcif, language),
       imageData,
-      scorecardPaperSize
+      scorecardPaperSize,
+      orientation
     );
     pdfMake
       .createPdf(pdfDefinition)
@@ -83,7 +91,8 @@ export const downloadBlankScorecards = (wcif, language) => {
 const scorecardsPdfDefinition = (
   scorecardList,
   imageData,
-  scorecardPaperSize
+  scorecardPaperSize,
+  pageOrientation = 'horizontal'
 ) => {
   const {
     pageWidth,
@@ -100,7 +109,16 @@ const scorecardsPdfDefinition = (
     { x: 60, y: 590 },
     { x: 360, y: 590 },
   ].slice(0, scorecardsPerPage);
-  const cutLines =
+
+  let actualPageWidth = pageWidth;
+  let actualPageHeight = pageHeight;
+
+  if (pageOrientation === 'landscape') {
+    actualPageWidth = pageHeight;
+    actualPageHeight = pageWidth;
+  }
+
+  const horizontalCutlines =
     scorecardsPerPage === 4
       ? {
           canvas: [
@@ -119,7 +137,28 @@ const scorecardsPdfDefinition = (
           ],
         }
       : {};
+  const verticalCutlines =
+    scorecardsPerPage === 4
+      ? {
+          canvas: [
+            cutLine({
+              y1: horizontalMargin,
+              x1: pageHeight / 2,
+              y2: pageWidth - horizontalMargin,
+              x2: pageHeight / 2,
+            }),
+            cutLine({
+              y1: pageWidth / 2,
+              x1: verticalMargin,
+              y2: pageWidth / 2,
+              x2: pageHeight - verticalMargin,
+            }),
+          ],
+        }
+      : {};
 
+  const cutLines =
+    pageOrientation === 'horizontal' ? horizontalCutlines : verticalCutlines;
   return {
     background: [
       ...(imageData === null
@@ -132,8 +171,9 @@ const scorecardsPdfDefinition = (
           }))),
       cutLines,
     ],
-    pageSize: { width: pageWidth, height: pageHeight },
+    pageSize: { width: actualPageWidth, height: actualPageHeight },
     pageMargins: [horizontalMargin, verticalMargin],
+    pageOrientation: pageOrientation,
     content: {
       layout: {
         /* Outer margin is done using pageMargins, we use padding for the remaining inner margins. */
@@ -149,7 +189,7 @@ const scorecardsPdfDefinition = (
       },
       table: {
         widths: Array(scorecardsPerRow).fill('*'),
-        heights: pageHeight / scorecardsPerRow - 2 * verticalMargin,
+        heights: actualPageHeight / scorecardsPerRow - 2 * verticalMargin,
         dontBreakRows: true,
         body: chunk(scorecardList, scorecardsPerRow),
       },
@@ -173,6 +213,7 @@ const scorecards = (wcif, rounds, rooms, language) => {
     scorecardPaperSize,
     scorecardOrder,
     printScorecardsCoverSheets,
+    printDedicatedMultiBlindScorecards,
   } = getExtensionData('CompetitionConfig', wcif);
   const { scorecardsPerPage } = scorecardPaperSizeInfos[scorecardPaperSize];
   let cards = flatMap(rounds, round => {
@@ -225,6 +266,7 @@ const scorecards = (wcif, rounds, rooms, language) => {
                 round,
                 wcif
               ),
+              printDedicatedMultiBlindScorecards,
             })
         );
         if (groupCoverSheet) {
@@ -349,6 +391,7 @@ const blankScorecards = (wcif, language) => {
     printStations,
     scorecardPaperSize,
     printScrambleCheckerForBlankScorecards,
+    printDedicatedMultiBlindScorecards,
   } = getExtensionData('CompetitionConfig', wcif);
   const { scorecardsPerPage } = scorecardPaperSizeInfos[scorecardPaperSize];
   return flatMap(uniq(attemptCounts), attemptCount =>
@@ -360,6 +403,7 @@ const blankScorecards = (wcif, language) => {
         scorecardPaperSize,
         language: language,
         printScrambleCheckerBox: printScrambleCheckerForBlankScorecards,
+        printDedicatedMultiBlindScorecards,
       })
     )
   );
@@ -380,6 +424,7 @@ const scorecard = ({
   featured = false,
   language = 'en',
   printScrambleCheckerBox,
+  printDedicatedMultiBlindScorecards = false,
 }) => {
   const defaultTranslationData = translation('en');
   const translationData = translation(language);
@@ -389,7 +434,6 @@ const scorecard = ({
       ([data1, data2], key) => [data1[key], data2[key]],
       [translationData, defaultTranslationData]
     );
-
     return phrase || defaultPhrase;
   };
 
@@ -404,7 +448,12 @@ const scorecard = ({
   } = scorecardPaperSizeInfos[scorecardPaperSize];
   const scorecardWidth = pageWidth / scorecardsPerRow - 2 * horizontalMargin;
 
-  return [
+  const isDedicatedMultiBlindScorecard =
+    printDedicatedMultiBlindScorecards &&
+    eventId &&
+    eventId.startsWith('333mbf');
+
+  const baseHeader = [
     {
       fontSize: 10,
       columns: [
@@ -415,7 +464,7 @@ const scorecard = ({
         featured
           ? {
               text: '★',
-              font: 'WenQuanYiZenHei', // Roboto (default) does not support unicode icons like ★
+              font: 'WenQuanYiZenHei',
               alignment: 'right',
             }
           : {},
@@ -428,133 +477,194 @@ const scorecard = ({
       margin: [0, 0, 0, 10],
       alignment: 'center',
     },
-    {
-      margin: [25, 0, 0, 0],
-      table: {
-        widths: ['*', 30, 30, ...(printStations ? [30] : [])],
-        body: [
-          columnLabels([
-            t('eventLabel'),
-            { text: t('round'), alignment: 'center' },
-            { text: t('group'), alignment: 'center' },
-            ...(printStations
-              ? [{ text: t('station'), alignment: 'center' }]
-              : []),
-          ]),
-          [
-            eventId ? t('eventName', eventId) : ' ',
-            { text: roundNumber, alignment: 'center' },
-            { text: groupNumber, alignment: 'center' },
-            ...(printStations
-              ? [{ text: stationNumber, alignment: 'center' }]
-              : []),
-          ],
+  ];
+
+  const eventRoundTable = {
+    margin: [25, 0, 0, 0],
+    table: {
+      widths: ['*', 30, 30, ...(printStations ? [30] : [])],
+      body: [
+        columnLabels([
+          t('eventLabel'),
+          { text: t('round'), alignment: 'center' },
+          { text: t('group'), alignment: 'center' },
+          ...(printStations
+            ? [{ text: t('station'), alignment: 'center' }]
+            : []),
+        ]),
+        [
+          eventId ? t('eventName', eventId) : ' ',
+          { text: roundNumber, alignment: 'center' },
+          { text: groupNumber, alignment: 'center' },
+          ...(printStations
+            ? [{ text: stationNumber, alignment: 'center' }]
+            : []),
         ],
-      },
-    },
-    {
-      margin: [25, 0, 0, 0],
-      table: {
-        widths: [30, '*'],
-        body: [
-          columnLabels([
-            'ID',
-            [
-              { text: t('name'), alignment: 'left', width: 'auto' },
-              {
-                text:
-                  competitor.wcaId ||
-                  // If the competitor has a name, then this is a new competitor
-                  // Else this is a blank scorecard
-                  (competitor.name ? t('newCompetitor') : ' '),
-                alignment: 'right',
-              },
-            ],
-          ]),
-          [
-            { text: competitor.registrantId || ' ', alignment: 'center' },
-            {
-              text: pdfName(competitor.name || ' ', {
-                swapLatinWithLocalNames: localNamesFirst,
-                short: printOneName,
-              }),
-              maxHeight: 20 /* See: https://github.com/bpampuch/pdfmake/issues/264#issuecomment-108347567 */,
-            },
-          ],
-        ],
-      },
-    },
-    {
-      margin: [0, 10, 0, 0],
-      table: {
-        widths: [
-          16,
-          25,
-          ...(printScrambleCheckerBox ? [25] : []),
-          '*',
-          25,
-          25,
-        ] /* Note: 16 (width) + 4 + 4 (defult left and right padding) + 1 (left border) = 25 */,
-        body: [
-          columnLabels(
-            [
-              '',
-              t('scr'),
-              ...(printScrambleCheckerBox ? [t('check')] : []),
-              t('result'),
-              t('judge'),
-              t('comp'),
-            ],
-            {
-              alignment: 'center',
-            }
-          ),
-          ...attemptRows(
-            cutoff,
-            attemptCount,
-            scorecardWidth,
-            printScrambleCheckerBox
-          ),
-          [
-            {
-              text: t('extra') + ' (' + t('delegateInitials') + ' _______)',
-              ...noBorder,
-              colSpan: 5 + printScrambleCheckerBox,
-              margin: [0, 1],
-              fontSize: 10,
-            },
-          ],
-          attemptRow('_', printScrambleCheckerBox),
-          [
-            {
-              text: '',
-              ...noBorder,
-              colSpan: 5 + printScrambleCheckerBox,
-              margin: [0, 1],
-            },
-          ],
-        ],
-      },
-    },
-    {
-      fontSize: 10,
-      columns: [
-        cutoff
-          ? {
-              text: `${t('cutoff')}: ${cutoffToString(cutoff, eventId)}`,
-              alignment: 'center',
-            }
-          : {},
-        timeLimit
-          ? {
-              text: `${t('timeLimit')}: ${timeLimitToString(timeLimit, {
-                totalText: t('total'),
-              })}`,
-              alignment: 'center',
-            }
-          : {},
       ],
     },
+  };
+
+  const competitorTable = {
+    margin: [25, 0, 0, 0],
+    table: {
+      widths: [30, '*'],
+      body: [
+        columnLabels([
+          'ID',
+          [
+            { text: t('name'), alignment: 'left', width: 'auto' },
+            {
+              text:
+                competitor.wcaId ||
+                (competitor.name ? t('newCompetitor') : ' '),
+              alignment: 'right',
+            },
+          ],
+        ]),
+        [
+          { text: competitor.registrantId || ' ', alignment: 'center' },
+          {
+            text: pdfName(competitor.name || ' ', {
+              swapLatinWithLocalNames: localNamesFirst,
+              short: printOneName,
+            }),
+            maxHeight: 20,
+          },
+        ],
+      ],
+    },
+  };
+
+  const multiBlindTable = {
+    margin: [0, 10, 0, 0],
+    table: {
+      widths: [
+        16,
+        25,
+        25,
+        ...(printScrambleCheckerBox ? [25] : []),
+        25,
+        25,
+        '*',
+        25,
+        25,
+      ],
+      body: [
+        columnLabels(
+          [
+            '',
+            t('del'),
+            t('scr'),
+            ...(printScrambleCheckerBox ? [t('check')] : []),
+            t('solved'),
+            t('declared'),
+            t('time'),
+            t('judge'),
+            t('comp'),
+          ],
+          { alignment: 'center' }
+        ),
+        ...Array.from({ length: attemptCount }).map((_, i) =>
+          multiBlindAttemptRow(i + 1, printScrambleCheckerBox)
+        ),
+        [
+          {
+            text: t('extra') + ' (' + t('delegateInitials') + ' _______)',
+            ...noBorder,
+            colSpan: 8 + (printScrambleCheckerBox ? 1 : 0),
+            margin: [0, 1],
+            fontSize: 10,
+          },
+          ...Array(printScrambleCheckerBox ? 1 : 0).fill(''),
+        ],
+        multiBlindAttemptRow('_', printScrambleCheckerBox),
+        [
+          {
+            text: '',
+            ...noBorder,
+            colSpan: 8 + (printScrambleCheckerBox ? 1 : 0),
+            margin: [0, 1],
+          },
+          ...Array(printScrambleCheckerBox ? 1 : 0).fill(''),
+        ],
+      ],
+    },
+  };
+
+  const standardAttemptTable = {
+    margin: [0, 10, 0, 0],
+    table: {
+      widths: [16, 25, ...(printScrambleCheckerBox ? [25] : []), '*', 25, 25],
+      body: [
+        columnLabels(
+          [
+            '',
+            t('scr'),
+            ...(printScrambleCheckerBox ? [t('check')] : []),
+            t('result'),
+            t('judge'),
+            t('comp'),
+          ],
+          {
+            alignment: 'center',
+          }
+        ),
+        ...attemptRows(
+          cutoff,
+          attemptCount,
+          scorecardWidth,
+          printScrambleCheckerBox
+        ),
+        [
+          {
+            text: t('extra') + ' (' + t('delegateInitials') + ' _______)',
+            ...noBorder,
+            colSpan: 5 + (printScrambleCheckerBox ? 1 : 0),
+            margin: [0, 1],
+            fontSize: 10,
+          },
+          ...Array(printScrambleCheckerBox ? 1 : 0).fill(''),
+        ],
+        attemptRow('_', printScrambleCheckerBox),
+        [
+          {
+            text: '',
+            ...noBorder,
+            colSpan: 5 + (printScrambleCheckerBox ? 1 : 0),
+            margin: [0, 1],
+          },
+          ...Array(printScrambleCheckerBox ? 1 : 0).fill(''),
+        ],
+      ],
+    },
+  };
+
+  const limitsRow = {
+    fontSize: 10,
+    columns: [
+      cutoff
+        ? {
+            text: `${t('cutoff')}: ${cutoffToString(cutoff, eventId)}`,
+            alignment: 'center',
+          }
+        : {},
+      timeLimit
+        ? {
+            text: `${t('timeLimit')}: ${timeLimitToString(timeLimit, {
+              totalText: t('total'),
+            })}`,
+            alignment: 'center',
+          }
+        : {},
+    ],
+  };
+
+  return [
+    ...baseHeader,
+    eventRoundTable,
+    competitorTable,
+    isDedicatedMultiBlindScorecard ? multiBlindTable : standardAttemptTable,
+    limitsRow,
   ];
 };
 
@@ -722,6 +832,24 @@ const attemptRow = (attemptNumber, needsScrambleChecker) => [
   },
   {},
   ...(needsScrambleChecker ? [{}] : []),
+  {},
+  {},
+  {},
+];
+
+const multiBlindAttemptRow = (attemptNumber, needsScrambleChecker) => [
+  {
+    text: attemptNumber,
+    ...noBorder,
+    fontSize: 20,
+    bold: true,
+    alignment: 'center',
+  },
+  {},
+  {},
+  ...(needsScrambleChecker ? [{}] : []),
+  {},
+  {},
   {},
   {},
   {},

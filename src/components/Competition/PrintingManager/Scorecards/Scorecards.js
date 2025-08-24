@@ -29,7 +29,11 @@ import {
 import { difference, sortBy } from '../../../../logic/utils';
 import languageInfo from '../../../../logic/translations';
 
-const Scorecards = ({ wcif }) => {
+const Scorecards = ({
+  wcif,
+  multiBlindOnly,
+  printDedicatedMultiBlindScorecards,
+}) => {
   const missingScorecards = roundsMissingScorecards(wcif);
   const [selectedRounds, setSelectedRounds] = useState(
     missingScorecards.every(
@@ -39,8 +43,13 @@ const Scorecards = ({ wcif }) => {
       : []
   );
   const rounds = sortBy(
-    roundsWithoutResults(wcif).filter(
-      round => parseActivityCode(round.id).eventId !== '333fm'
+    roundsWithoutResults(wcif).filter(round =>
+      parseActivityCode(round.id).eventId !== '333fm' &&
+      printDedicatedMultiBlindScorecards
+        ? multiBlindOnly
+          ? parseActivityCode(round.id).eventId === '333mbf'
+          : parseActivityCode(round.id).eventId !== '333mbf'
+        : true
     ),
     round => parseActivityCode(round.id).roundNumber
   );
@@ -147,7 +156,13 @@ const Scorecards = ({ wcif }) => {
         <Grid item>
           <Button
             onClick={() =>
-              downloadScorecards(wcif, selectedRounds, selectedRooms, language)
+              downloadScorecards(
+                wcif,
+                selectedRounds,
+                selectedRooms,
+                language,
+                multiBlindOnly ? 'landscape' : 'horizontal'
+              )
             }
             disabled={isSelectionEmpty}
           >
@@ -165,11 +180,13 @@ const Scorecards = ({ wcif }) => {
           </Button>
         </Grid>
         <Grid item style={{ flexGrow: 1 }} />
-        <Grid item>
-          <Button onClick={() => downloadBlankScorecards(wcif, language)}>
-            Blank scorecards
-          </Button>
-        </Grid>
+        {!multiBlindOnly && (
+          <Grid item>
+            <Button onClick={() => downloadBlankScorecards(wcif, language)}>
+              Blank scorecards
+            </Button>
+          </Grid>
+        )}
       </Grid>
     </Paper>
   );
