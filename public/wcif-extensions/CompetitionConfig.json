@@ -62,6 +62,10 @@
     "printScrambleCheckerForBlankScorecards": {
       "description": "A flag indicating whether the box for scrambler checker signature should be printed for blank scorecards.",
       "type": "boolean"
+    },
+    "printDedicatedMultiBlindScorecards": {
+      "description": "A flag indicating whether special Multi-Blind scorecards should be printed",
+      "type": "boolean"
     }
   },
   "required": ["localNamesFirst", "printOneName", "scorecardsBackgroundUrl", "competitorsSortingRule", "noTasksForNewcomers", "tasksForOwnEventsOnly"]
