@@ -13,6 +13,7 @@ import {
   roundsMissingAssignments,
   activityCodeToName,
 } from '../../../logic/activities';
+import OTSScorecards from './OTSScorecards/OTSScorecards';
 
 const PrintingManager = ({ wcif }) => {
   const [tabValue, setTabValue] = useState(0);
@@ -49,11 +50,13 @@ const PrintingManager = ({ wcif }) => {
         <Tabs value={tabValue} onChange={(event, value) => setTabValue(value)}>
           <Tab label="Scorecards" />
           <Tab label="Competitor cards" />
+          <Tab label="OTS scorecards" />
         </Tabs>
       </Grid>
       <Grid item xs={12}>
         {tabValue === 0 && <Scorecards wcif={wcif} />}
         {tabValue === 1 && <CompetitorCards wcif={wcif} />}
+        {tabValue === 2 && <OTSScorecards wcif={wcif} />}
       </Grid>
       <Grid item>
         <Button
