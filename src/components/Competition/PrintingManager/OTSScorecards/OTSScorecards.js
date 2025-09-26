@@ -60,7 +60,7 @@ const OTSScorecards = ({ wcif }) => {
                 <ListItemAvatar>
                   <Avatar
                     alt={scorecards.person.name}
-                    src={scorecards.person.avatar.thumbUrl}
+                    src={scorecards.person.avatar?.thumbUrl}
                   />
                 </ListItemAvatar>
                 <ListItemText
