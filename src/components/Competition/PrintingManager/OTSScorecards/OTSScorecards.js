@@ -46,7 +46,7 @@ const OTSScorecards = ({ wcif }) => {
     <Paper style={{ padding: 16 }}>
       <Grid container>
         <Grid item xs={6}>
-          <Typography variant="subtitle1">Select persons</Typography>
+          <Typography variant="subtitle1">Select competitors</Typography>
           <List style={{ width: 400 }}>
             {missingScorecards.map(scorecards => (
               <ListItem
