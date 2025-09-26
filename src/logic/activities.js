@@ -321,10 +321,6 @@ export const competitorsRegisteredForAnEventWithoutGroups = wcif => {
             p => p.person.wcaUserId === person.wcaUserId
           );
           newPerson.eventIds.push(eventId);
-          persons = persons.filter(
-            p => p.person.wcaUserId !== person.wcaUserId
-          );
-          persons.push(newPerson);
         }
       }
     });
