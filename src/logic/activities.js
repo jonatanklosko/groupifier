@@ -299,6 +299,31 @@ export const roundsMissingScorecards = wcif =>
     .filter(round => groupActivitiesAssigned(wcif, round.id))
     .filter(round => parseActivityCode(round.id).eventId !== '333fm');
 
+export const competitorsRegisteredForAnEventWithoutGroups = wcif => {
+  let persons = {};
+  wcif.persons.forEach(person => {
+    if (!person.registration || person.registration?.status !== 'accepted') {
+      return;
+    }
+    person.registration.eventIds.forEach(eventId => {
+      const hasCompetitorAssignment = person.assignments.some(
+        a =>
+          a.assignmentCode === 'competitor' &&
+          activityById(wcif, a.activityId).activityCode.startsWith(
+            `${eventId}-r1`
+          )
+      );
+      if (!hasCompetitorAssignment) {
+        if (!persons[person.wcaUserId]) {
+          persons[person.wcaUserId] = { person, eventIds: [] };
+        }
+        persons[person.wcaUserId].eventIds.push(eventId);
+      }
+    });
+  });
+  return Object.values(persons);
+};
+
 export const allGroupsCreated = wcif =>
   wcif.events.every(event =>
     event.rounds.every(

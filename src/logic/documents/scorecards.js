@@ -5,6 +5,7 @@ import {
   groupActivitiesByRound,
   hasDistributedAttempts,
   roomByActivity,
+  competitorsRegisteredForAnEventWithoutGroups,
 } from '../activities';
 import { eventNameById } from '../events';
 import { cutoffToString, timeLimitToString } from '../formatters';
@@ -61,6 +62,111 @@ export const downloadScorecards = (wcif, rounds, rooms, language) => {
     );
     pdfMake.createPdf(pdfDefinition).download(`${wcif.id}-scorecards.pdf`);
   });
+};
+
+export const downloadEmptyScorecardsForPersons = (
+  wcif,
+  selectedPersons,
+  language = 'en'
+) => {
+  const personsWithoutGroups = competitorsRegisteredForAnEventWithoutGroups(
+    wcif
+  );
+  const filteredPersonsWithoutGroups = personsWithoutGroups.filter(
+    ({ person }) => selectedPersons.includes(person.wcaUserId)
+  );
+  const { scorecardsBackgroundUrl, scorecardPaperSize } = getExtensionData(
+    'CompetitionConfig',
+    wcif
+  );
+
+  getImageDataUrl(scorecardsBackgroundUrl).then(imageData => {
+    const pdfDefinition = scorecardsPdfDefinition(
+      emptyScorecardsForPersons(wcif, filteredPersonsWithoutGroups, language),
+      imageData,
+      scorecardPaperSize
+    );
+    pdfMake
+      .createPdf(pdfDefinition)
+      .download(`${wcif.id}-missing-scorecards.pdf`);
+  });
+};
+
+const prepareScorecardsPages = (cards, scorecardsPerPage, scorecardOrder) => {
+  const scorecardsOnLastPage = cards.length % scorecardsPerPage;
+
+  if (scorecardsOnLastPage !== 0 && scorecardOrder !== 'stacked') {
+    cards = cards.concat(
+      times(scorecardsPerPage - scorecardsOnLastPage, () => ({}))
+    );
+  }
+
+  if (scorecardOrder === 'stacked') {
+    if (scorecardsOnLastPage !== 0) {
+      cards = cards.concat(
+        times(scorecardsPerPage - scorecardsOnLastPage, () => ({}))
+      );
+    }
+    cards = cards
+      .map((card, idx) => ({ overallNumber: idx, card }))
+      .sort((a, b) => {
+        const sectionA = a.overallNumber % (cards.length / scorecardsPerPage);
+        const sectionB = b.overallNumber % (cards.length / scorecardsPerPage);
+        if (sectionA !== sectionB) return sectionA - sectionB;
+        return a.overallNumber - b.overallNumber;
+      })
+      .map(({ card }) => card);
+  }
+
+  return cards;
+};
+
+export const emptyScorecardsForPersons = (
+  wcif,
+  personsWithoutGroups,
+  language = 'en'
+) => {
+  const {
+    localNamesFirst,
+    printOneName,
+    printStations,
+    scorecardPaperSize,
+    scorecardOrder,
+  } = getExtensionData('CompetitionConfig', wcif);
+
+  const { scorecardsPerPage } = scorecardPaperSizeInfos[scorecardPaperSize];
+
+  let cards = flatMap(personsWithoutGroups, ({ person, eventIds }) =>
+    flatMap(eventIds, eventId => {
+      const round = wcif.events
+        .find(e => e.id === eventId)
+        .rounds.find(r => r.id === `${eventId}-r1`);
+      const roundFormat = round.format;
+      const attemptCount = maxAttemptCountByFormat[roundFormat];
+
+      const card = scorecard({
+        competitionName: wcif.shortName,
+        activityCode: `${eventId}-r1`,
+        attemptCount,
+        round,
+        competitor: person,
+        localNamesFirst,
+        printOneName,
+        printStations,
+        scorecardPaperSize,
+        language,
+        printScrambleCheckerBox: shouldPrintScrambleChecker(
+          person,
+          round,
+          wcif
+        ),
+      });
+
+      return card ? [card] : [];
+    })
+  );
+
+  return prepareScorecardsPages(cards, scorecardsPerPage, scorecardOrder);
 };
 
 export const downloadBlankScorecards = (wcif, language) => {
@@ -174,7 +280,9 @@ const scorecards = (wcif, rounds, rooms, language) => {
     scorecardOrder,
     printScorecardsCoverSheets,
   } = getExtensionData('CompetitionConfig', wcif);
+
   const { scorecardsPerPage } = scorecardPaperSizeInfos[scorecardPaperSize];
+
   let cards = flatMap(rounds, round => {
     const groupsWithCompetitors = groupActivitiesWithCompetitors(
       wcif,
@@ -182,17 +290,21 @@ const scorecards = (wcif, rounds, rooms, language) => {
     ).filter(([groupActivity, _]) =>
       rooms.includes(roomByActivity(wcif, groupActivity.id))
     );
+
     let scorecardNumber = sum(
       groupsWithCompetitors.map(
         ([_, competitorsWithStation]) => competitorsWithStation.length
       )
     );
+
     return flatMap(
       groupsWithCompetitors,
       ([groupActivity, competitorsWithStation]) => {
         const { featuredCompetitorWcaUserIds = [] } =
           getExtensionData('ActivityConfig', groupActivity) || {};
+
         let scorecardInGroupNumber = competitorsWithStation.length;
+
         const groupCoverSheet = printScorecardsCoverSheets
           ? coverSheet({
               competitionName: wcif.shortName,
@@ -201,11 +313,11 @@ const scorecards = (wcif, rounds, rooms, language) => {
               room: roomByActivity(wcif, groupActivity.id),
             })
           : null;
+
         const groupScorecards = competitorsWithStation.map(
           ([competitor, stationNumber]) =>
             scorecard({
               scorecardNumber: scorecardNumber--,
-              // If station numbers are assigned use those, otherwise generate on the fly
               stationNumber: stationNumber || scorecardInGroupNumber--,
               competitionName: wcif.shortName,
               activityCode: groupActivity.activityCode,
@@ -227,9 +339,11 @@ const scorecards = (wcif, rounds, rooms, language) => {
               ),
             })
         );
+
         if (groupCoverSheet) {
           groupScorecards.unshift(groupCoverSheet);
         }
+
         const scorecardsOnLastPage = groupScorecards.length % scorecardsPerPage;
         return scorecardsOnLastPage === 0 || scorecardOrder === 'stacked'
           ? groupScorecards
@@ -239,30 +353,8 @@ const scorecards = (wcif, rounds, rooms, language) => {
       }
     );
   });
-  if (scorecardOrder === 'stacked') {
-    const scorecardsOnLastPage = cards.length % scorecardsPerPage;
-    if (scorecardsOnLastPage !== 0) {
-      cards = cards.concat(
-        times(scorecardsPerPage - scorecardsOnLastPage, () => ({}))
-      );
-    }
-    cards = cards
-      .map((card, idx) => {
-        return { overallNumber: idx, card };
-      })
-      .sort((cardA, cardB) => {
-        const sectionA =
-          cardA.overallNumber % (cards.length / scorecardsPerPage);
-        const sectionB =
-          cardB.overallNumber % (cards.length / scorecardsPerPage);
-        if (sectionA !== sectionB) {
-          return sectionA - sectionB;
-        }
-        return cardA.overallNumber - cardB.overallNumber;
-      })
-      .map(card => card.card);
-  }
-  return cards;
+
+  return prepareScorecardsPages(cards, scorecardsPerPage, scorecardOrder);
 };
 
 const shouldPrintScrambleChecker = (competitor, round, wcif) => {
