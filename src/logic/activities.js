@@ -302,8 +302,9 @@ export const roundsMissingScorecards = wcif =>
 export const competitorsRegisteredForAnEventWithoutGroups = wcif => {
   let persons = [];
   wcif.persons.forEach(person => {
-    if (!person.registration || person.registration?.status !== 'accepted')
+    if (!person.registration || person.registration?.status !== 'accepted') {
       return;
+    }
     person.registration.eventIds.forEach(eventId => {
       const hasCompetitorAssignment = person.assignments.some(
         a =>
