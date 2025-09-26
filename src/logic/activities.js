@@ -300,7 +300,7 @@ export const roundsMissingScorecards = wcif =>
     .filter(round => parseActivityCode(round.id).eventId !== '333fm');
 
 export const competitorsRegisteredForAnEventWithoutGroups = wcif => {
-  let persons = [];
+  let persons = {};
   wcif.persons.forEach(person => {
     if (!person.registration || person.registration?.status !== 'accepted')
       return;
@@ -313,22 +313,14 @@ export const competitorsRegisteredForAnEventWithoutGroups = wcif => {
           )
       );
       if (!hasCompetitorAssignment) {
-        if (!persons.some(p => p.person.wcaUserId === person.wcaUserId)) {
-          persons.push({ person, eventIds: [eventId] });
-        } else {
-          let newPerson = persons.find(
-            p => p.person.wcaUserId === person.wcaUserId
-          );
-          newPerson.eventIds.push(eventId);
-          persons = persons.filter(
-            p => p.person.wcaUserId !== person.wcaUserId
-          );
-          persons.push(newPerson);
+        if (!persons[person.wcaUserId]) {
+          persons[person.wcaUserId] = { person, eventIds: [] };
         }
+        persons[person.wcaUserId].eventIds.push(eventId);
       }
     });
   });
-  return persons;
+  return Object.values(persons);
 };
 
 export const allGroupsCreated = wcif =>
