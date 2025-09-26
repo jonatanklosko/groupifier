@@ -140,9 +140,9 @@ export const emptyScorecardsForPersons = (
     flatMap(eventIds, eventId => {
       const round = wcif.events
         .find(e => e.id === eventId)
-        ?.rounds?.find(r => r.id === `${eventId}-r1`);
-      const roundFormat = round?.format || '1';
-      const attemptCount = maxAttemptCountByFormat[roundFormat] || 5;
+        .rounds.find(r => r.id === `${eventId}-r1`);
+      const roundFormat = round.format;
+      const attemptCount = maxAttemptCountByFormat[roundFormat];
 
       const card = scorecard({
         competitionName: wcif.shortName,
