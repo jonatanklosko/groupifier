@@ -25,7 +25,7 @@ const languageInfo = [
     englishName: 'Portuguese (Brazil)',
   },
   { code: 'tnt', originalName: 'Trentin', englishName: 'Trentin' },
-];
+].sort((a, b) => a.originalName.localeCompare(b.originalName));
 
 const texts = {
   en: {
