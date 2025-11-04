@@ -34,6 +34,11 @@ export const assignmentName = assignmentCode => {
     case JUDGE_ASSIGNMENT_CODE:
       return 'Judge';
     default:
+      if (isStaffAssignment(assignmentCode)) {
+        // The rest of the staff assignments are named by their code suffix capitalized
+        const suffix = assignmentCode.substring('staff-'.length);
+        return suffix.charAt(0).toUpperCase() + suffix.slice(1);
+      }
       throw new Error(`Unrecognised assignment code: '${assignmentCode}'`);
   }
 };
