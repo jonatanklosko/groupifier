@@ -47,7 +47,7 @@ const scorecardPaperSizeInfos = {
   },
 };
 
-const maxAttemptCountByFormat = { '1': 1, '2': 2, '3': 3, m: 3, a: 5 };
+const maxAttemptCountByFormat = { '1': 1, '2': 2, '3': 3, '5': 5, m: 3, a: 5 };
 
 export const downloadScorecards = (wcif, rounds, rooms, language) => {
   const { scorecardsBackgroundUrl, scorecardPaperSize } = getExtensionData(
