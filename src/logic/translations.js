@@ -144,7 +144,7 @@ const texts = {
     round: '轮次',
     group: '组别',
     station: '赛台',
-    ID: '编号',
+    id: '编号',
     name: '姓名',
     newCompetitor: '新人选手',
     scr: '打乱',
