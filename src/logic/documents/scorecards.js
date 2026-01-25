@@ -475,6 +475,7 @@ const scorecard = ({
 }) => {
   const defaultTranslationData = translation('en');
   const translationData = translation(language);
+  const translationFont = fontForLanguage(language);
 
   const t = (...keys) => {
     const [phrase, defaultPhrase] = keys.reduce(
@@ -526,15 +527,23 @@ const scorecard = ({
         widths: ['*', 30, 30, ...(printStations ? [30] : [])],
         body: [
           columnLabels([
-            t('eventLabel'),
-            { text: t('round'), alignment: 'center' },
-            { text: t('group'), alignment: 'center' },
+            { text: t('eventLabel'), font: translationFont },
+            { text: t('round'), alignment: 'center', font: translationFont },
+            { text: t('group'), alignment: 'center', font: translationFont },
             ...(printStations
-              ? [{ text: t('station'), alignment: 'center' }]
+              ? [
+                  {
+                    text: t('station'),
+                    alignment: 'center',
+                    font: translationFont,
+                  },
+                ]
               : []),
           ]),
           [
-            eventId ? t('eventName', eventId) : ' ',
+            eventId
+              ? { text: t('eventName', eventId), font: translationFont }
+              : ' ',
             { text: roundNumber, alignment: 'center' },
             { text: groupNumber, alignment: 'center' },
             ...(printStations
@@ -552,7 +561,12 @@ const scorecard = ({
           columnLabels([
             'ID',
             [
-              { text: t('name'), alignment: 'left', width: 'auto' },
+              {
+                text: t('name'),
+                alignment: 'left',
+                width: 'auto',
+                font: translationFont,
+              },
               {
                 text:
                   competitor.wcaId ||
@@ -560,6 +574,7 @@ const scorecard = ({
                   // Else this is a blank scorecard
                   (competitor.name ? t('newCompetitor') : ' '),
                 alignment: 'right',
+                font: translationFont,
               },
             ],
           ]),
@@ -591,11 +606,13 @@ const scorecard = ({
           columnLabels(
             [
               '',
-              t('scr'),
-              ...(printScrambleCheckerBox ? [t('check')] : []),
-              t('result'),
-              t('judge'),
-              t('comp'),
+              { text: t('scr'), font: translationFont },
+              ...(printScrambleCheckerBox
+                ? [{ text: t('check'), font: translationFont }]
+                : []),
+              { text: t('result'), font: translationFont },
+              { text: t('judge'), font: translationFont },
+              { text: t('comp'), font: translationFont },
             ],
             {
               alignment: 'center',
@@ -614,6 +631,7 @@ const scorecard = ({
               colSpan: 5 + printScrambleCheckerBox,
               margin: [0, 1],
               fontSize: 10,
+              font: translationFont,
             },
           ],
           attemptRow('_', printScrambleCheckerBox),
@@ -635,6 +653,7 @@ const scorecard = ({
           ? {
               text: `${t('cutoff')}: ${cutoffToString(cutoff, eventId)}`,
               alignment: 'center',
+              font: translationFont,
             }
           : {},
         timeLimit
@@ -643,6 +662,7 @@ const scorecard = ({
                 totalText: t('total'),
               })}`,
               alignment: 'center',
+              font: translationFont,
             }
           : {},
       ],
@@ -820,3 +840,10 @@ const attemptRow = (attemptNumber, needsScrambleChecker) => [
 ];
 
 const noBorder = { border: [false, false, false, false] };
+
+const fontForLanguage = language => {
+  if (language === 'cn') {
+    return 'WenQuanYiZenHei';
+  }
+  return 'Roboto';
+};
