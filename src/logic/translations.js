@@ -30,6 +30,7 @@ const languageInfo = [
 
 const texts = {
   en: {
+    id: 'ID',
     eventLabel: 'Event',
     round: 'Round',
     group: 'Group',

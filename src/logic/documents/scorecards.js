@@ -559,7 +559,7 @@ const scorecard = ({
         widths: [30, '*'],
         body: [
           columnLabels([
-            'ID',
+            t('id'),
             [
               {
                 text: t('name'),
