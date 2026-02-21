@@ -47,7 +47,17 @@ const scorecardPaperSizeInfos = {
   },
 };
 
-const maxAttemptCountByFormat = { '1': 1, '2': 2, '3': 3, '5': 5, m: 3, a: 5 };
+// Note: the current scorecards are not really applicable to h2h, but
+// we include the format below for completeness, so it doesn't crash.
+const maxAttemptCountByFormat = {
+  '1': 1,
+  '2': 2,
+  '3': 3,
+  '5': 5,
+  m: 3,
+  a: 5,
+  h: 5,
+};
 
 export const downloadScorecards = (wcif, rounds, rooms, language) => {
   const { scorecardsBackgroundUrl, scorecardPaperSize } = getExtensionData(
