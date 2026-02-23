@@ -373,7 +373,9 @@ const shouldPrintScrambleChecker = (competitor, round, wcif) => {
     printScrambleCheckerForTopRankedCompetitors,
     printScrambleCheckerForFinalRounds,
   } = getExtensionData('CompetitionConfig', wcif);
-
+  if (['555', '666', '777', 'minx'].includes(eventId)) {
+    return false;
+  }
   if (printScrambleCheckerForTopRankedCompetitors) {
     const singlePersonalBest = competitor.personalBests?.find(
       personalBest =>
