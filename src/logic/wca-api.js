@@ -13,7 +13,7 @@ export const getUpcomingManageableCompetitions = () => {
 };
 
 export const getWcif = competitionId =>
-  wcaApiFetch(`/competitions/${competitionId}/wcif`);
+  wcaApiFetch(`/competitions/${competitionId}/wcif/version/2`);
 
 const updateWcif = (competitionId, wcif) =>
   wcaApiFetch(`/competitions/${competitionId}/wcif`, {

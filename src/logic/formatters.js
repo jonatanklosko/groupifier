@@ -3,11 +3,11 @@ import { shortEventNameById } from './events';
 
 export const cutoffToString = (cutoff, eventId) => {
   if (eventId === '333mbf') {
-    return `> ${multibldAttemptResultToPoints(cutoff.attemptResult)} points`;
+    return `> ${multibldResultValueToPoints(cutoff.resultValue)} points`;
   } else if (eventId === '333fm') {
-    return `< ${cutoff.attemptResult} moves`;
+    return `< ${cutoff.resultValue} moves`;
   } else {
-    return `< ${centisecondsToClockFormat(cutoff.attemptResult)}`;
+    return `< ${centisecondsToClockFormat(cutoff.resultValue)}`;
   }
 };
 
@@ -28,8 +28,8 @@ export const timeLimitToString = (timeLimit, options = {}) => {
   }
 };
 
-const multibldAttemptResultToPoints = attemptResult =>
-  99 - (Math.floor(attemptResult / 10000000) % 100);
+const multibldResultValueToPoints = resultValue =>
+  99 - (Math.floor(resultValue / 10000000) % 100);
 
 export const centisecondsToClockFormat = centiseconds => {
   const date = new Date(null);

@@ -57,7 +57,7 @@ export const PersonalBest = attributes => {
   if (!eventId || !worldRanking || !type)
     throw new Error('PersonalBest requires eventId, worldRanking and type.');
   return {
-    best: worldRanking * 200,
+    value: worldRanking * 200,
     continentalRanking: worldRanking,
     nationalRanking: worldRanking,
     ...attributes,

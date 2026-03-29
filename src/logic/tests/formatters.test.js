@@ -2,22 +2,22 @@ import { cutoffToString, timeLimitToString } from '../formatters';
 
 describe('cutoffToString', () => {
   test('returns poinst for MBLD', () => {
-    const cutoff = { numberOfAttempts: 1, attemptResult: 910000000 };
+    const cutoff = { numberOfAttempts: 1, resultValue: 910000000 };
     expect(cutoffToString(cutoff, '333mbf')).toEqual('> 8 points');
   });
 
   test('returns moves for FMC', () => {
-    const cutoff = { numberOfAttempts: 1, attemptResult: 40 };
+    const cutoff = { numberOfAttempts: 1, resultValue: 40 };
     expect(cutoffToString(cutoff, '333fm')).toEqual('< 40 moves');
   });
 
   test('returns clock format for ordinary events', () => {
-    const cutoff = { numberOfAttempts: 2, attemptResult: 1.5 * 3600 * 100 };
+    const cutoff = { numberOfAttempts: 2, resultValue: 1.5 * 3600 * 100 };
     expect(cutoffToString(cutoff, '333')).toEqual('< 1:30:00.00');
   });
 
   test('strips leading zeros', () => {
-    const cutoff = { numberOfAttempts: 2, attemptResult: 30 * 100 };
+    const cutoff = { numberOfAttempts: 2, resultValue: 30 * 100 };
     expect(cutoffToString(cutoff, '333')).toEqual('< 30.00');
   });
 });

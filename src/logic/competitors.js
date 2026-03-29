@@ -11,7 +11,7 @@ export const best = (person, eventId, type) => {
   const personalBest = person.personalBests.find(
     pb => pb.eventId === eventId && pb.type === type
   );
-  return personalBest ? personalBest.best : Infinity;
+  return personalBest ? personalBest.value : Infinity;
 };
 
 export const bestAverageAndSingle = (competitor, eventId) => {
@@ -30,58 +30,75 @@ export const bestAverageAndSingle = (competitor, eventId) => {
 
 const competitorsExpectedToAdvance = (
   sortedCompetitors,
-  advancementCondition,
+  resultCondition,
   eventId
 ) => {
-  switch (advancementCondition.type) {
+  switch (resultCondition.type) {
     case 'ranking':
-      return sortedCompetitors.slice(0, advancementCondition.level);
+      return sortedCompetitors.slice(0, resultCondition.value);
     case 'percent':
       return sortedCompetitors.slice(
         0,
-        Math.floor(sortedCompetitors.length * advancementCondition.level * 0.01)
+        Math.floor(sortedCompetitors.length * resultCondition.value * 0.01)
       );
-    case 'attemptResult':
-      /* Assume that competitors having personal best better than the advancement condition will make it to the next round. */
-      return sortedCompetitors.filter(
-        person => best(person, eventId, 'single') < advancementCondition.level
-      );
+    case 'resultAchieved':
+      /* Assume competitors with a personal best better than the condition level will advance. */
+      return sortedCompetitors.filter(person => {
+        const pb = best(person, eventId, resultCondition.scope);
+        return resultCondition.value === null
+          ? pb !== Infinity
+          : pb < resultCondition.value;
+      });
     default:
       throw new Error(
-        `Unrecognised AdvancementCondition type: '${advancementCondition.type}'`
+        `Unrecognised ResultCondition type: '${resultCondition.type}'`
       );
   }
 };
 
-export const getExpectedCompetitorsByRound = wcif =>
-  wcif.events.reduce((expectedCompetitorsByRound, event) => {
-    const [firstRound, ...nextRounds] = event.rounds;
-    expectedCompetitorsByRound[
-      firstRound.id
-    ] = sortByArray(
-      acceptedPeopleRegisteredForEvent(wcif, event.id),
-      competitor => bestAverageAndSingle(competitor, event.id)
-    );
-    nextRounds.reduce(
-      ([round, competitors], nextRound) => {
-        const advancementCondition = round.advancementCondition;
-        if (!advancementCondition) {
-          throw new Error(
-            `Mising advancement condition for ${activityCodeToName(round.id)}.`
-          );
-        }
-        const nextRoundCompetitors = competitorsExpectedToAdvance(
-          competitors,
-          advancementCondition,
+export const getExpectedCompetitorsByRound = wcif => {
+  const expectedCompetitorsByRound = {};
+
+  for (const event of wcif.events) {
+    for (const round of event.rounds) {
+      const source = round.participationRuleset.participationSource;
+      if (source.type === 'registrations') {
+        expectedCompetitorsByRound[
+          round.id
+        ] = sortByArray(
+          acceptedPeopleRegisteredForEvent(wcif, event.id),
+          competitor => bestAverageAndSingle(competitor, event.id)
+        );
+      } else if (source.type === 'round') {
+        expectedCompetitorsByRound[round.id] = competitorsExpectedToAdvance(
+          expectedCompetitorsByRound[source.roundId],
+          source.resultCondition,
           event.id
         );
-        expectedCompetitorsByRound[nextRound.id] = nextRoundCompetitors;
-        return [nextRound, nextRoundCompetitors];
-      },
-      [firstRound, expectedCompetitorsByRound[firstRound.id]]
-    );
-    return expectedCompetitorsByRound;
-  }, {});
+      } else if (source.type === 'linkedRounds') {
+        const allCompetitors = uniq(
+          source.roundIds.flatMap(
+            roundId => expectedCompetitorsByRound[roundId]
+          )
+        );
+        const sortedCompetitors = sortByArray(allCompetitors, competitor =>
+          bestAverageAndSingle(competitor, event.id)
+        );
+        expectedCompetitorsByRound[round.id] = competitorsExpectedToAdvance(
+          sortedCompetitors,
+          source.resultCondition,
+          event.id
+        );
+      } else {
+        throw new Error(
+          `Unrecognised ParticipationSource type: '${source.type}'`
+        );
+      }
+    }
+  }
+
+  return expectedCompetitorsByRound;
+};
 
 /* Returns competitors for the given round sorted from worst to best. */
 export const competitorsForRound = (wcif, roundId) => {
