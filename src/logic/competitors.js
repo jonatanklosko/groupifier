@@ -1,4 +1,4 @@
-import { parseActivityCode, activityCodeToName } from './activities';
+import { parseActivityCode } from './activities';
 import { personById, roundById, previousRound } from './wcif';
 import { sortBy, sortByArray, uniq } from './utils';
 
