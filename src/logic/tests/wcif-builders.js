@@ -78,7 +78,9 @@ export const Round = attributes => ({
   format: 'a',
   timeLimit: null,
   cutoff: null,
-  advancementCondition: null,
+  participationRuleset: {
+    participationSource: { type: 'registrations' },
+  },
   results: [],
   scrambleSetCount: 1,
   scrambleSets: [],

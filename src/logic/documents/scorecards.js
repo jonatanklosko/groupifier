@@ -394,14 +394,17 @@ const shouldPrintScrambleChecker = (competitor, round, wcif) => {
       return true;
     }
   }
-  if (
-    printScrambleCheckerForFinalRounds &&
-    round.advancementCondition === null
-  ) {
+  if (printScrambleCheckerForFinalRounds && isFinal(round, wcif)) {
     return true;
   }
 
   return false;
+};
+
+const isFinal = (round, wcif) => {
+  const { eventId, roundNumber } = parseActivityCode(round.id);
+  const event = wcif.events.find(event => event.id === eventId);
+  return roundNumber === event.rounds.length;
 };
 
 const groupActivitiesWithCompetitors = (wcif, roundId) => {

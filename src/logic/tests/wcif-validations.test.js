@@ -14,23 +14,23 @@ describe('validateWcif', () => {
     expect(validateWcif(wcif)).toContain('No rounds specified for 3x3x3 Cube.');
   });
 
-  test('returns an error when a round has no advancement condition unless it is the last one', () => {
+  test('returns an error when a round has no participation ruleset', () => {
     const wcif = Competition({
       events: [
         Event({
           id: '333',
           rounds: [
-            Round({ id: '333-r1', advancementCondition: null }),
-            Round({ id: '333-r2', advancementCondition: null }),
+            Round({ id: '333-r1', participationRuleset: null }),
+            Round({ id: '333-r2' }),
           ],
         }),
       ],
     });
     expect(validateWcif(wcif)).toContain(
-      'No advancement condition specified for 3x3x3 Cube, Round 1.'
+      'No participation ruleset specified for 3x3x3 Cube, Round 1.'
     );
     expect(validateWcif(wcif)).not.toContain(
-      'No advancement condition specified for 3x3x3 Cube, Round 2.'
+      'No participation ruleset specified for 3x3x3 Cube, Round 2.'
     );
   });
 
