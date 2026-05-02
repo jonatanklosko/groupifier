@@ -16,8 +16,8 @@
     "url": "https://github.com/jonatanklosko/groupifier.git"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "bin/bundle_fonts.sh && react-scripts build",
+    "start": "NODE_OPTIONS=--openssl-legacy-provider react-scripts start",
+    "build": "bin/bundle_fonts.sh && NODE_OPTIONS=--openssl-legacy-provider react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "postinstall": "bin/bundle_fonts.sh"

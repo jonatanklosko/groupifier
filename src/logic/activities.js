@@ -295,9 +295,19 @@ export const roundsMissingAssignments = wcif =>
   );
 
 export const roundsMissingScorecards = wcif =>
-  roundsMissingResults(wcif)
+  flatMap(wcif.events, event => event.rounds)
+    .filter(round => roundNeedsScorecards(wcif, round))
     .filter(round => groupActivitiesAssigned(wcif, round.id))
     .filter(round => parseActivityCode(round.id).eventId !== '333fm');
+
+const roundNeedsScorecards = (wcif, round) => {
+  if (round.results.length === 0) {
+    const { roundNumber } = parseActivityCode(round.id);
+    return roundNumber === 1 || groupActivitiesAssigned(wcif, round.id);
+  }
+
+  return round.results.every(result => result.attempts.length === 0);
+};
 
 export const competitorsRegisteredForAnEventWithoutGroups = wcif => {
   let persons = {};
