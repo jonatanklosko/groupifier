@@ -102,12 +102,13 @@ export const getExpectedCompetitorsByRound = wcif => {
 
 /* Returns competitors for the given round sorted from worst to best. */
 export const competitorsForRound = (wcif, roundId) => {
-  const { eventId, roundNumber } = parseActivityCode(roundId);
+  const { eventId } = parseActivityCode(roundId);
   const round = roundById(wcif, roundId);
+  const source = round.participationRuleset.participationSource;
   const competitorsInRound = round.results.map(({ personId }) =>
     personById(wcif, personId)
   );
-  if (roundNumber === 1) {
+  if (source.type === 'registrations') {
     /* For first rounds, if there are no empty results to use, get whoever registered for the given event. */
     const competitors =
       competitorsInRound.length > 0

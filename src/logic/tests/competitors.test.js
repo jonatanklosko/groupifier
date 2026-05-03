@@ -177,6 +177,17 @@ describe('competitorsForRound', () => {
                 }),
                 Result({ attempts: [], personId: person1.registrantId }),
               ],
+              participationRuleset: {
+                participationSource: {
+                  type: 'round',
+                  roundId: '333-r1',
+                  resultCondition: {
+                    type: 'percent',
+                    scope: 'average',
+                    value: 50,
+                  },
+                },
+              },
             }),
           ],
         }),
@@ -203,7 +214,25 @@ describe('competitorsForRound', () => {
       const wcif = Competition({
         persons: [person1, person2],
         events: [
-          Event({ rounds: [Round({ id: '333-r1' }), Round({ id: '333-r2' })] }),
+          Event({
+            rounds: [
+              Round({ id: '333-r1' }),
+              Round({
+                id: '333-r2',
+                participationRuleset: {
+                  participationSource: {
+                    type: 'round',
+                    roundId: '333-r1',
+                    resultCondition: {
+                      type: 'percent',
+                      scope: 'average',
+                      value: 50,
+                    },
+                  },
+                },
+              }),
+            ],
+          }),
         ],
       });
       expect(competitorsForRound(wcif, '333-r2')).toEqual(null);

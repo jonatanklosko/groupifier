@@ -274,20 +274,20 @@ export const roundsWithoutResults = wcif =>
 
 /* Round is missing results if it has all results empty
    or it's the first round and has no results at all.
+   (it can also be a subsequent as long as its participation source is registrations,
+   since that makes it effectively the same as the first round)
    In other words no one's competed in such round, but we know who should compete in it. */
 const roundsMissingResults = wcif =>
-  wcif.events
-    .map(event =>
-      event.rounds.find(round => {
-        const { roundNumber } = parseActivityCode(round.id);
-        return (
-          (round.results.length === 0 && roundNumber === 1) ||
-          (round.results.length > 0 &&
-            round.results.every(result => result.attempts.length === 0))
-        );
-      })
-    )
-    .filter(round => round);
+  flatMap(wcif.events, event =>
+    event.rounds.filter(round => {
+      const source = round.participationRuleset.participationSource;
+      return (
+        (round.results.length === 0 && source.type === 'registrations') ||
+        (round.results.length > 0 &&
+          round.results.every(result => result.attempts.length === 0))
+      );
+    })
+  );
 
 export const roundsMissingAssignments = wcif =>
   roundsMissingResults(wcif).filter(
