@@ -281,7 +281,7 @@ const cutLine = properties => ({
   lineColor: '#888888',
 });
 
-const scorecards = (wcif, rounds, rooms, language) => {
+export const scorecards = (wcif, rounds, rooms, language) => {
   const {
     localNamesFirst,
     printOneName,
@@ -408,19 +408,64 @@ const isFinal = (round, wcif) => {
 };
 
 const groupActivitiesWithCompetitors = (wcif, roundId) => {
+  const sortedGroupActivities = hasDistributedAttempts(roundId)
+    ? groupActivitiesByRound(wcif, roundId)
+        /* Don't duplicate scorecards for each attempt.  */
+        .filter(
+          ({ activityCode }) =>
+            parseActivityCode(activityCode).attemptNumber === 1
+        )
+    : sortBy(
+        groupActivitiesByRound(wcif, roundId),
+        ({ activityCode }) => parseActivityCode(activityCode).groupNumber
+      );
   const sortedCompetitors = competitorsForRound(wcif, roundId);
+  const competitorOrderByRegistrantId = new Map(
+    (sortedCompetitors || []).map((competitor, index) => [
+      competitor.registrantId,
+      index,
+    ])
+  );
+  const assignedCompetitorsByGroup = sortedGroupActivities.map(
+    groupActivity => [
+      groupActivity,
+      wcif.persons
+        .filter(competitor =>
+          hasAssignment(competitor, groupActivity.id, 'competitor')
+        )
+        .map(competitor => [
+          competitor,
+          getAssignment(competitor, groupActivity.id, 'competitor'),
+        ])
+        .sort(([competitorA, assignmentA], [competitorB, assignmentB]) => {
+          const orderA =
+            competitorOrderByRegistrantId.get(competitorA.registrantId) ??
+            Number.MAX_SAFE_INTEGER;
+          const orderB =
+            competitorOrderByRegistrantId.get(competitorB.registrantId) ??
+            Number.MAX_SAFE_INTEGER;
+          if (orderA !== orderB) return orderA - orderB;
+          const stationA = assignmentA.stationNumber ?? Number.MAX_SAFE_INTEGER;
+          const stationB = assignmentB.stationNumber ?? Number.MAX_SAFE_INTEGER;
+          if (stationA !== stationB) return stationA - stationB;
+          return competitorA.name.localeCompare(competitorB.name);
+        })
+        .map(([competitor, assignment]) => [
+          competitor,
+          assignment.stationNumber,
+        ]),
+    ]
+  );
+
+  if (
+    assignedCompetitorsByGroup.some(
+      ([_, competitorsWithStation]) => competitorsWithStation.length > 0
+    )
+  ) {
+    return assignedCompetitorsByGroup;
+  }
+
   if (sortedCompetitors) {
-    const sortedGroupActivities = hasDistributedAttempts(roundId)
-      ? groupActivitiesByRound(wcif, roundId)
-          /* Don't duplicate scorecards for each attempt.  */
-          .filter(
-            ({ activityCode }) =>
-              parseActivityCode(activityCode).attemptNumber === 1
-          )
-      : sortBy(
-          groupActivitiesByRound(wcif, roundId),
-          ({ activityCode }) => parseActivityCode(activityCode).groupNumber
-        );
     return sortedGroupActivities.map(groupActivity => [
       groupActivity,
       sortedCompetitors
@@ -433,18 +478,18 @@ const groupActivitiesWithCompetitors = (wcif, roundId) => {
             .stationNumber,
         ]),
     ]);
-  } else {
-    /* If competitors for this round are not known yet, generate nameless scorecards. */
-    const expectedCompetitorCount = getExpectedCompetitorsByRound(wcif)[roundId]
-      .length;
-    const groupsWithSize = hasDistributedAttempts(roundId)
-      ? [[groupActivitiesByRound(wcif, roundId)[0], expectedCompetitorCount]]
-      : sortedGroupActivitiesWithSize(wcif, roundId, expectedCompetitorCount);
-    return groupsWithSize.map(([groupActivity, size]) => [
-      groupActivity,
-      times(size, () => [{ name: null, registrantId: null }, null]),
-    ]);
   }
+
+  /* If competitors for this round are not known yet, generate nameless scorecards. */
+  const expectedCompetitorCount = getExpectedCompetitorsByRound(wcif)[roundId]
+    .length;
+  const groupsWithSize = hasDistributedAttempts(roundId)
+    ? [[groupActivitiesByRound(wcif, roundId)[0], expectedCompetitorCount]]
+    : sortedGroupActivitiesWithSize(wcif, roundId, expectedCompetitorCount);
+  return groupsWithSize.map(([groupActivity, size]) => [
+    groupActivity,
+    times(size, () => [{ name: null, registrantId: null }, null]),
+  ]);
 };
 
 const blankScorecards = (wcif, language) => {
