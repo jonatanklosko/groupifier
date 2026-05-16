@@ -185,144 +185,157 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
           <Typography variant="h5" gutterBottom>
             Printing
           </Typography>
-          <Grid item>
-            <FormControl fullWidth>
-              <InputLabel htmlFor="scorecard-paper-size">
-                Scorecard Paper Size
-              </InputLabel>
-              <Select
-                value={scorecardPaperSize}
+          <Grid container direction="column" spacing={1}>
+            <Grid item>
+              <FormControl fullWidth>
+                <InputLabel htmlFor="scorecard-paper-size">
+                  Scorecard Paper Size
+                </InputLabel>
+                <Select
+                  value={scorecardPaperSize}
+                  onChange={handleTextFieldChange}
+                  inputProps={{
+                    name: 'scorecardPaperSize',
+                    id: 'scorecard-paper-size',
+                  }}
+                >
+                  {scorecardPaperSizes.map(({ id, name }) => (
+                    <MenuItem value={id} key={id}>
+                      {name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl fullWidth>
+                <InputLabel htmlFor="scorecard-sort-order">
+                  Scorecard order
+                </InputLabel>
+                <Select
+                  value={scorecardOrder}
+                  onChange={handleTextFieldChange}
+                  inputProps={{
+                    name: 'scorecardOrder',
+                    id: 'scorecard-order',
+                  }}
+                >
+                  {scorecardSortingRules.map(({ id, name }) => (
+                    <MenuItem value={id} key={id}>
+                      {name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="printScorecardsCoverSheets"
+                    checked={printScorecardsCoverSheets}
+                    onChange={handleCheckboxChange}
+                  />
+                }
+                label="Print cover sheets for scorecards"
+              />
+            </Grid>
+            <Grid item>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="localNamesFirst"
+                    checked={localNamesFirst}
+                    onChange={handleCheckboxChange}
+                  />
+                }
+                label="Swap latin names with local ones"
+              />
+            </Grid>
+            <Grid item>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="printOneName"
+                    checked={printOneName}
+                    onChange={handleCheckboxChange}
+                  />
+                }
+                label="Only one name (does not put local/latin name in parentheses)"
+              />
+            </Grid>
+            <Grid item>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="printStations"
+                    checked={printStations}
+                    onChange={handleCheckboxChange}
+                  />
+                }
+                label="Print out station number"
+              />
+              <FormHelperText>
+                Note that this is printing only, you have to control if there is
+                enough stations for everyone manually
+              </FormHelperText>
+            </Grid>
+            <Grid item style={{ marginTop: 16 }}>
+              <Typography variant="subtitle2" gutterBottom>
+                Scramble checking
+              </Typography>
+              <Typography variant="body2">
+                Note: scramble checker boxes are never printed for 5x5x5, 6x6x6,
+                7x7x7 and Megaminx.
+              </Typography>
+            </Grid>
+            <Grid item>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="printScrambleCheckerForTopRankedCompetitors"
+                    checked={printScrambleCheckerForTopRankedCompetitors}
+                    onChange={handleCheckboxChange}
+                  />
+                }
+                label="Print out scramble checker sign box for top ranked competitors (WR50 in single or WR50/NR15 in average)"
+              />
+            </Grid>
+            <Grid item>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="printScrambleCheckerForFinalRounds"
+                    checked={printScrambleCheckerForFinalRounds}
+                    onChange={handleCheckboxChange}
+                  />
+                }
+                label="Print out scramble checker sign box for final rounds"
+              />
+            </Grid>
+            <Grid item>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="printScrambleCheckerForBlankScorecards"
+                    checked={printScrambleCheckerForBlankScorecards}
+                    onChange={handleCheckboxChange}
+                  />
+                }
+                label="Print out scrambler checker sign box for blank scorecards"
+              />
+            </Grid>
+            <Grid item>
+              <TextField
+                fullWidth
+                label="Scorecards background image URL"
+                name="scorecardsBackgroundUrl"
+                value={scorecardsBackgroundUrl}
                 onChange={handleTextFieldChange}
-                inputProps={{
-                  name: 'scorecardPaperSize',
-                  id: 'scorecard-paper-size',
-                }}
-              >
-                {scorecardPaperSizes.map(({ id, name }) => (
-                  <MenuItem value={id} key={id}>
-                    {name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                helperText="The image is placed at the center of each scorecard."
+              />
+            </Grid>
           </Grid>
-          <Grid item>
-            <FormControl fullWidth>
-              <InputLabel htmlFor="scorecard-sort-order">
-                Scorecard order
-              </InputLabel>
-              <Select
-                value={scorecardOrder}
-                onChange={handleTextFieldChange}
-                inputProps={{
-                  name: 'scorecardOrder',
-                  id: 'scorecard-order',
-                }}
-              >
-                {scorecardSortingRules.map(({ id, name }) => (
-                  <MenuItem value={id} key={id}>
-                    {name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="printScorecardsCoverSheets"
-                  checked={printScorecardsCoverSheets}
-                  onChange={handleCheckboxChange}
-                />
-              }
-              label="Print cover sheets for scorecards"
-            />
-          </Grid>
-          <Grid item>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="localNamesFirst"
-                  checked={localNamesFirst}
-                  onChange={handleCheckboxChange}
-                />
-              }
-              label="Swap latin names with local ones"
-            />
-          </Grid>
-          <Grid item>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="printOneName"
-                  checked={printOneName}
-                  onChange={handleCheckboxChange}
-                />
-              }
-              label="Only one name (does not put local/latin name in parentheses)"
-            />
-          </Grid>
-          <Grid>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="printScrambleCheckerForTopRankedCompetitors"
-                  checked={printScrambleCheckerForTopRankedCompetitors}
-                  onChange={handleCheckboxChange}
-                />
-              }
-              label="Print out scramble checker sign box for top ranked competitors (WR50 in single or WR50/NR15 in average)"
-            />
-          </Grid>
-          <Grid>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="printScrambleCheckerForFinalRounds"
-                  checked={printScrambleCheckerForFinalRounds}
-                  onChange={handleCheckboxChange}
-                />
-              }
-              label="Print out scramble checker sign box for final rounds"
-            />
-          </Grid>
-          <Grid>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="printScrambleCheckerForBlankScorecards"
-                  checked={printScrambleCheckerForBlankScorecards}
-                  onChange={handleCheckboxChange}
-                />
-              }
-              label="Print out scrambler checker sign box for blank scorecards"
-            />
-          </Grid>
-          <Grid>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="printStations"
-                  checked={printStations}
-                  onChange={handleCheckboxChange}
-                />
-              }
-              label="Print out station number"
-            />
-            <FormHelperText>
-              Note that this is printing only, you have to control if there is
-              enough stations for everyone manually
-            </FormHelperText>
-          </Grid>
-          <TextField
-            fullWidth
-            label="Scorecards background image URL"
-            name="scorecardsBackgroundUrl"
-            value={scorecardsBackgroundUrl}
-            onChange={handleTextFieldChange}
-            helperText="The image is placed at the center of each scorecard."
-          />
         </Grid>
       </Grid>
     </Paper>
