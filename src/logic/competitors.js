@@ -1,5 +1,5 @@
 import { parseActivityCode } from './activities';
-import { personById, roundById, previousRound } from './wcif';
+import { personById, roundById, participationSourceRounds } from './wcif';
 import { sortBy, sortByArray, uniq } from './utils';
 
 export const best = (person, eventId, type) => {
@@ -119,16 +119,38 @@ export const competitorsForRound = (wcif, roundId) => {
       competitor.name,
     ]);
   } else if (competitorsInRound.length > 0) {
-    const previous = previousRound(wcif, roundId);
+    // Sort competitors by the result they get in the previous round.
+    // Note that in case of linked dual rounds, we need to look for
+    // results in both rounds, since some competitors may have only
+    // participated in one of them. The ranking should be the same
+    // in both results, so we just use the first one we find.
+
+    const previousRounds = participationSourceRounds(wcif, source);
     return sortBy(competitorsInRound, person => {
-      const previousResult = previous.results.find(
-        result => result.personId === person.registrantId
-      );
-      return -previousResult.ranking;
+      const previousResult = findPersonResultInRounds(person, previousRounds);
+      if (previousResult) {
+        return -previousResult.ranking;
+      }
+      // We should always find a result above, but fallback to max ranking
+      // just in case.
+      return -competitorsInRound.length;
     });
   } else {
     return null;
   }
+};
+
+const findPersonResultInRounds = (person, rounds) => {
+  for (const round of rounds) {
+    const result = round.results.find(
+      result => result.personId === person.registrantId
+    );
+    if (result) {
+      return result;
+    }
+  }
+
+  return null;
 };
 
 export const age = person => {

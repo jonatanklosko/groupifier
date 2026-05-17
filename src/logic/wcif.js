@@ -20,3 +20,22 @@ export const previousRound = (wcif, roundId) => {
     ({ id }) => parseActivityCode(id).roundNumber === roundNumber - 1
   );
 };
+
+export const participationSourceRounds = (wcif, participationSource) => {
+  if (participationSource.type === 'registrations') {
+    return [];
+  }
+  if (participationSource.type === 'round') {
+    return [roundById(wcif, participationSource.roundId)];
+  }
+  if (participationSource.type === 'linkedRounds') {
+    return participationSource.roundIds.map(roundId => {
+      return roundById(wcif, roundId);
+    });
+  }
+
+  throw new Error(
+    'unknown participation source type:',
+    participationSource.type
+  );
+};
