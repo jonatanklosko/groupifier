@@ -179,6 +179,83 @@ export const emptyScorecardsForPersons = (
   return prepareScorecardsPages(cards, scorecardsPerPage, scorecardOrder);
 };
 
+export const downloadCustomScorecards = (wcif, sections, language = 'en') => {
+  const { scorecardsBackgroundUrl, scorecardPaperSize } = getExtensionData(
+    'CompetitionConfig',
+    wcif
+  );
+  getImageDataUrl(scorecardsBackgroundUrl).then(imageData => {
+    const pdfDefinition = scorecardsPdfDefinition(
+      customScorecards(wcif, sections, language),
+      imageData,
+      scorecardPaperSize
+    );
+    pdfMake
+      .createPdf(pdfDefinition)
+      .download(`${wcif.id}-custom-scorecards.pdf`);
+  });
+};
+
+const customScorecards = (wcif, sections, language) => {
+  const {
+    localNamesFirst,
+    printOneName,
+    printStations,
+    scorecardPaperSize,
+    scorecardOrder,
+  } = getExtensionData('CompetitionConfig', wcif);
+
+  const { scorecardsPerPage } = scorecardPaperSizeInfos[scorecardPaperSize];
+
+  let cardNumber = 1;
+  const cards = flatMap(sections, section => {
+    const {
+      eventId,
+      customEventName,
+      roundNumber,
+      groupNumber,
+      competitors,
+    } = section;
+
+    let round = null;
+    let attemptCount = 5;
+    let activityCode;
+    let eventNameOverride = null;
+
+    if (eventId) {
+      const wcifEvent = wcif.events.find(e => e.id === eventId);
+      round = wcifEvent
+        ? wcifEvent.rounds.find(r => r.id === `${eventId}-r${roundNumber}`)
+        : null;
+      attemptCount = round ? maxAttemptCountByFormat[round.format] : 5;
+      activityCode = `${eventId}-r${roundNumber}-g${groupNumber}`;
+    } else {
+      eventNameOverride = customEventName || 'Custom';
+      activityCode = `custom-r${roundNumber}-g${groupNumber}`;
+    }
+
+    return competitors.map(competitor =>
+      scorecard({
+        scorecardNumber: cardNumber++,
+        competitionName: wcif.shortName,
+        activityCode,
+        round,
+        attemptCount,
+        competitor,
+        localNamesFirst,
+        printOneName,
+        printStations,
+        scorecardPaperSize,
+        language,
+        printScrambleCheckerBox: false,
+        eventNameOverride,
+      })
+    );
+  });
+
+  return prepareScorecardsPages(cards, scorecardsPerPage, scorecardOrder);
+};
+
 export const downloadBlankScorecards = (wcif, language) => {
   const { scorecardsBackgroundUrl, scorecardPaperSize } = getExtensionData(
     'CompetitionConfig',
@@ -532,6 +609,7 @@ const scorecard = ({
   featured = false,
   language = 'en',
   printScrambleCheckerBox,
+  eventNameOverride = null,
 }) => {
   const defaultTranslationData = translation('en');
   const translationData = translation(language);
@@ -550,6 +628,8 @@ const scorecard = ({
     ? parseActivityCode(activityCode)
     : {};
   const { cutoff, timeLimit } = round || {};
+  const displayEventName =
+    eventNameOverride || (eventId ? t('eventName', eventId) : null);
   const {
     pageWidth,
     scorecardsPerRow,
@@ -601,8 +681,8 @@ const scorecard = ({
               : []),
           ]),
           [
-            eventId
-              ? { text: t('eventName', eventId), font: translationFont }
+            displayEventName
+              ? { text: displayEventName, font: translationFont }
               : ' ',
             { text: roundNumber, alignment: 'center' },
             { text: groupNumber, alignment: 'center' },
@@ -630,9 +710,10 @@ const scorecard = ({
               {
                 text:
                   competitor.wcaId ||
-                  // If the competitor has a name, then this is a new competitor
-                  // Else this is a blank scorecard
-                  (competitor.name ? t('newCompetitor') : ' '),
+                  // registrantId null means manually entered name, not a registered new competitor
+                  (competitor.name && competitor.registrantId != null
+                    ? t('newCompetitor')
+                    : ' '),
                 alignment: 'right',
                 font: translationFont,
               },
