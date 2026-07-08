@@ -8,7 +8,11 @@ import {
   competitorsRegisteredForAnEventWithoutGroups,
 } from '../activities';
 import { eventNameById } from '../events';
-import { cutoffToString, timeLimitToString } from '../formatters';
+import {
+  cutoffToString,
+  timeLimitToString,
+  cumulativeRoundsToString,
+} from '../formatters';
 import {
   getExpectedCompetitorsByRound,
   competitorsForRound,
@@ -630,6 +634,9 @@ const scorecard = ({
   const { cutoff, timeLimit } = round || {};
   const displayEventName =
     eventNameOverride || (eventId ? t('eventName', eventId) : null);
+  const cumulativeRoundsString = timeLimit
+    ? cumulativeRoundsToString(timeLimit)
+    : null;
   const {
     pageWidth,
     scorecardsPerRow,
@@ -799,11 +806,24 @@ const scorecard = ({
           : {},
         timeLimit
           ? {
-              text: `${t('timeLimit')}: ${timeLimitToString(timeLimit, {
-                totalText: t('total'),
-              })}`,
               alignment: 'center',
-              font: translationFont,
+              stack: [
+                {
+                  text: `${t('timeLimit')}: ${timeLimitToString(timeLimit, {
+                    totalText: t('total'),
+                  })}`,
+                  font: translationFont,
+                },
+                ...(cumulativeRoundsString
+                  ? [
+                      {
+                        text: `(${cumulativeRoundsString})`,
+                        fontSize: 7,
+                        font: translationFont,
+                      },
+                    ]
+                  : []),
+              ],
             }
           : {},
       ],

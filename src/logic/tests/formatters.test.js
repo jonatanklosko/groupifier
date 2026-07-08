@@ -1,4 +1,8 @@
-import { cutoffToString, timeLimitToString } from '../formatters';
+import {
+  cutoffToString,
+  timeLimitToString,
+  cumulativeRoundsToString,
+} from '../formatters';
 
 describe('cutoffToString', () => {
   test('returns poinst for MBLD', () => {
@@ -36,13 +40,34 @@ describe('timeLimitToString', () => {
     expect(timeLimitToString(timeLimit)).toEqual('1:00.00 total');
   });
 
-  test('includes list of short round names for multi-round cumulative limit', () => {
+  test('returns just the total time for multi-round cumulative limit', () => {
     const timeLimit = {
       centiseconds: 1.5 * 3600 * 100,
       cumulativeRoundIds: ['444bf-r1', '555bf-r1'],
     };
-    expect(timeLimitToString(timeLimit)).toEqual(
-      '1:30:00.00 total (4BLD R1 + 5BLD R1)'
-    );
+    expect(timeLimitToString(timeLimit)).toEqual('1:30:00.00 total');
+  });
+});
+
+describe('cumulativeRoundsToString', () => {
+  test('returns null for non-cumulative limit', () => {
+    const timeLimit = { centiseconds: 15 * 100, cumulativeRoundIds: [] };
+    expect(cumulativeRoundsToString(timeLimit)).toEqual(null);
+  });
+
+  test('returns null for single-round cumulative limit', () => {
+    const timeLimit = {
+      centiseconds: 60 * 100,
+      cumulativeRoundIds: ['333bf-r1'],
+    };
+    expect(cumulativeRoundsToString(timeLimit)).toEqual(null);
+  });
+
+  test('returns list of short round names for multi-round cumulative limit', () => {
+    const timeLimit = {
+      centiseconds: 1.5 * 3600 * 100,
+      cumulativeRoundIds: ['444bf-r1', '555bf-r1'],
+    };
+    expect(cumulativeRoundsToString(timeLimit)).toEqual('4BLD R1 + 5BLD R1');
   });
 });

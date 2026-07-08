@@ -21,15 +21,23 @@ export const timeLimitToString = (timeLimit, options = {}) => {
   const clockFormat = centisecondsToClockFormat(centiseconds);
   if (cumulativeRoundIds.length === 0) {
     return clockFormat;
-  } else if (cumulativeRoundIds.length === 1) {
-    return `${clockFormat} ${totalText}`;
   } else {
-    const roundStrings = cumulativeRoundIds.map(roundId => {
-      const { eventId, roundNumber } = parseActivityCode(roundId);
-      return `${shortEventNameById(eventId)} R${roundNumber}`;
-    });
-    return `${clockFormat} ${totalText} (${roundStrings.join(' + ')})`;
+    return `${clockFormat} ${totalText}`;
   }
+};
+
+/* Returns a list of short round names sharing a cumulative time limit,
+   or null when the limit spans just the current round. */
+export const cumulativeRoundsToString = timeLimit => {
+  const { cumulativeRoundIds } = timeLimit;
+  if (cumulativeRoundIds.length <= 1) {
+    return null;
+  }
+  const roundStrings = cumulativeRoundIds.map(roundId => {
+    const { eventId, roundNumber } = parseActivityCode(roundId);
+    return `${shortEventNameById(eventId)} R${roundNumber}`;
+  });
+  return roundStrings.join(' + ');
 };
 
 const multibldResultValueToPoints = resultValue =>
