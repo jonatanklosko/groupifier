@@ -389,7 +389,7 @@ const CustomScorecards = ({ wcif }) => {
   };
 
   return (
-    <Paper style={{ padding: 16 }}>
+    <>
       {sections.map(section => (
         <SectionEditor
           key={section.id}
@@ -443,7 +443,7 @@ const CustomScorecards = ({ wcif }) => {
           </Button>
         </Grid>
       </Grid>
-    </Paper>
+    </>
   );
 };
 
