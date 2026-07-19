@@ -470,7 +470,8 @@ const shouldPrintScrambleChecker = (competitor, round, wcif) => {
       (singlePersonalBest && singlePersonalBest.worldRanking <= 50) ||
       (averagePersonalBest &&
         (averagePersonalBest.worldRanking <= 50 ||
-          averagePersonalBest.nationalRanking <= 15))
+          (averagePersonalBest.nationalRanking <= 15 &&
+            averagePersonalBest.nationalRanking > 0)))
     ) {
       return true;
     }
