@@ -1004,7 +1004,7 @@ const attemptRow = (attemptNumber, needsScrambleChecker) => [
 const noBorder = { border: [false, false, false, false] };
 
 const fontForLanguage = language => {
-  if (language === 'cn') {
+  if (language === 'cn' || language === 'zh') {
     return 'WenQuanYiZenHei';
   }
   return 'Roboto';
