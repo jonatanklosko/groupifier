@@ -755,7 +755,7 @@ const texts = {
       minx: 'Megaminx12面體',
       pyram: 'Pyraminx金字塔',
       clock: 'Clock魔錶',
-      skewb: 'Skewb斜轉方塊,
+      skewb: 'Skewb斜轉方塊',
       sq1: 'Square-1',
       '444bf': '4x4x4盲解',
       '555bf': '5x5x5盲解',
