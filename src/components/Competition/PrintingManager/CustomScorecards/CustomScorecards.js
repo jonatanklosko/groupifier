@@ -22,6 +22,7 @@ import { acceptedPeople } from '../../../../logic/competitors';
 import { eventNameById } from '../../../../logic/events';
 import { downloadCustomScorecards } from '../../../../logic/documents/scorecards';
 import languageInfo from '../../../../logic/translations';
+import TimeField from './TimeField';
 
 let sectionIdCounter = 0;
 
@@ -35,6 +36,10 @@ const newSection = () => ({
   manualNames: [],
   search: '',
   manualInput: '',
+  attemptCount: 5,
+  timeLimitCs: 0,
+  cutoffCs: 0,
+  cutoffAttempts: 2,
 });
 
 const SectionEditor = ({
@@ -175,6 +180,83 @@ const SectionEditor = ({
       </Grid>
 
       <Divider style={{ margin: '12px 0' }} />
+
+      {section.eventId === null && (
+        <>
+          <Grid
+            container
+            spacing={2}
+            alignItems="center"
+            style={{ marginBottom: 12 }}
+          >
+            <Grid item>
+              <TextField
+                label="Attempts"
+                variant="outlined"
+                type="number"
+                inputProps={{ min: 1, max: 5 }}
+                value={section.attemptCount}
+                onChange={e =>
+                  onUpdate({
+                    attemptCount: Math.min(
+                      5,
+                      Math.max(1, parseInt(e.target.value) || 5)
+                    ),
+                  })
+                }
+                style={{ width: 110 }}
+              />
+            </Grid>
+            <Grid item>
+              <TimeField
+                label="Time limit"
+                value={section.timeLimitCs}
+                onChange={cs => onUpdate({ timeLimitCs: cs })}
+                size="small"
+                variant="outlined"
+                style={{ width: 150 }}
+              />
+            </Grid>
+            <Grid item>
+              <TimeField
+                label="Cutoff"
+                value={section.cutoffCs}
+                onChange={cs => onUpdate({ cutoffCs: cs })}
+                size="small"
+                variant="outlined"
+                style={{ width: 150 }}
+              />
+            </Grid>
+            {section.cutoffCs > 0 && (
+              <>
+                <Grid item>
+                  <Typography variant="body2">after</Typography>
+                </Grid>
+                <Grid item>
+                  <TextField
+                    label="Attempts"
+                    value={section.cutoffAttempts}
+                    onChange={e =>
+                      onUpdate({
+                        cutoffAttempts: Math.max(
+                          1,
+                          parseInt(e.target.value) || 1
+                        ),
+                      })
+                    }
+                    size="small"
+                    variant="outlined"
+                    type="number"
+                    inputProps={{ min: 1, max: 4 }}
+                    style={{ width: 100 }}
+                  />
+                </Grid>
+              </>
+            )}
+          </Grid>
+          <Divider style={{ margin: '0 0 12px' }} />
+        </>
+      )}
 
       <Grid container spacing={2}>
         <Grid item xs={7}>
@@ -373,12 +455,31 @@ const CustomScorecards = ({ wcif }) => {
             wcaId: null,
           })),
         ];
+
+        let timeLimit = null;
+        let cutoff = null;
+        if (section.eventId === null) {
+          if (section.timeLimitCs > 0)
+            timeLimit = {
+              centiseconds: section.timeLimitCs,
+              cumulativeRoundIds: [],
+            };
+          if (section.cutoffCs > 0)
+            cutoff = {
+              numberOfAttempts: section.cutoffAttempts,
+              resultValue: section.cutoffCs,
+            };
+        }
+
         return {
           eventId: section.eventId || null,
           customEventName: section.customEventName,
           roundNumber: section.roundNumber,
           groupNumber: section.groupNumber,
+          attemptCount: section.attemptCount,
           competitors,
+          timeLimit,
+          cutoff,
         };
       })
       .filter(s => s.competitors.length > 0);

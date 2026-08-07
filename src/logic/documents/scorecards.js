@@ -218,11 +218,14 @@ const customScorecards = (wcif, sections, language) => {
       customEventName,
       roundNumber,
       groupNumber,
+      attemptCount,
       competitors,
+      timeLimit: sectionTimeLimit,
+      cutoff: sectionCutoff,
     } = section;
 
     let round = null;
-    let attemptCount = 5;
+    let effectiveAttemptCount = attemptCount;
     let activityCode;
     let eventNameOverride = null;
 
@@ -231,11 +234,17 @@ const customScorecards = (wcif, sections, language) => {
       round = wcifEvent
         ? wcifEvent.rounds.find(r => r.id === `${eventId}-r${roundNumber}`)
         : null;
-      attemptCount = round ? maxAttemptCountByFormat[round.format] : 5;
+      if (round) effectiveAttemptCount = maxAttemptCountByFormat[round.format];
       activityCode = `${eventId}-r${roundNumber}-g${groupNumber}`;
     } else {
       eventNameOverride = customEventName || 'Custom';
       activityCode = `custom-r${roundNumber}-g${groupNumber}`;
+      if (sectionTimeLimit || sectionCutoff) {
+        round = {
+          cutoff: sectionCutoff || null,
+          timeLimit: sectionTimeLimit || null,
+        };
+      }
     }
 
     return competitors.map(competitor =>
@@ -244,7 +253,7 @@ const customScorecards = (wcif, sections, language) => {
         competitionName: wcif.shortName,
         activityCode,
         round,
-        attemptCount,
+        attemptCount: effectiveAttemptCount,
         competitor,
         localNamesFirst,
         printOneName,
