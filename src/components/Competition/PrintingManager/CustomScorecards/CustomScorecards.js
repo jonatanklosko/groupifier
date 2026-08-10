@@ -212,7 +212,6 @@ const SectionEditor = ({
                 label="Time limit"
                 value={section.timeLimitCs}
                 onChange={cs => onUpdate({ timeLimitCs: cs })}
-                size="small"
                 variant="outlined"
                 style={{ width: 150 }}
               />
@@ -222,7 +221,6 @@ const SectionEditor = ({
                 label="Cutoff"
                 value={section.cutoffCs}
                 onChange={cs => onUpdate({ cutoffCs: cs })}
-                size="small"
                 variant="outlined"
                 style={{ width: 150 }}
               />
@@ -244,11 +242,10 @@ const SectionEditor = ({
                         ),
                       })
                     }
-                    size="small"
                     variant="outlined"
                     type="number"
                     inputProps={{ min: 1, max: 4 }}
-                    style={{ width: 100 }}
+                    style={{ width: 90 }}
                   />
                 </Grid>
               </>
