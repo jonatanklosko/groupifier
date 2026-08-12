@@ -29,7 +29,7 @@ export const saveWcifChanges = (previousWcif, newWcif) => {
 
   // Note: we always include formatVersion, so that the update endpoint
   // knows how to interpret the data.
-  let wcifDiff = pick(newWcif, ['formatVersion', ...keysDiff]);
+  let wcifDiff = pick(newWcif, ['formatVersion', 'id', ...keysDiff]);
 
   // TODO: remove once WCIF registration status evaluation is resolved
   if (wcifDiff.persons) {
