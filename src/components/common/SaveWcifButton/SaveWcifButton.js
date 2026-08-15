@@ -14,33 +14,35 @@ const SaveWcifButton = ({
   history,
 }) => {
   const [saving, setSaving] = useState(false);
-  const [failed, setFailed] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleSaveClick = () => {
     setSaving(true);
-    setFailed(false);
+    setError(null);
     saveWcifChanges(wcif, updatedWcif)
       .then(() => {
         onWcifUpdate(updatedWcif);
         history.push(`/competitions/${updatedWcif.id}`);
       })
-      .catch(() => {
+      .catch(error => {
         setSaving(false);
-        setFailed(true);
+        setError(error);
       });
   };
 
   return (
     <Fragment>
       <Snackbar
-        open={failed}
-        message="Failed to save data to the WCA website."
+        open={error !== null}
+        message={`Failed to save data to the WCA website.${
+          error && error.message ? ` Reason: ${error.message}` : ''
+        }`}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',
         }}
         autoHideDuration={5000}
-        onClose={() => setFailed(false)}
+        onClose={() => setError(null)}
       />
       <Button
         variant="contained"
