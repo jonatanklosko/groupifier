@@ -485,7 +485,7 @@ const texts = {
     result: 'Resultado',
     judge: 'Xuíz',
     comp: 'Comp',
-    extra: 'Tentativa extra',
+    extra: 'Intento extra',
     delegateInitials: 'Iniciais do delegado',
     cutoff: 'Tempo de corte',
     timeLimit: 'Tempo límite',
