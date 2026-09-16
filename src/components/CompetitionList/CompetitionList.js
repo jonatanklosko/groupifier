@@ -16,6 +16,7 @@ import { sortBy } from '../../logic/utils';
 const CompetitionList = () => {
   const [competitions, setCompetitions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [competitionCount, setcompetitionCount] = useState(0)
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -24,6 +25,7 @@ const CompetitionList = () => {
         setCompetitions(
           sortBy(competitions, competition => competition['start_date'])
         );
+        setcompetitionCount(competitions.length)
       })
       .catch(error => setError(error.message))
       .finally(() => setLoading(false));
@@ -31,7 +33,7 @@ const CompetitionList = () => {
 
   return (
     <Paper>
-      <List subheader={<ListSubheader>Your competitions</ListSubheader>}>
+      <List subheader={<ListSubheader>Your competitions {competitionCount == 0 ? '' : `${competitionCount}`}</ListSubheader>}>
         {error && (
           <ListItem>
             <ListItemIcon>
