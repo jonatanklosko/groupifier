@@ -31,7 +31,7 @@ const CompetitionList = () => {
 
   return (
     <Paper>
-      <List subheader={<ListSubheader>Your competitions</ListSubheader>}>
+      <List subheader={<ListSubheader>Your competitions {competitions.length > 0 ? `(${competitions.length})` : ''}</ListSubheader>}>
         {error && (
           <ListItem>
             <ListItemIcon>
