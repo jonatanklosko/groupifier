@@ -5,17 +5,18 @@ import {
   activityDurationString,
   parseActivityCode,
   roomsWithTimezoneAndGroups,
+  stageByActivity,
 } from '../activities';
 import { hasAssignment } from '../assignments';
 import { pdfName } from './pdf-utils';
 import { competitorsForRound } from '../competitors';
 
-export const downloadGroupOverview = (wcif, rounds, rooms) => {
-  const pdfDefinition = groupOverviewPdfDefinition(wcif, rounds, rooms);
+export const downloadGroupOverview = (wcif, rounds, rooms, stages) => {
+  const pdfDefinition = groupOverviewPdfDefinition(wcif, rounds, rooms, stages);
   pdfMake.createPdf(pdfDefinition).download(`${wcif.id}-group-overview.pdf`);
 };
 
-const groupOverviewPdfDefinition = (wcif, rounds, rooms) => ({
+const groupOverviewPdfDefinition = (wcif, rounds, rooms, stages) => ({
   footer: (currentPage, pageCount) => ({
     text: `${currentPage} of ${pageCount}`,
     alignment: 'center',
@@ -24,9 +25,18 @@ const groupOverviewPdfDefinition = (wcif, rounds, rooms) => ({
   content: sortByArray(
     flatMap(
       flatMap(rounds, round =>
-        roomsWithTimezoneAndGroups(wcif, round.id).filter(
-          ([room, timezone, groupActivities]) => rooms.includes(room)
-        )
+        roomsWithTimezoneAndGroups(wcif, round.id)
+          .map(([room, timezone, groupActivities]) => [
+            room,
+            timezone,
+            groupActivities.filter(groupActivity => {
+              const stage = stageByActivity(wcif, groupActivity.id);
+              return stage ? stages.includes(stage) : rooms.includes(room);
+            })
+          ])
+          .filter(
+            ([room, timezone, groupActivities]) => groupActivities.length > 0
+          )
       ),
       ([room, timezone, groupActivities]) =>
         groupActivities.map(groupActivity => [room, timezone, groupActivity])
@@ -41,6 +51,7 @@ const groupOverviewPdfDefinition = (wcif, rounds, rooms) => ({
 });
 
 const overviewForGroup = (wcif, room, timezone, groupActivity) => {
+  const stage = stageByActivity(groupActivity.id);
   const headersWithPeople = [
     ['Competitors', 'competitor'],
     ['Scramblers', 'staff-scrambler'],
@@ -79,6 +90,7 @@ const overviewForGroup = (wcif, room, timezone, groupActivity) => {
         columns: [
           `Time: ${activityDurationString(groupActivity, timezone)}`,
           `Room: ${room.name}`,
+          ...(stage ? [`Stage: ${stage.name}`] : []),
         ],
         margin: [0, 5, 0, 5],
       },

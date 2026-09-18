@@ -5,6 +5,7 @@ import {
   groupActivitiesByRound,
   hasDistributedAttempts,
   roomByActivity,
+  stageByActivity,
   competitorsRegisteredForAnEventWithoutGroups,
 } from '../activities';
 import { eventNameById } from '../events';
@@ -63,14 +64,14 @@ const maxAttemptCountByFormat = {
   h: 5,
 };
 
-export const downloadScorecards = (wcif, rounds, rooms, language) => {
+export const downloadScorecards = (wcif, rounds, rooms, stages, language) => {
   const { scorecardsBackgroundUrl, scorecardPaperSize } = getExtensionData(
     'CompetitionConfig',
     wcif
   );
   getImageDataUrl(scorecardsBackgroundUrl).then(imageData => {
     const pdfDefinition = scorecardsPdfDefinition(
-      scorecards(wcif, rounds, rooms, language),
+      scorecards(wcif, rounds, rooms, stages, language),
       imageData,
       scorecardPaperSize
     );
@@ -371,7 +372,7 @@ const cutLine = properties => ({
   lineColor: '#888888',
 });
 
-export const scorecards = (wcif, rounds, rooms, language) => {
+export const scorecards = (wcif, rounds, rooms, stages, language) => {
   const {
     localNamesFirst,
     printOneName,
@@ -387,9 +388,12 @@ export const scorecards = (wcif, rounds, rooms, language) => {
     const groupsWithCompetitors = groupActivitiesWithCompetitors(
       wcif,
       round.id
-    ).filter(([groupActivity, _]) =>
-      rooms.includes(roomByActivity(wcif, groupActivity.id))
-    );
+    ).filter(([groupActivity, _]) => {
+      const stage = stageByActivity(wcif, groupActivity.id);
+      return stage
+        ? stages.includes(stage)
+        : rooms.includes(roomByActivity(wcif, groupActivity.id));
+    });
 
     let scorecardNumber = sum(
       groupsWithCompetitors.map(
@@ -411,6 +415,7 @@ export const scorecards = (wcif, rounds, rooms, language) => {
               activityCode: groupActivity.activityCode,
               numberOfScorecards: competitorsWithStation.length,
               room: roomByActivity(wcif, groupActivity.id),
+              stage: stageByActivity(wcif, groupActivity.id),
             })
           : null;
 
@@ -846,6 +851,7 @@ const coverSheet = ({
   activityCode,
   numberOfScorecards,
   room,
+  stage,
 }) => {
   const { eventId, roundNumber, groupNumber } = activityCode
     ? parseActivityCode(activityCode)
@@ -866,7 +872,7 @@ const coverSheet = ({
       alignment: 'center',
     },
     {
-      text: `Group ${groupNumber} (${room.name})`,
+      text: `Group ${groupNumber} (${stage?.name || room.name})`,
       fontSize: 15,
       margin: [0, 6],
       alignment: 'center',
