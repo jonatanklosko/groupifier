@@ -32,7 +32,7 @@ const groupOverviewPdfDefinition = (wcif, rounds, rooms, stages) => ({
             groupActivities.filter(groupActivity => {
               const stage = stageByActivity(wcif, groupActivity.id);
               return stage ? stages.includes(stage) : rooms.includes(room);
-            })
+            }),
           ])
           .filter(
             ([room, timezone, groupActivities]) => groupActivities.length > 0
@@ -51,7 +51,7 @@ const groupOverviewPdfDefinition = (wcif, rounds, rooms, stages) => ({
 });
 
 const overviewForGroup = (wcif, room, timezone, groupActivity) => {
-  const stage = stageByActivity(groupActivity.id);
+  const stage = stageByActivity(wcif, groupActivity.id);
   const headersWithPeople = [
     ['Competitors', 'competitor'],
     ['Scramblers', 'staff-scrambler'],
