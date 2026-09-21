@@ -80,8 +80,7 @@ const Scorecards = ({ wcif }) => {
 
   const isSelectionEmpty =
     selectedRounds.length === 0 ||
-    selectedRooms.length === 0 ||
-    selectedStages.length === 0;
+    (selectedRooms.length === 0 && selectedStages.length === 0);
 
   const [language, setLanguage] = useState('en');
 
@@ -117,46 +116,46 @@ const Scorecards = ({ wcif }) => {
         {allRooms.length > 1 && (
           <Grid item xs={6}>
             <Typography variant="subtitle1">Select rooms</Typography>
-              <List style={{ width: 400 }}>
-                {allRooms.map(room => (
-                  <div key={room.id}>
+            <List style={{ width: 400 }}>
+              {allRooms.map(room => (
+                <div key={room.id}>
+                  <ListItem
+                    button
+                    onClick={() => handleRoomClick(room)}
+                    style={selectedRooms.includes(room) ? {} : { opacity: 0.5 }}
+                  >
+                    <ListItemText primary={room.name} />
+                    <Checkbox
+                      checked={selectedRooms.includes(room)}
+                      tabIndex={-1}
+                      disableRipple
+                      style={{ padding: 0 }}
+                    />
+                  </ListItem>
+                  {stages(room).map(stage => (
                     <ListItem
+                      key={stage.id}
                       button
-                      onClick={() => handleRoomClick(room)}
-                      style={selectedRooms.includes(room) ? {} : { opacity: 0.5 }}
+                      onClick={() => handleStageClick(stage)}
+                      style={{
+                        paddingLeft: 48,
+                        ...(selectedStages.includes(stage)
+                          ? {}
+                          : { opacity: 0.5 }),
+                      }}
                     >
-                      <ListItemText primary={room.name} />
+                      <ListItemText primary={stage.name} />
                       <Checkbox
-                        checked={selectedRooms.includes(room)}
+                        checked={selectedStages.includes(stage)}
                         tabIndex={-1}
                         disableRipple
                         style={{ padding: 0 }}
                       />
                     </ListItem>
-                    {stages(room).map(stage => (
-                      <ListItem
-                        key={stage.id}
-                        button
-                        onClick={() => handleStageClick(stage)}
-                        style={{
-                          paddingLeft: 48,
-                          ...(selectedStages.includes(stage)
-                            ? {}
-                            : { opacity: 0.5 })
-                        }}
-                      >
-                        <ListItemText primary={stage.name} />
-                        <Checkbox
-                          checked={selectedStages.includes(stage)}
-                          tabIndex={-1}
-                          disableRipple
-                          style={{ padding: 0 }}
-                        />
-                      </ListItem>
-                    ))}
-                  </div>
-                ))}
-              </List>
+                  ))}
+                </div>
+              ))}
+            </List>
           </Grid>
         )}
       </Grid>
