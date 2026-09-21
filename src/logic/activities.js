@@ -98,7 +98,8 @@ export const rooms = wcif =>
   flatMap(wcif.schedule.venues, venue => venue.rooms);
 
 export const stages = room =>
-  getExternalExtensionData('org.cubingusa.natshelper.v1.Room', room)?.stages || [];
+  getExternalExtensionData('org.cubingusa.natshelper.v1.Room', room)?.stages ||
+  [];
 
 export const roomByActivity = (wcif, activityId) =>
   rooms(wcif).find(room =>
@@ -112,10 +113,8 @@ export const stageByActivity = (wcif, activityId) => {
     getExternalExtensionData('org.cubingusa.natshelper.v1.Group', activity)
       ?.stageId;
   return (
-    stageId &&
-    stages(roomByActivity(wcif, activityId)).find(
-      stage => stage.id === stageId
-    )
+    stageId !== undefined &&
+    stages(roomByActivity(wcif, activityId)).find(stage => stage.id === stageId)
   );
 };
 
