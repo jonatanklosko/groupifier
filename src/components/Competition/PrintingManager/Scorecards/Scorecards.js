@@ -118,7 +118,7 @@ const Scorecards = ({ wcif }) => {
             <Typography variant="subtitle1">Select rooms</Typography>
             <List style={{ width: 400 }}>
               {allRooms.map(room => (
-                <div key={room.id}>
+                <React.Fragment key={room.id}>
                   <ListItem
                     button
                     onClick={() => handleRoomClick(room)}
@@ -153,7 +153,7 @@ const Scorecards = ({ wcif }) => {
                       />
                     </ListItem>
                   ))}
-                </div>
+                </React.Fragment>
               ))}
             </List>
           </Grid>
