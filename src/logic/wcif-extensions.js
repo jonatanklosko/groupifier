@@ -52,6 +52,13 @@ export const getExtensionData = (extensionName, wcifEntity) => {
   return extension ? { ...defaultData, ...extension.data } : defaultData;
 };
 
+export const getExternalExtensionData = (extensionId, wcifEntity) => {
+  const extension = (wcifEntity.extensions || []).find(
+    extension => extension.id === extensionId
+  );
+  return extension && extension.data;
+};
+
 export const removeExtensionData = (extensionName, wcifEntity) => ({
   ...wcifEntity,
   extensions: wcifEntity.extensions.filter(

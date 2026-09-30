@@ -25,6 +25,7 @@ import {
   parseActivityCode,
   activityCodeToName,
   rooms,
+  stages,
 } from '../../../../logic/activities';
 import { difference, sortBy } from '../../../../logic/utils';
 import languageInfo from '../../../../logic/translations';
@@ -65,8 +66,21 @@ const Scorecards = ({ wcif }) => {
     );
   };
 
+  const allStages = allRooms.flatMap(stages);
+
+  const [selectedStages, setSelectedStages] = useState(allStages);
+
+  const handleStageClick = stage => {
+    setSelectedStages(
+      selectedStages.includes(stage)
+        ? difference(selectedStages, [stage])
+        : [...selectedStages, stage]
+    );
+  };
+
   const isSelectionEmpty =
-    selectedRounds.length === 0 || selectedRooms.length === 0;
+    selectedRounds.length === 0 ||
+    (selectedRooms.length === 0 && selectedStages.length === 0);
 
   const [language, setLanguage] = useState('en');
 
@@ -104,20 +118,42 @@ const Scorecards = ({ wcif }) => {
             <Typography variant="subtitle1">Select rooms</Typography>
             <List style={{ width: 400 }}>
               {allRooms.map(room => (
-                <ListItem
-                  key={room.id}
-                  button
-                  onClick={() => handleRoomClick(room)}
-                  style={selectedRooms.includes(room) ? {} : { opacity: 0.5 }}
-                >
-                  <ListItemText primary={room.name} />
-                  <Checkbox
-                    checked={selectedRooms.includes(room)}
-                    tabIndex={-1}
-                    disableRipple
-                    style={{ padding: 0 }}
-                  />
-                </ListItem>
+                <React.Fragment key={room.id}>
+                  <ListItem
+                    button
+                    onClick={() => handleRoomClick(room)}
+                    style={selectedRooms.includes(room) ? {} : { opacity: 0.5 }}
+                  >
+                    <ListItemText primary={room.name} />
+                    <Checkbox
+                      checked={selectedRooms.includes(room)}
+                      tabIndex={-1}
+                      disableRipple
+                      style={{ padding: 0 }}
+                    />
+                  </ListItem>
+                  {stages(room).map(stage => (
+                    <ListItem
+                      key={stage.id}
+                      button
+                      onClick={() => handleStageClick(stage)}
+                      style={{
+                        paddingLeft: 48,
+                        ...(selectedStages.includes(stage)
+                          ? {}
+                          : { opacity: 0.5 }),
+                      }}
+                    >
+                      <ListItemText primary={stage.name} />
+                      <Checkbox
+                        checked={selectedStages.includes(stage)}
+                        tabIndex={-1}
+                        disableRipple
+                        style={{ padding: 0 }}
+                      />
+                    </ListItem>
+                  ))}
+                </React.Fragment>
               ))}
             </List>
           </Grid>
@@ -147,7 +183,13 @@ const Scorecards = ({ wcif }) => {
         <Grid item>
           <Button
             onClick={() =>
-              downloadScorecards(wcif, selectedRounds, selectedRooms, language)
+              downloadScorecards(
+                wcif,
+                selectedRounds,
+                selectedRooms,
+                selectedStages,
+                language
+              )
             }
             disabled={isSelectionEmpty}
           >
@@ -157,7 +199,12 @@ const Scorecards = ({ wcif }) => {
         <Grid item>
           <Button
             onClick={() =>
-              downloadGroupOverview(wcif, selectedRounds, selectedRooms)
+              downloadGroupOverview(
+                wcif,
+                selectedRounds,
+                selectedRooms,
+                selectedStages
+              )
             }
             disabled={isSelectionEmpty}
           >

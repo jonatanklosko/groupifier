@@ -8,7 +8,11 @@ import {
   shortTime,
   isPresentDeep,
 } from './utils';
-import { getExtensionData, setExtensionData } from './wcif-extensions';
+import {
+  getExtensionData,
+  getExternalExtensionData,
+  setExtensionData,
+} from './wcif-extensions';
 import {
   suggestedGroupCount,
   suggestedScramblerCount,
@@ -93,10 +97,26 @@ export const activitiesIntersection = (first, second) => {
 export const rooms = wcif =>
   flatMap(wcif.schedule.venues, venue => venue.rooms);
 
+export const stages = room =>
+  getExternalExtensionData('org.cubingusa.natshelper.v1.Room', room)?.stages ||
+  [];
+
 export const roomByActivity = (wcif, activityId) =>
   rooms(wcif).find(room =>
     room.activities.some(activity => hasActivity(activity, activityId))
   );
+
+export const stageByActivity = (wcif, activityId) => {
+  const activity = activityById(wcif, activityId);
+  const stageId =
+    activity &&
+    getExternalExtensionData('org.cubingusa.natshelper.v1.Group', activity)
+      ?.stageId;
+  return (
+    stageId !== undefined &&
+    stages(roomByActivity(wcif, activityId)).find(stage => stage.id === stageId)
+  );
+};
 
 const hasActivity = (activity, activityId) =>
   activity.id === activityId ||
