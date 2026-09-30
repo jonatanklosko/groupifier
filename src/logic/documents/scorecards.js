@@ -7,6 +7,7 @@ import {
   roomByActivity,
   stageByActivity,
   competitorsRegisteredForAnEventWithoutGroups,
+  parentActivityByGroup,
 } from '../activities';
 import { eventNameById } from '../events';
 import {
@@ -144,7 +145,7 @@ export const emptyScorecardsForPersons = (
   const {
     localNamesFirst,
     printOneName,
-    printStations,
+    printStationsForBlankScorecards,
     scorecardPaperSize,
     scorecardOrder,
   } = getExtensionData('CompetitionConfig', wcif);
@@ -167,7 +168,7 @@ export const emptyScorecardsForPersons = (
         competitor: person,
         localNamesFirst,
         printOneName,
-        printStations,
+        printStations: printStationsForBlankScorecards,
         scorecardPaperSize,
         language,
         printScrambleCheckerBox: shouldPrintScrambleChecker(
@@ -205,7 +206,7 @@ const customScorecards = (wcif, sections, language) => {
   const {
     localNamesFirst,
     printOneName,
-    printStations,
+    printStationsForBlankScorecards,
     scorecardPaperSize,
     scorecardOrder,
   } = getExtensionData('CompetitionConfig', wcif);
@@ -258,7 +259,7 @@ const customScorecards = (wcif, sections, language) => {
         competitor,
         localNamesFirst,
         printOneName,
-        printStations,
+        printStations: printStationsForBlankScorecards,
         scorecardPaperSize,
         language,
         printScrambleCheckerBox: false,
@@ -376,7 +377,7 @@ export const scorecards = (wcif, rounds, rooms, stages, language) => {
   const {
     localNamesFirst,
     printOneName,
-    printStations,
+    printStationsForBlankScorecards,
     scorecardPaperSize,
     scorecardOrder,
     printScorecardsCoverSheets,
@@ -407,6 +408,12 @@ export const scorecards = (wcif, rounds, rooms, stages, language) => {
         const { featuredCompetitorWcaUserIds = [] } =
           getExtensionData('ActivityConfig', groupActivity) || {};
 
+        const { assignStations = printStationsForBlankScorecards } =
+          getExtensionData(
+            'ActivityConfig',
+            parentActivityByGroup(wcif, groupActivity)
+          ) || {};
+
         let scorecardInGroupNumber = competitorsWithStation.length;
 
         const groupCoverSheet = printScorecardsCoverSheets
@@ -431,7 +438,8 @@ export const scorecards = (wcif, rounds, rooms, stages, language) => {
               competitor,
               localNamesFirst,
               printOneName,
-              printStations,
+              printStations:
+                !!stationNumber || (!competitor.registrantId && assignStations),
               scorecardPaperSize,
               featured: featuredCompetitorWcaUserIds.includes(
                 competitor.wcaUserId
@@ -594,7 +602,7 @@ const blankScorecards = (wcif, language) => {
     event => event.rounds
   ).map(round => maxAttemptCountByFormat[round.format]);
   const {
-    printStations,
+    printStationsForBlankScorecards,
     scorecardPaperSize,
     printScrambleCheckerForBlankScorecards,
   } = getExtensionData('CompetitionConfig', wcif);
@@ -604,7 +612,7 @@ const blankScorecards = (wcif, language) => {
       scorecard({
         competitionName: wcif.shortName,
         attemptCount,
-        printStations,
+        printStations: printStationsForBlankScorecards,
         scorecardPaperSize,
         language: language,
         printScrambleCheckerBox: printScrambleCheckerForBlankScorecards,

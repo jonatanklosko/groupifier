@@ -3,6 +3,7 @@ import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
 import Grid from '@material-ui/core/Grid';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
@@ -22,6 +23,7 @@ const RoundsConfig = ({ wcif, onWcifChange, expectedCompetitorsByRound }) => {
     assignScramblers: true,
     assignRunners: true,
     assignJudges: true,
+    assignStations: true,
   });
 
   const handleNextClick = () => {
@@ -61,26 +63,30 @@ const RoundsConfig = ({ wcif, onWcifChange, expectedCompetitorsByRound }) => {
       <Grid container direction="column">
         <Grid item style={{ margin: '0.5em 0' }}>
           <Typography variant="body1">
-            Which of the following roles would you like to assign?
+            Which of the following would you like to assign?
           </Typography>
         </Grid>
-        {['Scramblers', 'Runners', 'Judges'].map(roleLabel => (
-          <Grid item key={roleLabel}>
+        {['Scramblers', 'Runners', 'Judges', 'Stations'].map(label => (
+          <Grid item key={label}>
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={options[`assign${roleLabel}`]}
-                  name={`assign${roleLabel}`}
+                  checked={options[`assign${label}`]}
+                  name={`assign${label}`}
                   onChange={event => {
                     const { checked, name } = event.target;
                     setOptions({ ...options, [name]: checked });
                   }}
                 />
               }
-              label={roleLabel}
+              label={label}
             />
           </Grid>
         ))}
+        <FormHelperText>
+          Note that this is printing and assigning only, you have to control if
+          there is enough stations for everyone manually
+        </FormHelperText>
       </Grid>
       <Button onClick={handleNextClick}>Next</Button>
     </Paper>

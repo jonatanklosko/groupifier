@@ -55,7 +55,7 @@ describe('scorecards', () => {
       {
         localNamesFirst: false,
         printOneName: false,
-        printStations: true,
+        printStationsForBlankScorecards: true,
         scorecardPaperSize: 'a4',
         scorecardOrder: 'natural',
         printScorecardsCoverSheets: false,

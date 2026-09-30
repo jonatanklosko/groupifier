@@ -100,7 +100,7 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
     localNamesFirst,
     printOneName,
     scorecardsBackgroundUrl,
-    printStations,
+    printStationsForBlankScorecards,
     scorecardPaperSize,
     scorecardOrder,
     printScorecardsCoverSheets,
@@ -268,17 +268,13 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    name="printStations"
-                    checked={printStations}
+                    name="printStationsForBlankScorecards"
+                    checked={printStationsForBlankScorecards}
                     onChange={handleCheckboxChange}
                   />
                 }
-                label="Print out station number"
+                label="Print out station number for blank, OTS, and custom scorecards"
               />
-              <FormHelperText>
-                Note that this is printing only, you have to control if there is
-                enough stations for everyone manually
-              </FormHelperText>
             </Grid>
             <Grid item style={{ marginTop: 16 }}>
               <Typography variant="subtitle2" gutterBottom>

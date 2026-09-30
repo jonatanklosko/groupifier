@@ -33,8 +33,8 @@
       "description": "A flag indicating whether foreigners should be assigned running.",
       "type": "boolean"
     },
-    "printStations": {
-      "description": "A flag indicating whether competitors should have printed stations on their scorecards in generated PDF documents.",
+    "printStationsForBlankScorecards": {
+      "description": "A flag indicating whether blank, OTS, and custom scorecards should have printed station boxes in generated PDF documents.",
       "type": "boolean"
     },
     "scorecardPaperSize": {
