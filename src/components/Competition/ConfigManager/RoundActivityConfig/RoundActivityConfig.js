@@ -35,6 +35,7 @@ const RoundActivityConfig = React.memo(
       scramblers,
       runners,
       assignJudges,
+      assignStations,
       capacity,
     } = getExtensionData('ActivityConfig', activity);
     const stations = getExtensionData('RoomConfig', room).stations;
@@ -145,6 +146,26 @@ const RoundActivityConfig = React.memo(
                 />
               }
               label="Assign judges"
+            />
+          </DisabledReasonTooltip>
+        </Grid>
+        <Grid item>
+          <DisabledReasonTooltip
+            reasons={{
+              'there are no stations': stations === 0,
+              'groups already assigned': groupsAssigned,
+            }}
+          >
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={assignStations}
+                  name="assignStations"
+                  onChange={handleCheckboxChange}
+                  disabled={stations === 0 || groupsAssigned}
+                />
+              }
+              label="Assign stations"
             />
           </DisabledReasonTooltip>
         </Grid>
