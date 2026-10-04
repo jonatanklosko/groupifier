@@ -1,6 +1,7 @@
 import React from 'react';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import Grid from '@material-ui/core/Grid';
 import Tooltip from '@material-ui/core/Tooltip';
 
@@ -35,7 +36,7 @@ const RoundActivityConfig = React.memo(
       scramblers,
       runners,
       assignJudges,
-      assignStations,
+      printStations,
       capacity,
     } = getExtensionData('ActivityConfig', activity);
     const stations = getExtensionData('RoomConfig', room).stations;
@@ -159,15 +160,19 @@ const RoundActivityConfig = React.memo(
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={assignStations}
-                  name="assignStations"
+                  checked={printStations}
+                  name="printStations"
                   onChange={handleCheckboxChange}
                   disabled={stations === 0 || groupsAssigned}
                 />
               }
-              label="Assign stations"
+              label="Print out station number"
             />
           </DisabledReasonTooltip>
+          <FormHelperText>
+            Note that this is printing only, you have to control if there is
+            enough stations for everyone manually
+          </FormHelperText>
         </Grid>
       </Grid>
     );

@@ -29,8 +29,8 @@
       "description": "A flag indicating whether judges should be assigned to the given activity.",
       "type": "boolean"
     },
-    "assignStations": {
-      "description": "A flag indicating whether station numbers should be assigned to competitors to the given activity.",
+    "printStations": {
+      "description": "A flag indicating whether station numbers should be printed in the given activity.",
       "type": "boolean"
     },
     "featuredCompetitorWcaUserIds": {
@@ -38,5 +38,5 @@
       "type": "list"
     }
   },
-  "required": ["capacity", "groups", "scramblers", "runners", "assignJudges"]
+  "required": ["capacity", "groups", "scramblers", "runners", "assignJudges", "printStations"]
 }

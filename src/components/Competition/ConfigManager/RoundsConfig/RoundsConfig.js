@@ -23,7 +23,7 @@ const RoundsConfig = ({ wcif, onWcifChange, expectedCompetitorsByRound }) => {
     assignScramblers: true,
     assignRunners: true,
     assignJudges: true,
-    assignStations: true,
+    printStations: true,
   });
 
   const handleNextClick = () => {
@@ -50,6 +50,11 @@ const RoundsConfig = ({ wcif, onWcifChange, expectedCompetitorsByRound }) => {
     [wcif, onWcifChange, expectedCompetitorsByRound]
   );
 
+  const handleCheckboxChange = event => {
+    const { checked, name } = event.target;
+    setOptions({ ...options, [name]: checked });
+  };
+
   return activityCodesMissingConfig.length === 0 ? (
     <RoundsNavigation events={events} render={renderRound} />
   ) : (
@@ -63,29 +68,38 @@ const RoundsConfig = ({ wcif, onWcifChange, expectedCompetitorsByRound }) => {
       <Grid container direction="column">
         <Grid item style={{ margin: '0.5em 0' }}>
           <Typography variant="body1">
-            Which of the following would you like to assign?
+            Which of the following roles would you like to assign?
           </Typography>
         </Grid>
-        {['Scramblers', 'Runners', 'Judges', 'Stations'].map(label => (
-          <Grid item key={label}>
+        {['Scramblers', 'Runners', 'Judges'].map(roleLabel => (
+          <Grid item key={roleLabel}>
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={options[`assign${label}`]}
-                  name={`assign${label}`}
-                  onChange={event => {
-                    const { checked, name } = event.target;
-                    setOptions({ ...options, [name]: checked });
-                  }}
+                  checked={options[`assign${roleLabel}`]}
+                  name={`assign${roleLabel}`}
+                  onChange={handleCheckboxChange}
                 />
               }
-              label={label}
+              label={roleLabel}
             />
           </Grid>
         ))}
+        <Grid item>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={options.printStations}
+                name={'printStations'}
+                onChange={handleCheckboxChange}
+              />
+            }
+            label={'Print out station number'}
+          />
+        </Grid>
         <FormHelperText>
-          Note that this is printing and assigning only, you have to control if
-          there is enough stations for everyone manually
+          Note that this is printing only, you have to control if there is
+          enough stations for everyone manually
         </FormHelperText>
       </Grid>
       <Button onClick={handleNextClick}>Next</Button>

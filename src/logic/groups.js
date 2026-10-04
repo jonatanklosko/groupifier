@@ -809,11 +809,11 @@ export const updateAssignmentStationNumbers = (wcif, roundId) => {
     const parentActivity = parentActivityByGroup(wcif, groupActivity);
     if (!parentActivity) return wcif;
 
-    const { assignStations } = getExtensionData(
+    const { printStations } = getExtensionData(
       'ActivityConfig',
       parentActivity
     );
-    if (!assignStations) return wcif;
+    if (!printStations) return wcif;
 
     const competitors = sortedCompetitors.filter(competitor =>
       hasAssignment(competitor, groupActivity.id, 'competitor')

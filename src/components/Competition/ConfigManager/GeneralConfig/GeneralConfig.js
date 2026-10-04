@@ -100,7 +100,6 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
     localNamesFirst,
     printOneName,
     scorecardsBackgroundUrl,
-    printStationsForBlankScorecards,
     scorecardPaperSize,
     scorecardOrder,
     printScorecardsCoverSheets,
@@ -262,18 +261,6 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
                   />
                 }
                 label="Only one name (does not put local/latin name in parentheses)"
-              />
-            </Grid>
-            <Grid item>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    name="printStationsForBlankScorecards"
-                    checked={printStationsForBlankScorecards}
-                    onChange={handleCheckboxChange}
-                  />
-                }
-                label="Print out station number for blank, OTS, and custom scorecards"
               />
             </Grid>
             <Grid item style={{ marginTop: 16 }}>

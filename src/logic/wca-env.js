@@ -9,8 +9,8 @@ export const PRODUCTION =
 
 export const WCA_ORIGIN = PRODUCTION
   ? `https://${wcaProdHost}`
-  : 'https://staging.worldcubeassociation.org';
+  : 'https://www.worldcubeassociation.org';
 
 export const WCA_OAUTH_CLIENT_ID = PRODUCTION
   ? 'ontNJO4UBV7P-ShigoAwaP1g4peOANll4hyZOUWawj0'
-  : 'example-application-id';
+  : '7x3wL8Xzp-mKxQGMb2xInSD1i7PdHqWSHch1mpdikUo';

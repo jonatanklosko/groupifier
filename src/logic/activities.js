@@ -200,14 +200,14 @@ export const populateRoundActivitiesConfig = (
           ? suggestedRunnerCount(competitors / groups, stations)
           : 0;
         const assignJudges = stations > 0 && defaults.assignJudges;
-        const assignStations = stations > 0 && defaults.assignStations;
+        const printStations = stations > 0 && defaults.printStations;
         return setExtensionData('ActivityConfig', activity, {
           capacity,
           groups,
           scramblers,
           runners,
           assignJudges,
-          assignStations,
+          printStations,
         });
       });
     });
