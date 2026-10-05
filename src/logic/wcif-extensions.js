@@ -33,7 +33,6 @@ const defaultExtensionData = {
     noTasksForNewcomers: false,
     tasksForOwnEventsOnly: false,
     noRunningForForeigners: false,
-    printStations: false,
     scorecardPaperSize: 'a4',
     scorecardOrder: 'natural',
     printScorecardsCoverSheets: false,

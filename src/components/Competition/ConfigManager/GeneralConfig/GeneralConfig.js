@@ -100,7 +100,6 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
     localNamesFirst,
     printOneName,
     scorecardsBackgroundUrl,
-    printStations,
     scorecardPaperSize,
     scorecardOrder,
     printScorecardsCoverSheets,
@@ -263,22 +262,6 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
                 }
                 label="Only one name (does not put local/latin name in parentheses)"
               />
-            </Grid>
-            <Grid item>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    name="printStations"
-                    checked={printStations}
-                    onChange={handleCheckboxChange}
-                  />
-                }
-                label="Print out station number"
-              />
-              <FormHelperText>
-                Note that this is printing only, you have to control if there is
-                enough stations for everyone manually
-              </FormHelperText>
             </Grid>
             <Grid item style={{ marginTop: 16 }}>
               <Typography variant="subtitle2" gutterBottom>

@@ -29,6 +29,7 @@ import {
   activityDuration,
   hasDistributedAttempts,
   maxActivityId,
+  parentActivityByGroup,
   parseActivityCode,
   roundActivities,
   groupActivitiesByRound,
@@ -797,9 +798,6 @@ const scrambleSetCountForRound = (wcif, roundId) =>
       ).length;
 
 export const updateAssignmentStationNumbers = (wcif, roundId) => {
-  const { printStations } = getExtensionData('CompetitionConfig', wcif);
-  if (!printStations) return wcif;
-
   const sortedCompetitors = (
     competitorsForRound(wcif, roundId) || []
   ).reverse();
@@ -808,6 +806,15 @@ export const updateAssignmentStationNumbers = (wcif, roundId) => {
   const groupActivities = groupActivitiesByRound(wcif, roundId);
 
   return groupActivities.reduce((wcif, groupActivity) => {
+    const parentActivity = parentActivityByGroup(wcif, groupActivity);
+    if (!parentActivity) return wcif;
+
+    const { printStations } = getExtensionData(
+      'ActivityConfig',
+      parentActivity
+    );
+    if (!printStations) return wcif;
+
     const competitors = sortedCompetitors.filter(competitor =>
       hasAssignment(competitor, groupActivity.id, 'competitor')
     );

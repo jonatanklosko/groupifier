@@ -3,6 +3,7 @@ import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
 import Grid from '@material-ui/core/Grid';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
@@ -22,6 +23,7 @@ const RoundsConfig = ({ wcif, onWcifChange, expectedCompetitorsByRound }) => {
     assignScramblers: true,
     assignRunners: true,
     assignJudges: true,
+    printStations: false,
   });
 
   const handleNextClick = () => {
@@ -48,6 +50,11 @@ const RoundsConfig = ({ wcif, onWcifChange, expectedCompetitorsByRound }) => {
     [wcif, onWcifChange, expectedCompetitorsByRound]
   );
 
+  const handleCheckboxChange = event => {
+    const { checked, name } = event.target;
+    setOptions({ ...options, [name]: checked });
+  };
+
   return activityCodesMissingConfig.length === 0 ? (
     <RoundsNavigation events={events} render={renderRound} />
   ) : (
@@ -71,16 +78,29 @@ const RoundsConfig = ({ wcif, onWcifChange, expectedCompetitorsByRound }) => {
                 <Checkbox
                   checked={options[`assign${roleLabel}`]}
                   name={`assign${roleLabel}`}
-                  onChange={event => {
-                    const { checked, name } = event.target;
-                    setOptions({ ...options, [name]: checked });
-                  }}
+                  onChange={handleCheckboxChange}
                 />
               }
               label={roleLabel}
             />
           </Grid>
         ))}
+        <Grid item>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={options.printStations}
+                name={'printStations'}
+                onChange={handleCheckboxChange}
+              />
+            }
+            label={'Print out station number'}
+          />
+        </Grid>
+        <FormHelperText>
+          Note that this is printing only, you have to control if there is
+          enough stations for everyone manually
+        </FormHelperText>
       </Grid>
       <Button onClick={handleNextClick}>Next</Button>
     </Paper>

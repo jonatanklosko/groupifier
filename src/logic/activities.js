@@ -200,12 +200,14 @@ export const populateRoundActivitiesConfig = (
           ? suggestedRunnerCount(competitors / groups, stations)
           : 0;
         const assignJudges = stations > 0 && defaults.assignJudges;
+        const printStations = stations > 0 && defaults.printStations;
         return setExtensionData('ActivityConfig', activity, {
           capacity,
           groups,
           scramblers,
           runners,
           assignJudges,
+          printStations,
         });
       });
     });
@@ -262,6 +264,15 @@ export const groupActivitiesByRound = (wcif, roundId) =>
   flatMap(roundActivities(wcif, roundId), activity =>
     hasDistributedAttempts(roundId) ? [activity] : activity.childActivities
   );
+
+export const parentActivityByGroup = (wcif, group) => {
+  const { eventId, roundNumber } = parseActivityCode(group.activityCode);
+  return roundActivities(wcif, `${eventId}-r${roundNumber}`).find(activity =>
+    activity.childActivities.some(
+      childActivity => childActivity.id === group.id
+    )
+  );
+};
 
 export const roomsWithTimezoneAndGroups = (wcif, roundId) =>
   flatMap(wcif.schedule.venues, venue =>
