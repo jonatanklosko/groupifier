@@ -23,7 +23,7 @@ const RoundsConfig = ({ wcif, onWcifChange, expectedCompetitorsByRound }) => {
     assignScramblers: true,
     assignRunners: true,
     assignJudges: true,
-    printStations: true,
+    printStations: false,
   });
 
   const handleNextClick = () => {
