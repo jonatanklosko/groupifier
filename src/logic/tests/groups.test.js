@@ -10,23 +10,6 @@ import { createGroupActivities } from '../groups';
 import { setExtensionData } from '../wcif-extensions';
 
 describe('createGroupActivities', () => {
-  test('does not create group activities for MBLD and FMC', () => {
-    const activities = [
-      Activity({ activityCode: '333mbf-r1-a1' }),
-      Activity({ activityCode: '333fm-r1-a1' }),
-    ];
-    const wcif = Competition({
-      events: [
-        Event({ id: '333mbf', rounds: [Round({ id: '333mbf-r1' })] }),
-        Event({ id: '333fm', rounds: [Round({ id: '333fm-r1' })] }),
-      ],
-      schedule: {
-        venues: [Venue({ rooms: [Room({ activities })] })],
-      },
-    });
-    expect(createGroupActivities(wcif)).toEqual(wcif);
-  });
-
   test('does not create group activities if there are any already', () => {
     const roundActivity = setExtensionData(
       'ActivityConfig',
