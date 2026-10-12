@@ -5,28 +5,12 @@ import {
   Venue,
   Room,
   Activity,
+  Person,
 } from './wcif-builders';
-import { createGroupActivities } from '../groups';
+import { createGroupActivities, assignTasks } from '../groups';
 import { setExtensionData } from '../wcif-extensions';
 
 describe('createGroupActivities', () => {
-  test('does not create group activities for MBLD and FMC', () => {
-    const activities = [
-      Activity({ activityCode: '333mbf-r1-a1' }),
-      Activity({ activityCode: '333fm-r1-a1' }),
-    ];
-    const wcif = Competition({
-      events: [
-        Event({ id: '333mbf', rounds: [Round({ id: '333mbf-r1' })] }),
-        Event({ id: '333fm', rounds: [Round({ id: '333fm-r1' })] }),
-      ],
-      schedule: {
-        venues: [Venue({ rooms: [Room({ activities })] })],
-      },
-    });
-    expect(createGroupActivities(wcif)).toEqual(wcif);
-  });
-
   test('does not create group activities if there are any already', () => {
     const roundActivity = setExtensionData(
       'ActivityConfig',
@@ -181,5 +165,36 @@ describe('createGroupActivities', () => {
         endTime: '2020-01-01T10:45:00.000Z',
       })
     );
+  });
+});
+
+describe('assignTasks', () => {
+  test('replaces old competitor assignments to attempt activities with group assignments', () => {
+    const attemptActivity = Activity({ activityCode: '333fm-r1-a1' });
+    const competitor = Person({
+      registration: { eventIds: ['333fm'] },
+      assignments: [
+        { activityId: attemptActivity.id, assignmentCode: 'competitor' },
+      ],
+    });
+    const wcif = setExtensionData(
+      'CompetitionConfig',
+      Competition({
+        events: [Event({ id: '333fm', rounds: [Round({ id: '333fm-r1' })] })],
+        persons: [competitor],
+        schedule: {
+          venues: [Venue({ rooms: [Room({ activities: [attemptActivity] })] })],
+        },
+      }),
+      { competitorsSortingRule: 'ranks' }
+    );
+    const updatedWcif = assignTasks(createGroupActivities(wcif));
+    const [
+      group,
+    ] = updatedWcif.schedule.venues[0].rooms[0].activities[0].childActivities;
+    expect(group.activityCode).toEqual('333fm-r1-g1-a1');
+    expect(updatedWcif.persons[0].assignments).toEqual([
+      { activityId: group.id, assignmentCode: 'competitor' },
+    ]);
   });
 });

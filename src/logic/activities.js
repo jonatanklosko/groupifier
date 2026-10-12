@@ -261,9 +261,7 @@ export const roundActivities = (wcif, roundId) =>
   );
 
 export const groupActivitiesByRound = (wcif, roundId) =>
-  flatMap(roundActivities(wcif, roundId), activity =>
-    hasDistributedAttempts(roundId) ? [activity] : activity.childActivities
-  );
+  flatMap(roundActivities(wcif, roundId), activity => activity.childActivities);
 
 export const parentActivityByGroup = (wcif, group) => {
   const { eventId, roundNumber } = parseActivityCode(group.activityCode);
@@ -414,7 +412,7 @@ export const clearGroupsAndAssignments = (wcif, roundIds) => {
   const schedule = mapIn(wcif.schedule, ['venues'], venue =>
     mapIn(venue, ['rooms'], room =>
       mapIn(room, ['activities'], activity =>
-        roundIds.includes(activity.activityCode)
+        roundIds.some(roundId => activity.activityCode.startsWith(roundId))
           ? setIn(activity, ['childActivities'], [])
           : activity
       )

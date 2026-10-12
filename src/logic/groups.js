@@ -53,14 +53,15 @@ import {
 export const createGroupActivities = wcif => {
   const rounds = flatMap(wcif.events, event => event.rounds);
   return rounds.reduce((wcif, round) => {
-    /* For FMC and MBLD the activities are already scheduled, and there is always a single group. */
-    if (hasDistributedAttempts(round.id)) return wcif;
     /* If there are already groups created, don't override them. */
     if (groupActivitiesByRound(wcif, round.id).length > 0) return wcif;
     const currentActivityId = maxActivityId(wcif);
+    const distributedAttempts = hasDistributedAttempts(round.id);
     const activitiesWithGroups = roundActivities(wcif, round.id).map(
       activity => {
-        const { groups } = getExtensionData('ActivityConfig', activity);
+        const groups = distributedAttempts
+          ? 1
+          : getExtensionData('ActivityConfig', activity).groups;
         const totalDuration = activityDuration(activity);
         const groupDuration = totalDuration / groups;
         const groupActivities = times(groups, index => ({
@@ -78,11 +79,26 @@ export const createGroupActivities = wcif => {
         return { ...activity, childActivities: groupActivities };
       }
     );
+    const groupActivitiesByAttempt = flatMap(activitiesWithGroups, activity =>
+      activity.childActivities.map(groupActivity => ({
+        groupActivity,
+        attemptNumber: parseActivityCode(activity.activityCode).attemptNumber,
+      }))
+    );
+    const groupNumbersByAttempt = new Map();
     sortByArray(
-      flatMap(activitiesWithGroups, activity => activity.childActivities),
-      ({ startTime, endTime }) => [startTime, endTime]
-    ).forEach((groupActivity, index) => {
-      const activityCode = `${round.id}-g${index + 1}`;
+      groupActivitiesByAttempt,
+      ({ groupActivity: { startTime, endTime } }) => [startTime, endTime]
+    ).forEach(({ groupActivity, attemptNumber }, index) => {
+      const groupNumber = distributedAttempts
+        ? (groupNumbersByAttempt.get(attemptNumber) || 0) + 1
+        : index + 1;
+      if (distributedAttempts) {
+        groupNumbersByAttempt.set(attemptNumber, groupNumber);
+      }
+      const activityCode = `${round.id}-g${groupNumber}${
+        distributedAttempts ? `-a${attemptNumber}` : ''
+      }`;
       /* The child activities are newly created objects, so it's fine to mutate them at this point. */
       return Object.assign(groupActivity, {
         id: currentActivityId + index + 1,
@@ -110,27 +126,37 @@ const assignGroups = (wcif, roundsToAssign) => {
       : groupActivitiesByRound(wcif, round.id).length
   );
   return sortedRoundsToAssign.reduce((wcif, round) => {
+    if (hasDistributedAttempts(round.id)) {
+      /* Older versions assigned competitors to attempt activities directly.
+         Now we assign them to a group activity inside each attempt activity.
+         Competitions assigned the old way still have those assignments,
+         so we remove them here to avoid assigning everyone twice. */
+      wcif = removeAttemptAssignments(wcif, round.id);
+    }
     const competitors = sortedCompetitorsForRound(wcif, round.id);
     if (hasDistributedAttempts(round.id)) {
       /* In this case roundActivities are attempt activities.
          We want every competitor to be assigned all attempts.
          The same attempt may take place in many different rooms,
-         so for each attempt we split people among this attempt's activities. */
+         so we split people among its groups and assign them to the group activity. */
       const activitiesByAttempt = groupBy(
         roundActivities(wcif, round.id),
         ({ activityCode }) => parseActivityCode(activityCode).attemptNumber
       );
       const updatedCompetitors = Object.values(activitiesByAttempt).reduce(
         (competitors, attemptActivities) => {
+          const attemptGroups = attemptActivities.map(
+            activity => activity.childActivities[0]
+          );
           const competitorsPerActivity = Math.ceil(
-            competitors.length / attemptActivities.length
+            competitors.length / attemptGroups.length
           );
           const activitiesWithCompetitors = zip(
-            attemptActivities,
+            attemptGroups,
             chunk(competitors, competitorsPerActivity)
           );
-          return flatMap(activitiesWithCompetitors, ([activity, competitors]) =>
-            assignActivity(activity.id, 'competitor', competitors)
+          return flatMap(activitiesWithCompetitors, ([group, competitors]) =>
+            assignActivity(group.id, 'competitor', competitors)
           );
         },
         competitors
@@ -191,6 +217,15 @@ const assignGroups = (wcif, roundsToAssign) => {
     const updatedWcif = updatePeople(wcif, updatedCompetitors);
     return updateAssignmentStationNumbers(updatedWcif, round.id);
   }, wcif);
+};
+
+const removeAttemptAssignments = (wcif, roundId) => {
+  const attemptIds = roundActivities(wcif, roundId).map(({ id }) => id);
+  return mapIn(wcif, ['persons'], person =>
+    updateIn(person, ['assignments'], assignments =>
+      assignments.filter(({ activityId }) => !attemptIds.includes(activityId))
+    )
+  );
 };
 
 export const sortedGroupActivitiesWithSize = (
