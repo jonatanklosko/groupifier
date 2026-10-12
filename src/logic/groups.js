@@ -56,10 +56,12 @@ export const createGroupActivities = wcif => {
     /* If there are already groups created, don't override them. */
     if (groupActivitiesByRound(wcif, round.id).length > 0) return wcif;
     const currentActivityId = maxActivityId(wcif);
+    const distributedAttempts = hasDistributedAttempts(round.id);
     const activitiesWithGroups = roundActivities(wcif, round.id).map(
       activity => {
-        const { groups = 1 } =
-          getExtensionData('ActivityConfig', activity) ?? {};
+        const groups = distributedAttempts
+          ? 1
+          : getExtensionData('ActivityConfig', activity).groups;
         const totalDuration = activityDuration(activity);
         const groupDuration = totalDuration / groups;
         const groupActivities = times(groups, index => ({
@@ -77,7 +79,6 @@ export const createGroupActivities = wcif => {
         return { ...activity, childActivities: groupActivities };
       }
     );
-    const distributedAttempts = hasDistributedAttempts(round.id);
     const groupActivitiesByAttempt = flatMap(activitiesWithGroups, activity =>
       activity.childActivities.map(groupActivity => ({
         groupActivity,
@@ -125,6 +126,13 @@ const assignGroups = (wcif, roundsToAssign) => {
       : groupActivitiesByRound(wcif, round.id).length
   );
   return sortedRoundsToAssign.reduce((wcif, round) => {
+    if (hasDistributedAttempts(round.id)) {
+      /* Older versions assigned competitors to attempt activities directly.
+         Now we assign them to a group activity inside each attempt activity.
+         Competitions assigned the old way still have those assignments,
+         so we remove them here to avoid assigning everyone twice. */
+      wcif = removeAttemptAssignments(wcif, round.id);
+    }
     const competitors = sortedCompetitorsForRound(wcif, round.id);
     if (hasDistributedAttempts(round.id)) {
       /* In this case roundActivities are attempt activities.
@@ -209,6 +217,15 @@ const assignGroups = (wcif, roundsToAssign) => {
     const updatedWcif = updatePeople(wcif, updatedCompetitors);
     return updateAssignmentStationNumbers(updatedWcif, round.id);
   }, wcif);
+};
+
+const removeAttemptAssignments = (wcif, roundId) => {
+  const attemptIds = roundActivities(wcif, roundId).map(({ id }) => id);
+  return mapIn(wcif, ['persons'], person =>
+    updateIn(person, ['assignments'], assignments =>
+      assignments.filter(({ activityId }) => !attemptIds.includes(activityId))
+    )
+  );
 };
 
 export const sortedGroupActivitiesWithSize = (
