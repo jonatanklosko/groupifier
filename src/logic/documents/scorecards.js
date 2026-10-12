@@ -406,7 +406,7 @@ export const scorecards = (wcif, rounds, rooms, stages, language) => {
         const { printStations } =
           getExtensionData(
             'ActivityConfig',
-            parentActivityByGroup(wcif, groupActivity)
+            parentActivityByGroup(wcif, groupActivity) || groupActivity
           ) || {};
 
         let scorecardInGroupNumber = competitorsWithStation.length;
