@@ -470,11 +470,24 @@ const shouldPrintScrambleChecker = (competitor, round, wcif) => {
   const {
     printScrambleCheckerForTopRankedCompetitors,
     printScrambleCheckerForFinalRounds,
+    scrambleCheckerCompetitors,
   } = getExtensionData('CompetitionConfig', wcif);
   if (['555', '666', '777', 'minx'].includes(eventId)) {
     return false;
   }
-  if (printScrambleCheckerForTopRankedCompetitors) {
+  if (
+    printScrambleCheckerForTopRankedCompetitors === 'manual' &&
+    competitor &&
+    ((scrambleCheckerCompetitors || {})[eventId] || []).includes(
+      competitor.registrantId
+    )
+  ) {
+    return true;
+  }
+  if (
+    printScrambleCheckerForTopRankedCompetitors === 'topRanked' ||
+    printScrambleCheckerForTopRankedCompetitors === true
+  ) {
     const singlePersonalBest = competitor.personalBests?.find(
       personalBest =>
         personalBest.eventId === eventId && personalBest.type === 'single'

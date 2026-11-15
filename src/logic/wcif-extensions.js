@@ -36,9 +36,10 @@ const defaultExtensionData = {
     scorecardPaperSize: 'a4',
     scorecardOrder: 'natural',
     printScorecardsCoverSheets: false,
-    printScrambleCheckerForTopRankedCompetitors: false,
+    printScrambleCheckerForTopRankedCompetitors: 'none',
     printScrambleCheckerForFinalRounds: false,
     printScrambleCheckerForBlankScorecards: false,
+    scrambleCheckerCompetitors: {},
   },
 };
 
