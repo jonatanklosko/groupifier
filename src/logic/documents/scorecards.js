@@ -19,7 +19,7 @@ import {
   getExpectedCompetitorsByRound,
   competitorsForRound,
 } from '../competitors';
-import { getExtensionData } from '../wcif-extensions';
+import { getExtensionData, getScrambleCheckerRule } from '../wcif-extensions';
 import { pdfName, getImageDataUrl } from './pdf-utils';
 import { sortedGroupActivitiesWithSize } from '../groups';
 import { getAssignment, hasAssignment } from '../assignments';
@@ -467,16 +467,17 @@ export const scorecards = (wcif, rounds, rooms, stages, language) => {
 
 const shouldPrintScrambleChecker = (competitor, round, wcif) => {
   const { eventId } = round ? parseActivityCode(round.id) : {};
+  const competitionConfig = getExtensionData('CompetitionConfig', wcif);
   const {
-    printScrambleCheckerForTopRankedCompetitors,
     printScrambleCheckerForFinalRounds,
     scrambleCheckerCompetitors,
-  } = getExtensionData('CompetitionConfig', wcif);
+  } = competitionConfig;
+  const printScrambleCheckerRule = getScrambleCheckerRule(competitionConfig);
   if (['555', '666', '777', 'minx'].includes(eventId)) {
     return false;
   }
   if (
-    printScrambleCheckerForTopRankedCompetitors === 'manual' &&
+    printScrambleCheckerRule === 'manual' &&
     competitor &&
     ((scrambleCheckerCompetitors || {})[eventId] || []).includes(
       competitor.registrantId
@@ -484,10 +485,7 @@ const shouldPrintScrambleChecker = (competitor, round, wcif) => {
   ) {
     return true;
   }
-  if (
-    printScrambleCheckerForTopRankedCompetitors === 'topRanked' ||
-    printScrambleCheckerForTopRankedCompetitors === true
-  ) {
+  if (printScrambleCheckerRule === 'top-ranked') {
     const singlePersonalBest = competitor.personalBests?.find(
       personalBest =>
         personalBest.eventId === eventId && personalBest.type === 'single'

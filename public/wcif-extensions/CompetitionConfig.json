@@ -48,8 +48,21 @@
       "type": "boolean"
     },
     "printScrambleCheckerForTopRankedCompetitors": {
-      "description": "A flag indicating whether the box for scramble checker signature should be printed for top-ranked competitors (WR50 in single or WR50/NR15 in average).",
+      "description": "Deprecated, use printScrambleCheckerRule instead. A flag indicating whether the box for scramble checker signature should be printed for top-ranked competitors (WR50 in single or WR50/NR15 in average). Used as a fallback when printScrambleCheckerRule is not set.",
       "type": "boolean"
+    },
+    "printScrambleCheckerRule": {
+      "description": "Indicates for which competitors the box for scramble checker signature should be printed: none, manually selected competitors (see scrambleCheckerCompetitors) or top-ranked competitors (WR50 in single or WR50/NR15 in average).",
+      "type": ["string", "null"],
+      "enum": ["none", "manual", "top-ranked", null]
+    },
+    "scrambleCheckerCompetitors": {
+      "description": "A mapping from event id to the list of registrant ids of competitors that should get the box for scramble checker signature, used when printScrambleCheckerRule is manual.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "integer" }
+      }
     },
     "printScrambleCheckerForFinalRounds": {
       "description": "A flag indicating whether the box for scrambler checker signature should be printed for final rounds.",

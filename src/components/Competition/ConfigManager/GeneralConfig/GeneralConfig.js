@@ -14,6 +14,7 @@ import Typography from '@material-ui/core/Typography';
 
 import {
   getExtensionData,
+  getScrambleCheckerRule,
   setExtensionData,
 } from '../../../../logic/wcif-extensions';
 import { setIn } from '../../../../logic/utils';
@@ -84,7 +85,7 @@ const scrambleCheckerForCompetitorsOptions = [
       'Print out scramble checker sign box for manually selected competitors',
   },
   {
-    id: 'topRanked',
+    id: 'top-ranked',
     name:
       'Print out scramble checker sign box for top ranked competitors (WR50 in single or WR50/NR15 in average)',
   },
@@ -115,6 +116,7 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
     handlePropertyChange(name, value);
   };
 
+  const competitionConfig = getExtensionData('CompetitionConfig', wcif);
   const {
     competitorsSortingRule,
     noTasksForNewcomers,
@@ -126,19 +128,12 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
     scorecardPaperSize,
     scorecardOrder,
     printScorecardsCoverSheets,
-    printScrambleCheckerForTopRankedCompetitors,
     printScrambleCheckerForFinalRounds,
     printScrambleCheckerForBlankScorecards,
     scrambleCheckerCompetitors,
-  } = getExtensionData('CompetitionConfig', wcif);
+  } = competitionConfig;
 
-  /* Older configurations stored this setting as a boolean. */
-  const scrambleCheckerForCompetitorsValue =
-    printScrambleCheckerForTopRankedCompetitors === true
-      ? 'topRanked'
-      : printScrambleCheckerForTopRankedCompetitors === false
-      ? 'none'
-      : printScrambleCheckerForTopRankedCompetitors;
+  const printScrambleCheckerRule = getScrambleCheckerRule(competitionConfig);
 
   return (
     <Paper style={{ padding: 16 }}>
@@ -310,10 +305,10 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
                   Scramble checker for competitors
                 </InputLabel>
                 <Select
-                  value={scrambleCheckerForCompetitorsValue}
+                  value={printScrambleCheckerRule}
                   onChange={handleTextFieldChange}
                   inputProps={{
-                    name: 'printScrambleCheckerForTopRankedCompetitors',
+                    name: 'printScrambleCheckerRule',
                     id: 'scramble-checker-for-competitors',
                   }}
                 >
@@ -324,7 +319,7 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
                   ))}
                 </Select>
               </FormControl>
-              {scrambleCheckerForCompetitorsValue === 'manual' && (
+              {printScrambleCheckerRule === 'manual' && (
                 <Button
                   variant="outlined"
                   color="primary"

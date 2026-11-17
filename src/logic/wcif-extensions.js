@@ -36,7 +36,11 @@ const defaultExtensionData = {
     scorecardPaperSize: 'a4',
     scorecardOrder: 'natural',
     printScorecardsCoverSheets: false,
-    printScrambleCheckerForTopRankedCompetitors: 'none',
+    /* Deprecated, use printScrambleCheckerRule instead. Only read as a fallback for older configurations. */
+    printScrambleCheckerForTopRankedCompetitors: false,
+    /* One of 'none', 'manual' or 'top-ranked'. Defaults to null (not set) rather than 'none',
+       so that older configurations fall back to printScrambleCheckerForTopRankedCompetitors. */
+    printScrambleCheckerRule: null,
     printScrambleCheckerForFinalRounds: false,
     printScrambleCheckerForBlankScorecards: false,
     scrambleCheckerCompetitors: {},
@@ -65,3 +69,14 @@ export const removeExtensionData = (extensionName, wcifEntity) => ({
     extension => extension.id !== groupifierExtensionId(extensionName)
   ),
 });
+
+/* Returns the scramble checker rule, preferring the new printScrambleCheckerRule field
+   and falling back to the deprecated boolean printScrambleCheckerForTopRankedCompetitors. */
+export const getScrambleCheckerRule = competitionConfig => {
+  const {
+    printScrambleCheckerRule,
+    printScrambleCheckerForTopRankedCompetitors,
+  } = competitionConfig;
+  if (printScrambleCheckerRule) return printScrambleCheckerRule;
+  return printScrambleCheckerForTopRankedCompetitors ? 'top-ranked' : 'none';
+};
