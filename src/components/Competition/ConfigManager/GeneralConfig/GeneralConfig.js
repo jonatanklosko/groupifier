@@ -76,7 +76,7 @@ const scorecardSortingRules = [
 const scrambleCheckerForCompetitorsOptions = [
   {
     id: 'none',
-    name: 'No specific scramble checker',
+    name: 'Do not print out scramble checker sign box',
   },
   {
     id: 'manual',
