@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -13,9 +14,11 @@ import Typography from '@material-ui/core/Typography';
 
 import {
   getExtensionData,
+  getScrambleCheckerRule,
   setExtensionData,
 } from '../../../../logic/wcif-extensions';
 import { setIn } from '../../../../logic/utils';
+import ScrambleCheckerCompetitorsDialog from './ScrambleCheckerCompetitorsDialog/ScrambleCheckerCompetitorsDialog';
 
 const competitorsSortingRules = [
   {
@@ -71,7 +74,28 @@ const scorecardSortingRules = [
   },
 ];
 
+const scrambleCheckerForCompetitorsOptions = [
+  {
+    id: 'none',
+    name: 'Do not print out scramble checker sign box',
+  },
+  {
+    id: 'manual',
+    name:
+      'Print out scramble checker sign box for manually selected competitors',
+  },
+  {
+    id: 'top-ranked',
+    name:
+      'Print out scramble checker sign box for top ranked competitors (WR50 in single or WR50/NR15 in average)',
+  },
+];
+
 const GeneralConfig = ({ wcif, onWcifChange }) => {
+  const [scrambleCheckerDialogOpen, setScrambleCheckerDialogOpen] = useState(
+    false
+  );
+
   const handlePropertyChange = (property, value) => {
     onWcifChange(
       setExtensionData(
@@ -92,6 +116,7 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
     handlePropertyChange(name, value);
   };
 
+  const competitionConfig = getExtensionData('CompetitionConfig', wcif);
   const {
     competitorsSortingRule,
     noTasksForNewcomers,
@@ -103,10 +128,12 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
     scorecardPaperSize,
     scorecardOrder,
     printScorecardsCoverSheets,
-    printScrambleCheckerForTopRankedCompetitors,
     printScrambleCheckerForFinalRounds,
     printScrambleCheckerForBlankScorecards,
-  } = getExtensionData('CompetitionConfig', wcif);
+    scrambleCheckerCompetitors,
+  } = competitionConfig;
+
+  const printScrambleCheckerRule = getScrambleCheckerRule(competitionConfig);
 
   return (
     <Paper style={{ padding: 16 }}>
@@ -273,15 +300,43 @@ const GeneralConfig = ({ wcif, onWcifChange }) => {
               </Typography>
             </Grid>
             <Grid item>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    name="printScrambleCheckerForTopRankedCompetitors"
-                    checked={printScrambleCheckerForTopRankedCompetitors}
-                    onChange={handleCheckboxChange}
-                  />
+              <FormControl fullWidth>
+                <InputLabel htmlFor="scramble-checker-for-competitors">
+                  Scramble checker for competitors
+                </InputLabel>
+                <Select
+                  value={printScrambleCheckerRule}
+                  onChange={handleTextFieldChange}
+                  inputProps={{
+                    name: 'printScrambleCheckerRule',
+                    id: 'scramble-checker-for-competitors',
+                  }}
+                >
+                  {scrambleCheckerForCompetitorsOptions.map(({ id, name }) => (
+                    <MenuItem value={id} key={id}>
+                      {name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              {printScrambleCheckerRule === 'manual' && (
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  style={{ marginTop: 8 }}
+                  onClick={() => setScrambleCheckerDialogOpen(true)}
+                >
+                  Configure
+                </Button>
+              )}
+              <ScrambleCheckerCompetitorsDialog
+                open={scrambleCheckerDialogOpen}
+                wcif={wcif}
+                selectedCompetitors={scrambleCheckerCompetitors}
+                onChange={value =>
+                  handlePropertyChange('scrambleCheckerCompetitors', value)
                 }
-                label="Print out scramble checker sign box for top ranked competitors (WR50 in single or WR50/NR15 in average)"
+                onClose={() => setScrambleCheckerDialogOpen(false)}
               />
             </Grid>
             <Grid item>
